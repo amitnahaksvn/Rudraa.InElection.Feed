@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-PoliticalNews.Worker-b163ba94-c4f6-43c7-898a-aa210bac6d2b</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.7" />
+    <PackageReference Include="Cronos" Version="0.13.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PoliticalNews.Application\PoliticalNews.Application.csproj" />
+    <ProjectReference Include="..\PoliticalNews.Domain\PoliticalNews.Domain.csproj" />
+    <ProjectReference Include="..\PoliticalNews.Infrastructure\PoliticalNews.Infrastructure.csproj" />
+    <ProjectReference Include="..\PoliticalNews.ServiceDefaults\PoliticalNews.ServiceDefaults.csproj" />
+  </ItemGroup>
+</Project>

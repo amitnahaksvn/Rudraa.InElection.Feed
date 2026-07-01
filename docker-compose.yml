@@ -1,0 +1,48 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: politicalnews-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PROJECT: PoliticalNews.Worker
+    container_name: politicalnews-worker
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    environment:
+      DOTNET_ENVIRONMENT: Production
+      # Points at the local `mongo` service above by default. To crawl straight into an
+      # existing cluster (e.g. MongoDB Atlas) instead, override these two and drop the
+      # `mongo` service/`depends_on` entry.
+      MongoDb__ConnectionString: "mongodb://mongo:27017"
+      MongoDb__DatabaseName: "PoliticalNewsDb"
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PROJECT: PoliticalNews.Web
+    container_name: politicalnews-web
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    ports:
+      - "8080:8080"
+    environment:
+      DOTNET_ENVIRONMENT: Production
+      ASPNETCORE_URLS: "http://+:8080"
+      MongoDb__ConnectionString: "mongodb://mongo:27017"
+      MongoDb__DatabaseName: "PoliticalNewsDb"
+
+volumes:
+  mongo-data:

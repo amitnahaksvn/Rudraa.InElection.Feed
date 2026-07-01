@@ -1,0 +1,48 @@
+## .NET
+bin/
+obj/
+out/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+## Visual Studio / Rider / VS Code
+.vs/
+.vscode/
+.idea/
+*.sln.iml
+
+## Test results
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+coverage/
+
+## Build artifacts
+*.dll
+*.pdb
+*.cache
+publish/
+
+## User secrets / environment (never commit real credentials)
+appsettings.*.local.json
+.env
+.env.*
+secrets.json
+
+## OS files
+.DS_Store
+Thumbs.db
+
+## Claude Code (personal/local, not shared team config)
+.claude/settings.local.json
+
+## Logs
+*.log
+logs/
+
+## Aspire
+**/.aspire/
+
