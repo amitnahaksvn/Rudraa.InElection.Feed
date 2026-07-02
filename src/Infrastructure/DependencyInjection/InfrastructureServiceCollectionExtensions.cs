@@ -77,6 +77,12 @@ public static class InfrastructureServiceCollectionExtensions
         AddRssProvider<OneIndiaRssProvider>(services, OneIndiaRssProvider.ClientName, BrowserUserAgent);
         AddRssProvider<NewsXRssProvider>(services, NewsXRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<DnaIndiaRssProvider>(services, DnaIndiaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<PibRssProvider>(services, PibRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<NdmaRssProvider>(services, NdmaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<MinistryOfPortsShippingRssProvider>(services, MinistryOfPortsShippingRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<MyGovIndiaRssProvider>(services, MyGovIndiaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<GoogleNewsRssProvider>(services, GoogleNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<YouTubeRssProvider>(services, YouTubeRssProvider.ClientName, CrawlerUserAgent);
 
         services.AddHostedService<MongoIndexInitializerHostedService>();
 

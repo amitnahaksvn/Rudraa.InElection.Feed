@@ -37,6 +37,15 @@ public abstract partial class BaseRssProvider : IRssProvider
     /// <summary>Named <see cref="HttpClient"/> registered for this provider in DI.</summary>
     protected abstract string HttpClientName { get; }
 
+    /// <summary>
+    /// Builds the actual URL to fetch for a configured feed. Every existing provider leaves this
+    /// as the identity (<see cref="RssFeedOptions.Url"/> is already the literal feed URL), but
+    /// <see cref="GoogleNewsRssProvider"/> overrides it to treat <c>Url</c> as a search topic and
+    /// build a Google News search-feed URL from it - letting a new topic be added purely via
+    /// configuration (one list entry) rather than a hardcoded URL per topic.
+    /// </summary>
+    protected virtual string ResolveFeedUrl(RssFeedOptions feed) => feed.Url;
+
     public async Task<IReadOnlyList<FeedFetchResult>> FetchAllFeedsAsync(
         IReadOnlyList<RssFeedOptions> feeds,
         CancellationToken cancellationToken)
@@ -57,11 +66,12 @@ public abstract partial class BaseRssProvider : IRssProvider
         var stopwatch = Stopwatch.StartNew();
         string? rawXml = null;
         int? httpStatusCode = null;
+        var url = ResolveFeedUrl(feed);
 
         try
         {
             var client = _httpClientFactory.CreateClient(HttpClientName);
-            using var response = await client.GetAsync(feed.Url, cancellationToken);
+            using var response = await client.GetAsync(url, cancellationToken);
             httpStatusCode = (int)response.StatusCode;
             response.EnsureSuccessStatusCode();
 
@@ -71,7 +81,7 @@ public abstract partial class BaseRssProvider : IRssProvider
             var articles = new List<NormalizedArticle>();
             foreach (var item in document.Descendants("item"))
             {
-                var article = await ParseItemAsync(item, feed, cancellationToken);
+                var article = await ParseItemAsync(item, feed, url, cancellationToken);
                 if (article is not null)
                 {
                     articles.Add(article);
@@ -81,7 +91,7 @@ public abstract partial class BaseRssProvider : IRssProvider
             return new FeedFetchResult
             {
                 FeedName = feed.Name,
-                FeedUrl = feed.Url,
+                FeedUrl = url,
                 Success = true,
                 Articles = articles,
                 FetchedAt = fetchedAt,
@@ -97,11 +107,11 @@ public abstract partial class BaseRssProvider : IRssProvider
             // per-request Timeout - that is a dead/hanging feed, not our caller asking to stop,
             // and must never crash the host. Only lets an exception through uncaught when our
             // own cancellationToken was actually the one that fired (real shutdown/cancellation).
-            _logger.LogError(ex, "Failed to fetch/parse feed {Provider}/{Feed} ({Url})", Name, feed.Name, feed.Url);
+            _logger.LogError(ex, "Failed to fetch/parse feed {Provider}/{Feed} ({Url})", Name, feed.Name, url);
             return new FeedFetchResult
             {
                 FeedName = feed.Name,
-                FeedUrl = feed.Url,
+                FeedUrl = url,
                 Success = false,
                 Error = ex.Message,
                 FetchedAt = fetchedAt,
@@ -116,7 +126,7 @@ public abstract partial class BaseRssProvider : IRssProvider
     private static string ComputeContentHash(string rawXml) =>
         Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(rawXml))).ToLowerInvariant();
 
-    private async Task<NormalizedArticle?> ParseItemAsync(XElement item, RssFeedOptions feed, CancellationToken cancellationToken)
+    private async Task<NormalizedArticle?> ParseItemAsync(XElement item, RssFeedOptions feed, string feedUrl, CancellationToken cancellationToken)
     {
         var title = item.Element("title")?.Value.Trim();
         var link = item.Element("link")?.Value.Trim();
@@ -154,7 +164,7 @@ public abstract partial class BaseRssProvider : IRssProvider
             ImageUrl = imageUrl,
             PublishedAt = publishedAt,
             Tags = tags,
-            Source = feed.Url
+            Source = feedUrl
         };
     }
 

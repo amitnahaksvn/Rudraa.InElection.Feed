@@ -305,6 +305,87 @@ excluded under earlier, so it was not fetched or wired in). **Punjab Kesari** (`
 has no RSS `<link>` tag on its homepage and every guessed URL pattern 404s; `robots.txt` lists only
 sitemaps, no RSS hints). None of these four are wired into `NewsCrawler.appsettings.json`.
 
+**Government/legislative sources, plus Google News and YouTube - a much larger, mostly-negative
+verification pass.** The user asked for ~15 named government/legislative bodies and ~90 more
+(all central ministries, several statutory bodies, Google News, Google Alerts, and ~18 YouTube
+channels). Individual Indian ministry websites turned out to be almost universally RSS-less -
+**PIB** (`pib.gov.in`), **NDMA** (`ndma.gov.in`), and the **Ministry of Ports, Shipping and
+Waterways** (`shipmin.gov.in`) are the only three that actually work, plus the citizen-engagement
+platform **MyGov India** (`mygov.in`); everything else in that list (PMO India, ECI, Lok Sabha,
+Rajya Sabha, PRS Legislative Research, India.gov.in, data.gov.in, RBI, SEBI, UIDAI, NIC, IMD, NITI
+Aayog's own website, and 49 of the 50 named ministries) has no working RSS and is not wired in.
+
+**PIB** (`pib.gov.in`) is an ASP.NET WebForms site with an undocumented but discoverable
+`RssMain.aspx?ModId={category}&lang={language}` scheme - `ModId=6` is press releases, `ModId=8`
+photo features, `ModId=9` media invitations; `lang=1` English, `lang=2` Hindi, `lang=3` Urdu (every
+`lang` value above 3 silently falls back to Hindi content, so there is no fourth "regional"
+language reachable this way - the separately-branded `pibregional.nic.in` multilingual site
+mentioned in one of PIB's own old press releases is unreachable/dead, so "PIB Regional" specifically
+was not added). Five feeds are wired up under one `PIB` provider block (English, Hindi, Urdu,
+PhotoFeature, MediaInvitation).
+
+**NDMA** and **MinistryOfPortsShipping** are each a single bare `/rss.xml` (10 items apiece);
+Ports/Shipping's feed content skews toward audit/annual-report announcements rather than
+press-release news, and includes one permanent placeholder "Test" item from the publisher's own
+CMS - both accepted as-is, same as any other publisher's own editorial choices. **MyGovIndia**
+(`mygov.in/rss.xml`, 10 items) is a mix of campaign announcements, ministry group-page listings,
+and blog posts, reflecting what the platform itself actually is, not a pure news feed - also
+accepted as-is.
+
+**PMO India** (`pmindia.gov.in/en/feed/`) technically returns 200 with a well-formed RSS body, but
+the feed contains exactly one item: a stale "test post" dated June 2024 from a developer's own
+email address. The site's real speech/press-release content isn't exposed through that feed or any
+guessed category-specific variant, so PMO India was not wired in (its YouTube channel was, see
+below). **Rajya Sabha**'s `sansad.in/rs` section has `robots.txt: Disallow: /` - a blanket
+disallow respected the same way Firstpost's and Patrika's were, so it was excluded on policy
+grounds without ever being fetched, independent of whether a feed exists there. **ECI**, **Lok
+Sabha**, **PRS Legislative Research**, **India.gov.in**, **data.gov.in**, **RBI**, **SEBI**,
+**UIDAI**, **NIC**, and **NITI Aayog**'s own website all have no discoverable RSS `<link>` tag and
+no working guessed URL pattern. **IMD** (`mausam.imd.gov.in` and `www.imd.gov.in`) is unreachable
+outright - the TCP connection itself times out from this environment, not an HTTP-level block.
+
+**Google News** (`news.google.com/rss/search`) is architecturally different from every other
+provider: `GoogleNewsRssProvider` overrides a new `BaseRssProvider.ResolveFeedUrl(RssFeedOptions)`
+virtual hook (default implementation is the identity, `feed.Url` unchanged, so all 30+ other
+providers are unaffected) to treat a configured feed's `Url` as a plain-text search *topic*
+(e.g. `"India politics"`) rather than a literal feed URL, building the actual
+`news.google.com/rss/search?q={topic}&hl=en-IN&gl=IN&ceid=IN:en` URL from it at fetch time. This
+means adding a new topic later is purely a configuration change - one new `Feeds` entry with the
+topic text as `Url` - never a code change. Two things about Google News were deliberately accepted
+as known trade-offs rather than engineered around: (1) the feed's own `<copyright>` element states
+it is "made available solely for the purpose of rendering Google News results within a personal
+feed reader for personal, non-commercial use" and that "any other use...is expressly prohibited" -
+persisting it into this crawler's database is arguably outside that scope; flagged explicitly to
+the user, who chose to proceed anyway. (2) Each article's `<link>` is an opaque
+`news.google.com/rss/articles/{token}` redirect that does *not* resolve to the real publisher URL
+via a normal HTTP redirect (Google resolves it client-side via JS, confirmed by following the
+redirect and finding it just loops back to the same token URL with extra query params) - reliably
+decoding it would need either a headless browser or an unofficial reverse-engineered scheme, both
+judged too fragile to depend on, so Google News articles are stored under their Google-hosted link
+as-is. Practical effect: the same story already ingested from a direct publisher feed will **not**
+dedupe against its Google News copy - they end up as two separate documents by design, not a bug.
+
+**YouTube** channel feeds are Atom 1.0 (`<entry>`/`<published>`/`<id>`/`<link href="...">`), not
+RSS 2.0 - a different element vocabulary throughout, not a `BaseRssProvider`-style parsing quirk -
+so `YouTubeRssProvider` implements `IRssProvider` directly rather than extending
+`BaseRssProvider`, keeping the shared RSS 2.0 pipeline (used by every other provider) completely
+untouched. A configured feed's `Url` is the full
+`https://www.youtube.com/feeds/videos.xml?channel_id={id}` URL - channel ids are opaque (`UC...`)
+and have to be resolved once per channel (from the channel page's own `"externalId"` JSON field,
+or a YouTube search result's `"channelId"`) before adding a config entry; from then on, adding
+another channel is purely a configuration change - one new `Feeds` list entry - same as every
+other provider. Each video is normalized into the same `NormalizedArticle` shape everything else
+uses (`Content`/`Summary` from the video's `media:description`, `ImageUrl` from `media:thumbnail`,
+`Url` the watch page, tagged `"video"`) so it flows through the existing dedup/persistence/API
+pipeline unchanged - there is no separate "video" concept in the domain model. 18 channels are
+wired up: Narendra Modi, Sansad TV, DD News, DD India, PMO India, PIB India, Election Commission
+of India, MyGov India, and the Ministries of External Affairs, Defence, Home Affairs, Finance,
+Railways, Road Transport & Highways, Electronics & IT, Health & Family Welfare, Education, and
+NITI Aayog - each individually verified by checking the resolved channel id's actual feed
+`<title>` matches the expected entity (several initial handle guesses resolved to entirely
+unrelated channels - e.g. `@PIB` and `@mha` are squatted by unrelated personal accounts - and were
+discarded rather than trusted on the handle name alone).
+
 **Raw-response retention is enforced by an active daily cleanup job, not just the passive Mongo
 TTL index.** `NewsCrawler:RawResponseRetention` (default `7.00:00:00`, 7 days) drives two
 independent mechanisms on the `RssRawResponses` collection: the TTL index

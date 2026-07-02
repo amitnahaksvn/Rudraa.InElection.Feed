@@ -1755,6 +1755,250 @@
             "Enabled": true
           }
         ]
+      },
+      {
+        "Name": "PIB",
+        "Enabled": true,
+        "Cron": "*/5 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "English",
+            "Url": "https://pib.gov.in/RssMain.aspx?ModId=6&Mod=1&reg=3&lang=1",
+            "Category": "National",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Hindi",
+            "Url": "https://pib.gov.in/RssMain.aspx?ModId=6&Mod=1&reg=3&lang=2",
+            "Category": "National",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Urdu",
+            "Url": "https://pib.gov.in/RssMain.aspx?ModId=6&Mod=1&reg=3&lang=3",
+            "Category": "National",
+            "Language": "ur",
+            "Enabled": true
+          },
+          {
+            "Name": "PhotoFeature",
+            "Url": "https://pib.gov.in/RssMain.aspx?ModId=8&Mod=1&reg=3&lang=1",
+            "Category": "Photo",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "MediaInvitation",
+            "Url": "https://pib.gov.in/RssMain.aspx?ModId=9&Mod=1&reg=3&lang=1",
+            "Category": "Media",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "NDMA",
+        "Enabled": true,
+        "Cron": "*/5 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://ndma.gov.in/rss.xml",
+            "Category": "General",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "MinistryOfPortsShipping",
+        "Enabled": true,
+        "Cron": "*/5 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://shipmin.gov.in/en/rss.xml",
+            "Category": "General",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "MyGovIndia",
+        "Enabled": true,
+        "Cron": "*/5 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://www.mygov.in/rss.xml",
+            "Category": "General",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "GoogleNews",
+        "Enabled": true,
+        "Cron": "*/5 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "IndiaPolitics",
+            "Url": "India politics",
+            "Category": "Politics",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "ElectionCommissionOfIndia",
+            "Url": "Election Commission of India",
+            "Category": "Politics",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "YouTube",
+        "Enabled": true,
+        "Cron": "*/5 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "NarendraModi",
+            "Url": "https://www.youtube.com/feeds/videos.xml?channel_id=UC1NF71EwP41VdjAU1iXdLkw",
+            "Category": "Video",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "SansadTV",
+            "Url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCISgnSNwqQ2i8lhCun3KtQg",
+            "Category": "Video",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "DDNews",
+            "Url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCKwucPzHZ7zCUIf7If-Wo1g",
+            "Category": "Video",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "PMOIndia",
+            "Url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCDS9hpqUEXsXUIcf0qDcBIA",
+            "Category": "Video",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "PIBIndia",
+            "Url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCGn6a5SI8SNlj7WylmPD6GQ",
+            "Category": "Video",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "ElectionCommissionOfIndia",
+            "Url": "https://www.youtube.com/feeds/videos.xml?channel_id=UC9o42oimkxqHeyCT3ToIZnw",
+            "Category": "Video",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "MyGovIndia",
+            "Url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCTJpJk8bqQQEqeX58z8eimA",
+            "Category": "Video",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "MinistryOfExternalAffairs",
+            "Url": "https://www.youtube.com/feeds/videos.xml?channel_id=UC-wttYGdvP8Roy8mh8VbzKw",
+            "Category": "Video",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "MinistryOfDefence",
+            "Url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCM09y-_Ct0RPAoAC-Z5firg",
+            "Category": "Video",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "MinistryOfHomeAffairs",
+            "Url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCpkwJHVIx2Ga3teCtSpO50w",
+            "Category": "Video",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "MinistryOfFinance",
+            "Url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCz0MtugoyVMdI2wxiDoApPg",
+            "Category": "Video",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "MinistryOfRailways",
+            "Url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCAQknBaX2KQmcOrguv_dUog",
+            "Category": "Video",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "MinistryOfRoadTransportHighways",
+            "Url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCZW3RMnxFIW60E2vs1CMKNA",
+            "Category": "Video",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "MinistryOfElectronicsIT",
+            "Url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCAMMb7ahUbhS9Y0tKomdEsw",
+            "Category": "Video",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "MinistryOfHealthFamilyWelfare",
+            "Url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCsyPEi8BS07G8ZPXmpzIZrg",
+            "Category": "Video",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "MinistryOfEducation",
+            "Url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCp2smQxAyu_09vXiPJ3vTTg",
+            "Category": "Video",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "NITIAayog",
+            "Url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCdU0fFzTiX6Qr59Wr4uc4Lg",
+            "Category": "Video",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "DDIndia",
+            "Url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCGDQNvybfDDeGTf4GtigXaw",
+            "Category": "Video",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
       }
     ]
   }
