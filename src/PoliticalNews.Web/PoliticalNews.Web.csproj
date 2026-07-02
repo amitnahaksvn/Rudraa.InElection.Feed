@@ -8,6 +8,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Single source of truth for NewsCrawler:* (providers/feeds/schedules), shared with
+         PoliticalNews.Worker so both processes see identical feed config without duplicating it. -->
+    <Content Include="..\NewsCrawler.appsettings.json" Link="NewsCrawler.appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.MongoDb" Version="9.0.0" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.16.7" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />

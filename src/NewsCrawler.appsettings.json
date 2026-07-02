@@ -1,0 +1,539 @@
+{
+  "NewsCrawler": {
+    "Enabled": true,
+    "BatchSize": 100,
+    "LockName": "news-crawler",
+    "LockTtl": "00:15:00",
+    "FeedTimeout": "00:00:30",
+    "SaveRawResponses": true,
+    "Providers": [
+      {
+        "Name": "AajTak",
+        "Enabled": true,
+        "Cron": "*/5 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://www.aajtak.in/rssfeeds/?id=home",
+            "Category": "General",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "NewsTak",
+            "Url": "https://www.tak.live/rss/news-tak/video.xml",
+            "Category": "National",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "CrimeTak",
+            "Url": "https://www.tak.live/rss/crime-tak/video.xml",
+            "Category": "Crime",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "BharatTak",
+            "Url": "https://www.tak.live/rss/bharat-tak/video.xml",
+            "Category": "National",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "BizTak",
+            "Url": "https://www.tak.live/rss/biz-tak/video.xml",
+            "Category": "Business",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UPTak",
+            "Url": "https://www.tak.live/rss/up-tak/video.xml",
+            "Category": "Uttar Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "BiharTak",
+            "Url": "https://www.tak.live/rss/bihar-tak/video.xml",
+            "Category": "Bihar",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "LifeTak",
+            "Url": "https://www.tak.live/rss/life-tak/video.xml",
+            "Category": "Lifestyle",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "SahityaTak",
+            "Url": "https://www.tak.live/rss/sahitya-tak/video.xml",
+            "Category": "Literature",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "FitTak",
+            "Url": "https://www.tak.live/rss/fit-tak/video.xml",
+            "Category": "Health & Fitness",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "MPTak",
+            "Url": "https://www.tak.live/rss/mp-tak/video.xml",
+            "Category": "Madhya Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "AstroTak",
+            "Url": "https://www.tak.live/rss/astro-tak/video.xml",
+            "Category": "Astrology",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "DilliTak",
+            "Url": "https://www.tak.live/rss/dilli-tak/video.xml",
+            "Category": "Delhi",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "RajasthanTak",
+            "Url": "https://www.tak.live/rss/rajasthan-tak/video.xml",
+            "Category": "Rajasthan",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "GujaratTak",
+            "Url": "https://www.tak.live/rss/gujarat-tak/video.xml",
+            "Category": "Gujarat",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "PunjabTak",
+            "Url": "https://www.tak.live/rss/punjab-tak/video.xml",
+            "Category": "Punjab",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "HaryanaTak",
+            "Url": "https://www.tak.live/rss/haryana-tak/video.xml",
+            "Category": "Haryana",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarakhandTak",
+            "Url": "https://www.tak.live/rss/uttarakhand-tak/video.xml",
+            "Category": "Uttarakhand",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "KarnatakaTak",
+            "Url": "https://www.tak.live/rss/karnataka-tak/video.xml",
+            "Category": "Karnataka",
+            "Language": "hi",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "ABPNews",
+        "Enabled": true,
+        "Cron": "*/5 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://www.abplive.com/home/feed",
+            "Category": "General",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "India",
+            "Url": "https://www.abplive.com/news/india/feed",
+            "Category": "National",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "World",
+            "Url": "https://www.abplive.com/news/world/feed",
+            "Category": "World",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "States",
+            "Url": "https://www.abplive.com/states/feed",
+            "Category": "States",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Sports",
+            "Url": "https://www.abplive.com/sports/feed",
+            "Category": "Sports",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Bollywood",
+            "Url": "https://www.abplive.com/entertainment/bollywood/feed",
+            "Category": "Entertainment",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Television",
+            "Url": "https://www.abplive.com/entertainment/television/feed",
+            "Category": "Entertainment",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "TamilCinema",
+            "Url": "https://www.abplive.com/entertainment/tamil-cinema/feed",
+            "Category": "Entertainment",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "BhojpuriCinema",
+            "Url": "https://www.abplive.com/entertainment/bhojpuri-cinema/feed",
+            "Category": "Entertainment",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Astro",
+            "Url": "https://www.abplive.com/astro/feed",
+            "Category": "Astrology",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Religion",
+            "Url": "https://www.abplive.com/lifestyle/religion/feed",
+            "Category": "Religion",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Business",
+            "Url": "https://www.abplive.com/business/feed",
+            "Category": "Business",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Gadgets",
+            "Url": "https://www.abplive.com/technology/gadgets/feed",
+            "Category": "Technology",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Lifestyle",
+            "Url": "https://www.abplive.com/lifestyle/feed",
+            "Category": "Lifestyle",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Travel",
+            "Url": "https://www.abplive.com/lifestyle/travel/feed",
+            "Category": "Lifestyle",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Food",
+            "Url": "https://www.abplive.com/lifestyle/food/feed",
+            "Category": "Lifestyle",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Fashion",
+            "Url": "https://www.abplive.com/lifestyle/fashion/feed",
+            "Category": "Lifestyle",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "LifestyleHealth",
+            "Url": "https://www.abplive.com/lifestyle/health/feed",
+            "Category": "Health & Fitness",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Technology",
+            "Url": "https://www.abplive.com/technology/feed",
+            "Category": "Technology",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Education",
+            "Url": "https://www.abplive.com/education/feed",
+            "Category": "Education",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "EducationJobs",
+            "Url": "https://www.abplive.com/education/jobs/feed",
+            "Category": "Education",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Agriculture",
+            "Url": "https://www.abplive.com/agriculture/feed",
+            "Category": "Agriculture",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "GK",
+            "Url": "https://www.abplive.com/gk/feed",
+            "Category": "General Knowledge",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UtilityNews",
+            "Url": "https://www.abplive.com/utility-news/feed",
+            "Category": "Utility",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "WebStories",
+            "Url": "https://www.abplive.com/web-stories/feed",
+            "Category": "Web Stories",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Blog",
+            "Url": "https://www.abplive.com/blog/feed",
+            "Category": "Blog",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "ShortVideo",
+            "Url": "https://www.abplive.com/short-video/feed",
+            "Category": "Video",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "PhotoGallery",
+            "Url": "https://www.abplive.com/photo-gallery/feed",
+            "Category": "Photos",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "FactCheck",
+            "Url": "https://www.abplive.com/fact-check/feed",
+            "Category": "Fact Check",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Health",
+            "Url": "https://www.abplive.com/health/feed",
+            "Category": "Health",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Trending",
+            "Url": "https://www.abplive.com/trending/feed",
+            "Category": "Trending",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Elections",
+            "Url": "https://www.abplive.com/elections/feed",
+            "Category": "Politics",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "HinduCalendar",
+            "Url": "https://www.abplive.com/hindu-calendar/feed",
+            "Category": "Astrology",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Horoscope",
+            "Url": "https://www.abplive.com/astro/horoscope/feed",
+            "Category": "Astrology",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Numerology",
+            "Url": "https://www.abplive.com/astro/numerology/feed",
+            "Category": "Astrology",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "VastuShastra",
+            "Url": "https://www.abplive.com/astro/vastu-shastra/feed",
+            "Category": "Astrology",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Transit",
+            "Url": "https://www.abplive.com/astro/transit/feed",
+            "Category": "Astrology",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "IndiaAt2047",
+            "Url": "https://www.abplive.com/india-at-2047/feed",
+            "Category": "National",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "OTT",
+            "Url": "https://www.abplive.com/entertainment/ott/feed",
+            "Category": "Entertainment",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Celebrities",
+            "Url": "https://www.abplive.com/entertainment/celebrities/feed",
+            "Category": "Entertainment",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "IPL",
+            "Url": "https://www.abplive.com/sports/ipl/feed",
+            "Category": "Sports",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UPUK",
+            "Url": "https://www.abplive.com/news/states/up-uk/feed",
+            "Category": "Uttar Pradesh & Uttarakhand",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Bihar",
+            "Url": "https://www.abplive.com/news/states/bihar/feed",
+            "Category": "Bihar",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "DelhiNCR",
+            "Url": "https://www.abplive.com/news/states/delhi-ncr/feed",
+            "Category": "Delhi",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Maharashtra",
+            "Url": "https://www.abplive.com/news/states/maharashtra/feed",
+            "Category": "Maharashtra",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Rajasthan",
+            "Url": "https://www.abplive.com/news/states/rajasthan/feed",
+            "Category": "Rajasthan",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "MadhyaPradesh",
+            "Url": "https://www.abplive.com/news/states/madhya-pradesh/feed",
+            "Category": "Madhya Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Haryana",
+            "Url": "https://www.abplive.com/news/states/haryana/feed",
+            "Category": "Haryana",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Punjab",
+            "Url": "https://www.abplive.com/news/states/punjab/feed",
+            "Category": "Punjab",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Gujarat",
+            "Url": "https://www.abplive.com/news/states/gujarat/feed",
+            "Category": "Gujarat",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Chhattisgarh",
+            "Url": "https://www.abplive.com/news/states/chhattisgarh/feed",
+            "Category": "Chhattisgarh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "JammuKashmir",
+            "Url": "https://www.abplive.com/news/states/jammu-and-kashmir/feed",
+            "Category": "Jammu and Kashmir",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "HimachalPradesh",
+            "Url": "https://www.abplive.com/news/states/himachal-pradesh/feed",
+            "Category": "Himachal Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Jharkhand",
+            "Url": "https://www.abplive.com/news/states/jharkhand/feed",
+            "Category": "Jharkhand",
+            "Language": "hi",
+            "Enabled": true
+          }
+        ]
+      }
+    ]
+  }
+}

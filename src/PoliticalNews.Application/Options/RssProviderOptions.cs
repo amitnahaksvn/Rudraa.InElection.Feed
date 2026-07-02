@@ -12,5 +12,17 @@ public sealed class RssProviderOptions
 
     public bool Enabled { get; set; } = true;
 
+    /// <summary>
+    /// This provider's own standard 5-field cron expression, e.g. "*/5 * * * *" for every 5
+    /// minutes - independent of every other provider's schedule.
+    /// </summary>
+    public string Cron { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Per-provider half of the raw-response-save toggle - only takes effect when
+    /// <see cref="NewsCrawlerOptions.SaveRawResponses"/> is also true.
+    /// </summary>
+    public bool SaveRawResponses { get; set; } = true;
+
     public List<RssFeedOptions> Feeds { get; set; } = [];
 }

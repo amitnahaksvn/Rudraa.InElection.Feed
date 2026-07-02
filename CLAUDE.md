@@ -85,12 +85,20 @@ try/catch.
 (`Application/Abstractions`) is implemented by `BaseRssProvider` (`Infrastructure/RssProviders`),
 which owns the entire generic pipeline: HTTP fetch, RSS 2.0 XML parsing, image extraction
 (`media:content` -> `media:thumbnail` -> `enclosure` -> `og:image` HTML fallback), and
-normalization into `NormalizedArticle`. A concrete provider (currently only `AajTakRssProvider`)
+normalization into `NormalizedArticle`. A concrete provider (`AajTakRssProvider`, `AbpNewsRssProvider`)
 supplies just `Name` and an `IHttpClientFactory` client name - no MongoDB or persistence code.
 Adding a provider for a later phase (ANI/NDTV/PIB/...) means: one new `BaseRssProvider` subclass,
 one `services.AddHttpClient(...)` + `AddSingleton<IRssProvider, ...>()` in
 `Infrastructure/DependencyInjection/InfrastructureServiceCollectionExtensions.cs`, and one new
 block under `NewsCrawler:Providers` in `appsettings.json`. Feed URLs are never hardcoded.
+
+**Each provider owns its own cron schedule**, not a single global one: `RssProviderOptions.Cron`
+(a standard 5-field expression) lives per provider block. `Worker/HostedServices/CrawlerBackgroundService`
+ticks on a fixed 1-minute base interval (cron's own finest resolution) and, each tick, checks every
+provider's expression independently via `CrawlerBackgroundService.IsDue` - only the providers due
+that minute get crawled (`INewsCrawlerService.RunCrawlAsync(IReadOnlyCollection<string>, ...)`).
+A manually triggered crawl (`POST /api/crawl/trigger`) still runs every enabled provider regardless
+of its individual schedule (`RunCrawlAsync(CancellationToken)`, no provider filter).
 
 **Duplicate detection order** (`Infrastructure/Persistence/NewsArticleRepository.UpsertAsync`):
 `Url` -> `OriginalGuid` -> `Hash` (SHA-256 of normalized title + `PublishedAt`, computed by
@@ -125,3 +133,12 @@ feed list in `appsettings.json` are `tak.live` feeds (India Today Group's sister
 network - `news-tak`, `crime-tak`, `bharat-tak`, etc.), grouped under the same `AajTak` provider
 block per explicit instruction. Three tak.live slugs that were tried and don't resolve
 (`sports-tak`, `mumbai-tak`, `short-videos`) are intentionally excluded, not omissions.
+
+ABP Live (`abplive.com`) exposes a plain, consistent `{path}/feed` pattern (no `?id=` numeric
+scheme like Aaj Tak) - every one of the 54 feeds under `NewsCrawler:Providers[Name=ABPNews]` was
+individually curl-verified (HTTP 200, well-formed `<rss>` body) before being added, covering
+national/world/state news, elections, fact-check, business, entertainment, lifestyle, astrology,
+and a few utility categories (education, agriculture, GK, web-stories). `abplive.com` is the
+Hindi-language edition (`Language: "hi"`, matching AajTak); ABP's other language editions
+(`bengali.`, `marathi.`, `tamil.`, `telugu.`, `gujarati.`, `punjabi.`, `news.` for English) live on
+separate subdomains and are not wired in.

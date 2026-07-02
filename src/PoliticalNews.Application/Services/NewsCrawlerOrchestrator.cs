@@ -49,7 +49,14 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
     /// execute concurrently. Returns a non-persisted <see cref="CrawlStatus.Skipped"/> result
     /// if another run already holds the lock.
     /// </summary>
-    public async Task<CrawlHistory> RunCrawlAsync(CancellationToken cancellationToken)
+    public Task<CrawlHistory> RunCrawlAsync(CancellationToken cancellationToken) =>
+        RunCrawlAsync(providerFilter: null, cancellationToken);
+
+    /// <inheritdoc cref="INewsCrawlerService.RunCrawlAsync(IReadOnlyCollection{string}, CancellationToken)" />
+    public Task<CrawlHistory> RunCrawlAsync(IReadOnlyCollection<string> providerNames, CancellationToken cancellationToken) =>
+        RunCrawlAsync(p => providerNames.Contains(p.Name, StringComparer.OrdinalIgnoreCase), cancellationToken);
+
+    private async Task<CrawlHistory> RunCrawlAsync(Func<RssProviderOptions, bool>? providerFilter, CancellationToken cancellationToken)
     {
         var acquired = await _lockRepository.TryAcquireAsync(
             _options.LockName, _ownerId, _options.LockTtl, cancellationToken);
@@ -63,7 +70,7 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
 
         try
         {
-            return await RunLockedAsync(cancellationToken);
+            return await RunLockedAsync(providerFilter, cancellationToken);
         }
         finally
         {
@@ -71,7 +78,7 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
         }
     }
 
-    private async Task<CrawlHistory> RunLockedAsync(CancellationToken cancellationToken)
+    private async Task<CrawlHistory> RunLockedAsync(Func<RssProviderOptions, bool>? providerFilter, CancellationToken cancellationToken)
     {
         var history = new CrawlHistory
         {
@@ -89,7 +96,7 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
 
         try
         {
-            foreach (var providerOptions in _options.Providers.Where(p => p.Enabled))
+            foreach (var providerOptions in _options.Providers.Where(p => p.Enabled && (providerFilter is null || providerFilter(p))))
             {
                 var provider = _providers.FirstOrDefault(p =>
                     string.Equals(p.Name, providerOptions.Name, StringComparison.OrdinalIgnoreCase));
@@ -123,24 +130,29 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
                 var results = await provider.FetchAllFeedsAsync(enabledFeeds, cancellationToken);
                 feedCount += results.Count;
 
+                var saveRawResponses = _options.SaveRawResponses && providerOptions.SaveRawResponses;
+
                 foreach (var result in results)
                 {
-                    await _rawResponseRepository.InsertAsync(
-                        new RssRawResponse
-                        {
-                            Provider = provider.Name,
-                            FeedName = result.FeedName,
-                            FeedUrl = result.FeedUrl,
-                            FetchedAt = result.FetchedAt,
-                            HttpStatusCode = result.HttpStatusCode,
-                            RawXml = result.RawXml,
-                            ContentHash = result.ContentHash,
-                            ParseSucceeded = result.Success,
-                            ParseError = result.Error,
-                            ProcessingDurationMs = result.ProcessingDurationMs,
-                            CreatedAt = DateTimeOffset.UtcNow
-                        },
-                        cancellationToken);
+                    if (saveRawResponses)
+                    {
+                        await _rawResponseRepository.InsertAsync(
+                            new RssRawResponse
+                            {
+                                Provider = provider.Name,
+                                FeedName = result.FeedName,
+                                FeedUrl = result.FeedUrl,
+                                FetchedAt = result.FetchedAt,
+                                HttpStatusCode = result.HttpStatusCode,
+                                RawXml = result.RawXml,
+                                ContentHash = result.ContentHash,
+                                ParseSucceeded = result.Success,
+                                ParseError = result.Error,
+                                ProcessingDurationMs = result.ProcessingDurationMs,
+                                CreatedAt = DateTimeOffset.UtcNow
+                            },
+                            cancellationToken);
+                    }
 
                     if (!result.Success)
                     {

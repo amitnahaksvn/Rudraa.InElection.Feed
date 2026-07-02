@@ -55,6 +55,14 @@ public static class InfrastructureServiceCollectionExtensions
         });
         services.AddSingleton<IRssProvider, AajTakRssProvider>();
 
+        services.AddHttpClient(AbpNewsRssProvider.ClientName, (sp, client) =>
+        {
+            client.Timeout = sp.GetRequiredService<IOptions<NewsCrawlerOptions>>().Value.FeedTimeout;
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(
+                "Mozilla/5.0 (compatible; PoliticalNewsCrawler/1.0; +https://example.com/bot)");
+        });
+        services.AddSingleton<IRssProvider, AbpNewsRssProvider>();
+
         services.AddHostedService<MongoIndexInitializerHostedService>();
 
         return services;

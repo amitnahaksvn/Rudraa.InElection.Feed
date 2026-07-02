@@ -28,6 +28,26 @@ public class NewsCrawlerOrchestratorTests
         ]
     };
 
+    private static NewsCrawlerOptions BuildTwoProviderOptions() => new()
+    {
+        BatchSize = 100,
+        Providers =
+        [
+            new RssProviderOptions
+            {
+                Name = "AajTak",
+                Enabled = true,
+                Feeds = [new RssFeedOptions { Name = "Home", Url = "https://example.com/Home", Category = "General", Enabled = true }]
+            },
+            new RssProviderOptions
+            {
+                Name = "ABPNews",
+                Enabled = true,
+                Feeds = [new RssFeedOptions { Name = "Home", Url = "https://example.com/ABPHome", Category = "General", Enabled = true }]
+            }
+        ]
+    };
+
     private static NormalizedArticle BuildArticle(string url, string title = "Headline") => new()
     {
         Provider = "AajTak",
@@ -199,5 +219,88 @@ public class NewsCrawlerOrchestratorTests
         Assert.Equal(CrawlStatus.Skipped, history.Status);
         provider.Verify(p => p.FetchAllFeedsAsync(It.IsAny<IReadOnlyList<RssFeedOptions>>(), It.IsAny<CancellationToken>()), Times.Never);
         historyRepo.Verify(r => r.InsertAsync(It.IsAny<CrawlHistory>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task RunCrawlAsync_WithProviderNames_OnlyCrawlsNamedProviders()
+    {
+        var aajTak = new Mock<IRssProvider>();
+        aajTak.Setup(p => p.Name).Returns("AajTak");
+        aajTak.Setup(p => p.FetchAllFeedsAsync(It.IsAny<IReadOnlyList<RssFeedOptions>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync([BuildFeedResult(true, [BuildArticle("https://example.com/a1")])]);
+
+        var abpNews = new Mock<IRssProvider>();
+        abpNews.Setup(p => p.Name).Returns("ABPNews");
+
+        var articleRepo = new Mock<INewsArticleRepository>();
+        articleRepo
+            .Setup(r => r.UpsertAsync(It.IsAny<NewsArticle>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(ArticleUpsertOutcome.Inserted);
+
+        var historyRepo = new Mock<ICrawlHistoryRepository>();
+        historyRepo
+            .Setup(r => r.InsertAsync(It.IsAny<CrawlHistory>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync("history-4");
+
+        var orchestrator = new NewsCrawlerOrchestrator(
+            [aajTak.Object, abpNews.Object],
+            articleRepo.Object,
+            historyRepo.Object,
+            BuildAcquiredLockRepo().Object,
+            BuildRawResponseRepo().Object,
+            Options.Create(BuildTwoProviderOptions()),
+            NullLogger<NewsCrawlerOrchestrator>.Instance);
+
+        var history = await orchestrator.RunCrawlAsync(["AajTak"], CancellationToken.None);
+
+        Assert.Equal(CrawlStatus.Completed, history.Status);
+        Assert.Equal(1, history.NewArticles);
+        aajTak.Verify(p => p.FetchAllFeedsAsync(It.IsAny<IReadOnlyList<RssFeedOptions>>(), It.IsAny<CancellationToken>()), Times.Once);
+        abpNews.Verify(p => p.FetchAllFeedsAsync(It.IsAny<IReadOnlyList<RssFeedOptions>>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Theory]
+    [InlineData(true, true, true)]
+    [InlineData(true, false, false)]
+    [InlineData(false, true, false)]
+    [InlineData(false, false, false)]
+    public async Task RunCrawlAsync_RawResponseSavedOnlyWhenBothGlobalAndProviderToggleAreTrue(
+        bool globalSave, bool providerSave, bool expectSaved)
+    {
+        var provider = new Mock<IRssProvider>();
+        provider.Setup(p => p.Name).Returns("AajTak");
+        provider.Setup(p => p.FetchAllFeedsAsync(It.IsAny<IReadOnlyList<RssFeedOptions>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync([BuildFeedResult(true, [BuildArticle("https://example.com/a1")])]);
+
+        var articleRepo = new Mock<INewsArticleRepository>();
+        articleRepo
+            .Setup(r => r.UpsertAsync(It.IsAny<NewsArticle>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(ArticleUpsertOutcome.Inserted);
+
+        var historyRepo = new Mock<ICrawlHistoryRepository>();
+        historyRepo
+            .Setup(r => r.InsertAsync(It.IsAny<CrawlHistory>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync("history-5");
+
+        var rawResponseRepo = BuildRawResponseRepo();
+
+        var options = BuildOptions("Home");
+        options.SaveRawResponses = globalSave;
+        options.Providers[0].SaveRawResponses = providerSave;
+
+        var orchestrator = new NewsCrawlerOrchestrator(
+            [provider.Object],
+            articleRepo.Object,
+            historyRepo.Object,
+            BuildAcquiredLockRepo().Object,
+            rawResponseRepo.Object,
+            Options.Create(options),
+            NullLogger<NewsCrawlerOrchestrator>.Instance);
+
+        await orchestrator.RunCrawlAsync(CancellationToken.None);
+
+        rawResponseRepo.Verify(
+            r => r.InsertAsync(It.IsAny<RssRawResponse>(), It.IsAny<CancellationToken>()),
+            expectSaved ? Times.Once : Times.Never);
     }
 }

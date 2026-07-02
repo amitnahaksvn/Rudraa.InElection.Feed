@@ -9,9 +9,6 @@ public sealed class NewsCrawlerOptions
 
     public bool Enabled { get; set; } = true;
 
-    /// <summary>Standard 5-field cron expression, e.g. "*/5 * * * *" for every 5 minutes.</summary>
-    public string Cron { get; set; } = "*/5 * * * *";
-
     /// <summary>Max number of articles persisted per feed, per run.</summary>
     public int BatchSize { get; set; } = 100;
 
@@ -26,6 +23,13 @@ public sealed class NewsCrawlerOptions
 
     /// <summary>How long raw RSS responses (<c>RssRawResponses</c>) are kept before a TTL index expires them.</summary>
     public TimeSpan RawResponseRetention { get; set; } = TimeSpan.FromDays(30);
+
+    /// <summary>
+    /// Master switch for persisting raw RSS responses to <c>RssRawResponses</c>. A provider only
+    /// has its raw responses saved when this is true AND that provider's own
+    /// <see cref="RssProviderOptions.SaveRawResponses"/> is also true.
+    /// </summary>
+    public bool SaveRawResponses { get; set; } = true;
 
     public List<RssProviderOptions> Providers { get; set; } = [];
 }

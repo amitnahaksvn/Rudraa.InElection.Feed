@@ -1,3 +1,6 @@
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.EnvironmentVariables;
+using Microsoft.Extensions.Configuration.Json;
 using PoliticalNews.Application.DependencyInjection;
 using PoliticalNews.Infrastructure.DependencyInjection;
 using PoliticalNews.Worker.HostedServices;
@@ -8,6 +11,16 @@ using PoliticalNews.Worker.HostedServices;
 var initDbOnly = args.Contains("--init-db", StringComparer.OrdinalIgnoreCase);
 
 var builder = Host.CreateApplicationBuilder(args);
+
+// Shared with PoliticalNews.Web (see NewsCrawler.appsettings.json at the src/ root) so both
+// processes read the exact same provider/feed/schedule config from one file, not a duplicated copy.
+// AppContext.BaseDirectory (not ContentRootPath, which `dotnet run` sets to the project source
+// directory) is what's consistent between `dotnet run` and a published/Docker deployment - the
+// .csproj's linked Content item copies the file there under both build and publish. Inserted
+// before the environment-variables source (rather than appended, which is CreateApplicationBuilder's
+// default for a source added afterwards) so NewsCrawler__* env vars - e.g. from an AWS/Azure
+// secret injected into the container's environment - can still override this file, not the reverse.
+InsertNewsCrawlerConfigBeforeEnvironmentVariables(builder.Configuration);
 
 builder.AddServiceDefaults();
 
@@ -43,3 +56,23 @@ if (initDbOnly)
 logger.LogInformation("PoliticalNews.Worker application started");
 
 await host.RunAsync();
+
+static void InsertNewsCrawlerConfigBeforeEnvironmentVariables(IConfigurationBuilder configuration)
+{
+    var source = new JsonConfigurationSource
+    {
+        Path = Path.Combine(AppContext.BaseDirectory, "NewsCrawler.appsettings.json"),
+        Optional = false,
+        ReloadOnChange = true
+    };
+    source.ResolveFileProvider();
+
+    var envVariablesIndex = configuration.Sources.ToList().FindIndex(s => s is EnvironmentVariablesConfigurationSource);
+    if (envVariablesIndex < 0)
+    {
+        configuration.Add(source);
+        return;
+    }
+
+    configuration.Sources.Insert(envVariablesIndex, source);
+}

@@ -18,4 +18,13 @@
     <ProjectReference Include="..\PoliticalNews.Infrastructure\PoliticalNews.Infrastructure.csproj" />
     <ProjectReference Include="..\PoliticalNews.ServiceDefaults\PoliticalNews.ServiceDefaults.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <!-- Single source of truth for NewsCrawler:* (providers/feeds/schedules), shared with
+         PoliticalNews.Web so both processes see identical feed config without duplicating it. -->
+    <Content Include="..\NewsCrawler.appsettings.json" Link="NewsCrawler.appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

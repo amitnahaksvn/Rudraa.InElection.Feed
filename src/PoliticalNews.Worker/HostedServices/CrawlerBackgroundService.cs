@@ -6,18 +6,22 @@ using PoliticalNews.Application.Options;
 namespace PoliticalNews.Worker.HostedServices;
 
 /// <summary>
-/// Drives the crawl schedule from the configured cron expression. Mutual exclusion (so a
-/// scheduled tick never overlaps another tick, another worker instance, or a manually
-/// triggered API crawl) is enforced inside <see cref="INewsCrawlerService"/> itself via a
-/// distributed lock - this class only owns timing. A run that throws is logged and the
+/// Drives the crawl schedule - each provider has its own independent cron expression (<see
+/// cref="RssProviderOptions.Cron"/>), so a 1-minute base tick (cron's own finest resolution) is
+/// used to check every provider's schedule and only the providers due that minute are crawled.
+/// Mutual exclusion (so a tick never overlaps another tick, another worker instance, or a
+/// manually triggered API crawl) is enforced inside <see cref="INewsCrawlerService"/> itself via
+/// a distributed lock - this class only owns timing. A run that throws is logged and the
 /// scheduler simply waits for its next tick rather than crashing the host.
 /// </summary>
 public sealed class CrawlerBackgroundService : BackgroundService
 {
+    private static readonly TimeSpan TickInterval = TimeSpan.FromMinutes(1);
+
     private readonly INewsCrawlerService _crawlerService;
     private readonly NewsCrawlerOptions _options;
     private readonly ILogger<CrawlerBackgroundService> _logger;
-    private readonly CronExpression _cronExpression;
+    private readonly Dictionary<string, CronExpression> _providerCrons;
 
     public CrawlerBackgroundService(
         INewsCrawlerService crawlerService,
@@ -27,7 +31,7 @@ public sealed class CrawlerBackgroundService : BackgroundService
         _crawlerService = crawlerService;
         _options = options.Value;
         _logger = logger;
-        _cronExpression = CronExpression.Parse(_options.Cron, CronFormat.Standard);
+        _providerCrons = BuildProviderCrons(_options, logger);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -38,39 +42,52 @@ public sealed class CrawlerBackgroundService : BackgroundService
             return;
         }
 
-        _logger.LogInformation("Scheduler started. Cron '{Cron}', lock '{Lock}'", _options.Cron, _options.LockName);
-
-        while (!stoppingToken.IsCancellationRequested)
+        if (_providerCrons.Count == 0)
         {
-            var next = _cronExpression.GetNextOccurrence(DateTimeOffset.UtcNow, TimeZoneInfo.Utc);
-            if (next is null)
+            _logger.LogWarning("No provider has a valid Cron configured - scheduler will not run");
+            return;
+        }
+
+        _logger.LogInformation(
+            "Scheduler started. Providers: {Providers}, lock '{Lock}'",
+            string.Join(", ", _providerCrons.Select(p => $"{p.Key}='{p.Value}'")), _options.LockName);
+
+        var lastTick = DateTimeOffset.UtcNow;
+
+        using var timer = new PeriodicTimer(TickInterval);
+        while (true)
+        {
+            bool ticked;
+            try
             {
-                _logger.LogWarning("Cron expression '{Cron}' has no future occurrence - stopping scheduler", _options.Cron);
+                ticked = await timer.WaitForNextTickAsync(stoppingToken);
+            }
+            catch (OperationCanceledException)
+            {
                 break;
             }
 
-            var delay = next.Value - DateTimeOffset.UtcNow;
-            if (delay > TimeSpan.Zero)
-            {
-                try
-                {
-                    await Task.Delay(delay, stoppingToken);
-                }
-                catch (OperationCanceledException)
-                {
-                    break;
-                }
-            }
-
-            if (stoppingToken.IsCancellationRequested)
+            if (!ticked)
             {
                 break;
+            }
+
+            var now = DateTimeOffset.UtcNow;
+            var dueProviders = _providerCrons
+                .Where(p => IsDue(p.Value, lastTick, now))
+                .Select(p => p.Key)
+                .ToList();
+            lastTick = now;
+
+            if (dueProviders.Count == 0)
+            {
+                continue;
             }
 
             try
             {
-                _logger.LogInformation("Crawl run starting");
-                await _crawlerService.RunCrawlAsync(stoppingToken);
+                _logger.LogInformation("Crawl run starting for providers: {Providers}", string.Join(", ", dueProviders));
+                await _crawlerService.RunCrawlAsync(dueProviders, stoppingToken);
             }
             catch (Exception ex) when (!stoppingToken.IsCancellationRequested)
             {
@@ -83,5 +100,37 @@ public sealed class CrawlerBackgroundService : BackgroundService
         }
 
         _logger.LogInformation("Scheduler stopped (graceful shutdown)");
+    }
+
+    /// <summary>True if <paramref name="cron"/> has an occurrence in the (<paramref name="lastTick"/>, <paramref name="now"/>] window.</summary>
+    public static bool IsDue(CronExpression cron, DateTimeOffset lastTick, DateTimeOffset now)
+    {
+        var next = cron.GetNextOccurrence(lastTick, TimeZoneInfo.Utc);
+        return next.HasValue && next.Value <= now;
+    }
+
+    private static Dictionary<string, CronExpression> BuildProviderCrons(NewsCrawlerOptions options, ILogger logger)
+    {
+        var result = new Dictionary<string, CronExpression>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var provider in options.Providers.Where(p => p.Enabled))
+        {
+            if (string.IsNullOrWhiteSpace(provider.Cron))
+            {
+                logger.LogWarning("Provider '{Provider}' has no Cron configured - it will never run on schedule", provider.Name);
+                continue;
+            }
+
+            try
+            {
+                result[provider.Name] = CronExpression.Parse(provider.Cron, CronFormat.Standard);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Provider '{Provider}' has an invalid Cron expression '{Cron}' - it will never run on schedule", provider.Name, provider.Cron);
+            }
+        }
+
+        return result;
     }
 }
