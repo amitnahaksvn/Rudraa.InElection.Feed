@@ -11,5 +11,8 @@ public interface ICrawlHistoryRepository
 
     Task<IReadOnlyList<CrawlHistory>> GetRecentAsync(int count, CancellationToken cancellationToken);
 
+    /// <returns>Null if no crawl history record with that id exists.</returns>
+    Task<CrawlHistory?> GetByIdAsync(string id, CancellationToken cancellationToken);
+
     Task EnsureIndexesAsync(CancellationToken cancellationToken);
 }

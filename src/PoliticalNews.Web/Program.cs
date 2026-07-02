@@ -1,7 +1,12 @@
 using System.Reflection;
+using Hangfire;
+using Hangfire.Mongo;
+using Hangfire.Mongo.Migration.Strategies;
+using Hangfire.Mongo.Migration.Strategies.Backup;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using Microsoft.Extensions.Configuration.Json;
 using PoliticalNews.Application.DependencyInjection;
+using PoliticalNews.Application.Options;
 using PoliticalNews.Infrastructure.DependencyInjection;
 using PoliticalNews.Web.Infrastructure;
 using PoliticalNews.Web.Options;
@@ -29,6 +34,29 @@ builder.AddServiceDefaults();
 
 builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
+
+// Storage only, no AddHangfireServer() - job execution stays exclusively in PoliticalNews.Worker
+// (matching "Worker owns the cron schedule" elsewhere in this codebase); Web only needs to read
+// the same Hangfire Mongo collections to show the dashboard.
+var mongoConnectionString = InfrastructureServiceCollectionExtensions.ResolveMongoConnectionString(
+    builder.Configuration, builder.Configuration[$"{MongoDbOptions.SectionName}:ConnectionString"] ?? new MongoDbOptions().ConnectionString);
+var mongoDatabaseName = builder.Configuration[$"{MongoDbOptions.SectionName}:DatabaseName"] ?? new MongoDbOptions().DatabaseName;
+
+builder.Services.AddHangfire(config => config
+    .UseMongoStorage(mongoConnectionString, mongoDatabaseName, new MongoStorageOptions
+    {
+        Prefix = "hangfire",
+        // Hangfire.Mongo pings the database synchronously the first time storage is resolved and
+        // throws (crashing the whole host) if that single ping doesn't answer within 5s - too
+        // fragile against an Atlas cluster's normal latency variance. Mongo connectivity is already
+        // verified elsewhere (MongoDbOptions.ValidateOnStart, MongoIndexInitializerHostedService).
+        CheckConnection = false,
+        MigrationOptions = new MongoMigrationOptions
+        {
+            MigrationStrategy = new MigrateMongoMigrationStrategy(),
+            BackupStrategy = new CollectionMongoBackupStrategy()
+        }
+    }));
 
 if (initDbOnly)
 {
@@ -110,6 +138,11 @@ if (enableSwagger)
 
 app.MapDefaultEndpoints();
 app.MapEndpoints(Assembly.GetExecutingAssembly());
+
+if (builder.Configuration.GetValue($"{ApiOptions.SectionName}:EnableHangfireDashboard", false))
+{
+    app.UseHangfireDashboard();
+}
 
 app.Run();
 

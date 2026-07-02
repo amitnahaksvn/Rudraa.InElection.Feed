@@ -35,6 +35,9 @@ public sealed class CrawlHistoryRepository : ICrawlHistoryRepository
             .Limit(count)
             .ToListAsync(cancellationToken);
 
+    public async Task<CrawlHistory?> GetByIdAsync(string id, CancellationToken cancellationToken) =>
+        await _collection.Find(h => h.Id == id).FirstOrDefaultAsync(cancellationToken);
+
     public async Task EnsureIndexesAsync(CancellationToken cancellationToken)
     {
         var model = new CreateIndexModel<CrawlHistory>(
