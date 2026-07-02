@@ -9,7 +9,7 @@
     "Providers": [
       {
         "Name": "AajTak",
-        "Enabled": true,
+        "Enabled": false,
         "Cron": "*/5 * * * *",
         "SaveRawResponses": true,
         "Feeds": [
@@ -150,7 +150,7 @@
       },
       {
         "Name": "ABPNews",
-        "Enabled": true,
+        "Enabled": false,
         "Cron": "*/5 * * * *",
         "SaveRawResponses": true,
         "Feeds": [
@@ -530,6 +530,446 @@
             "Url": "https://www.abplive.com/news/states/jharkhand/feed",
             "Category": "Jharkhand",
             "Language": "hi",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "ZeeNews",
+        "Enabled": true,
+        "Cron": "*/5 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://zeenews.india.com/rss.xml",
+            "Category": "General",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "IndiaNational",
+            "Url": "https://zeenews.india.com/rss/india-national-news.xml",
+            "Category": "National",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "India",
+            "Url": "https://zeenews.india.com/rss/india-news.xml",
+            "Category": "India",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "World",
+            "Url": "https://zeenews.india.com/rss/world-news.xml",
+            "Category": "World",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Entertainment",
+            "Url": "https://zeenews.india.com/rss/entertainment-news.xml",
+            "Category": "Entertainment",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Sports",
+            "Url": "https://zeenews.india.com/rss/sports-news.xml",
+            "Category": "Sports",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Business",
+            "Url": "https://zeenews.india.com/rss/business.xml",
+            "Category": "Business",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Technology",
+            "Url": "https://zeenews.india.com/rss/technology-news.xml",
+            "Category": "Technology",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Health",
+            "Url": "https://zeenews.india.com/rss/health-news.xml",
+            "Category": "Health",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Viral",
+            "Url": "https://zeenews.india.com/rss/viral-news.xml",
+            "Category": "Trending",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Latest",
+            "Url": "https://zeenews.india.com/rss/latest-news.xml",
+            "Category": "Latest",
+            "Language": "en",
+            "Enabled": false
+          }
+        ]
+      },
+      {
+        "Name": "IndiaTV",
+        "Enabled": true,
+        "Cron": "*/5 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "TopStory",
+            "Url": "https://www.indiatvnews.com/rssnews/topstory.xml",
+            "Category": "General",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "India",
+            "Url": "https://www.indiatvnews.com/rssnews/topstory-india.xml",
+            "Category": "National",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Politics",
+            "Url": "https://www.indiatvnews.com/rssnews/topstory-politics.xml",
+            "Category": "Politics",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "World",
+            "Url": "https://www.indiatvnews.com/rssnews/topstory-world.xml",
+            "Category": "World",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Business",
+            "Url": "https://www.indiatvnews.com/rssnews/topstory-business.xml",
+            "Category": "Business",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Sports",
+            "Url": "https://www.indiatvnews.com/rssnews/topstory-sports.xml",
+            "Category": "Sports",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Entertainment",
+            "Url": "https://www.indiatvnews.com/rssnews/topstory-entertainment.xml",
+            "Category": "Entertainment",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "News18",
+        "Enabled": true,
+        "Cron": "*/5 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "India",
+            "Url": "https://www.news18.com/rss/india.xml",
+            "Category": "National",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Politics",
+            "Url": "https://www.news18.com/rss/politics.xml",
+            "Category": "Politics",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "World",
+            "Url": "https://www.news18.com/rss/world.xml",
+            "Category": "World",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Business",
+            "Url": "https://www.news18.com/rss/business.xml",
+            "Category": "Business",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Movies",
+            "Url": "https://www.news18.com/rss/movies.xml",
+            "Category": "Entertainment",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Sports",
+            "Url": "https://www.news18.com/rss/sports.xml",
+            "Category": "Sports",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Cricket",
+            "Url": "https://www.news18.com/rss/cricket.xml",
+            "Category": "Sports",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Tech",
+            "Url": "https://www.news18.com/rss/tech.xml",
+            "Category": "Technology",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Auto",
+            "Url": "https://www.news18.com/rss/auto.xml",
+            "Category": "Auto",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Lifestyle",
+            "Url": "https://www.news18.com/rss/lifestyle.xml",
+            "Category": "Lifestyle",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "EducationCareer",
+            "Url": "https://www.news18.com/rss/education-career.xml",
+            "Category": "Education",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Viral",
+            "Url": "https://www.news18.com/rss/viral.xml",
+            "Category": "Trending",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "NDTV",
+        "Enabled": true,
+        "Cron": "*/5 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "TopStories",
+            "Url": "https://feeds.feedburner.com/ndtvnews-top-stories",
+            "Category": "General",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "India",
+            "Url": "https://feeds.feedburner.com/ndtvnews-india-news",
+            "Category": "National",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "World",
+            "Url": "https://feeds.feedburner.com/ndtvnews-world-news",
+            "Category": "World",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Profit",
+            "Url": "https://feeds.feedburner.com/ndtvprofit-latest",
+            "Category": "Business",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Sports",
+            "Url": "https://feeds.feedburner.com/ndtvsports-latest",
+            "Category": "Sports",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Movies",
+            "Url": "https://feeds.feedburner.com/ndtvmovies-latest",
+            "Category": "Entertainment",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Gadgets360",
+            "Url": "https://feeds.feedburner.com/gadgets360-latest",
+            "Category": "Technology",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "IndianExpress",
+        "Enabled": true,
+        "Cron": "*/5 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://indianexpress.com/feed/",
+            "Category": "General",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "India",
+            "Url": "https://indianexpress.com/section/india/feed/",
+            "Category": "National",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "PoliticalPulse",
+            "Url": "https://indianexpress.com/section/political-pulse/feed/",
+            "Category": "Politics",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "World",
+            "Url": "https://indianexpress.com/section/world/feed/",
+            "Category": "World",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Business",
+            "Url": "https://indianexpress.com/section/business/feed/",
+            "Category": "Business",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Sports",
+            "Url": "https://indianexpress.com/section/sports/feed/",
+            "Category": "Sports",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Entertainment",
+            "Url": "https://indianexpress.com/section/entertainment/feed/",
+            "Category": "Entertainment",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Explained",
+            "Url": "https://indianexpress.com/section/explained/feed/",
+            "Category": "Explainers",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Opinion",
+            "Url": "https://indianexpress.com/section/opinion/feed/",
+            "Category": "Opinion",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Education",
+            "Url": "https://indianexpress.com/section/education/feed/",
+            "Category": "Education",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "TheHindu",
+        "Enabled": true,
+        "Cron": "*/5 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "National",
+            "Url": "https://www.thehindu.com/news/national/feeder/default.rss",
+            "Category": "National",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "International",
+            "Url": "https://www.thehindu.com/news/international/feeder/default.rss",
+            "Category": "World",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "News",
+            "Url": "https://www.thehindu.com/news/feeder/default.rss",
+            "Category": "Latest",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Business",
+            "Url": "https://www.thehindu.com/business/feeder/default.rss",
+            "Category": "Business",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Sport",
+            "Url": "https://www.thehindu.com/sport/feeder/default.rss",
+            "Category": "Sports",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Entertainment",
+            "Url": "https://www.thehindu.com/entertainment/feeder/default.rss",
+            "Category": "Entertainment",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Opinion",
+            "Url": "https://www.thehindu.com/opinion/feeder/default.rss",
+            "Category": "Opinion",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "SciTech",
+            "Url": "https://www.thehindu.com/sci-tech/feeder/default.rss",
+            "Category": "Technology",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Elections",
+            "Url": "https://www.thehindu.com/elections/feeder/default.rss",
+            "Category": "Politics",
+            "Language": "en",
             "Enabled": true
           }
         ]

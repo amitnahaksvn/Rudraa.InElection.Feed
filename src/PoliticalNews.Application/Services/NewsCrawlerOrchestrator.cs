@@ -44,10 +44,14 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
     }
 
     /// <summary>
-    /// Runs a full crawl, guarded by a Mongo-backed distributed lock so that the scheduled
-    /// worker tick and a manually triggered API call (or another instance entirely) can never
-    /// execute concurrently. Returns a non-persisted <see cref="CrawlStatus.Skipped"/> result
-    /// if another run already holds the lock.
+    /// Runs a full crawl. The distributed lock is scoped per provider ("{LockName}:{Provider}"),
+    /// not globally: the invariant worth enforcing is that the *same* provider is never crawled
+    /// by two runs at once (scheduled tick vs manual trigger vs another instance) - different
+    /// providers crawling in parallel is fine and, with every provider's Hangfire job firing on
+    /// the same cron tick, necessary; a single global lock would let exactly one provider win
+    /// per tick and starve the rest. Providers whose lock is held are skipped individually;
+    /// only when every requested provider is lock-skipped is a non-persisted
+    /// <see cref="CrawlStatus.Skipped"/> result returned.
     /// </summary>
     public Task<CrawlHistory> RunCrawlAsync(CancellationToken cancellationToken) =>
         RunCrawlAsync(providerFilter: null, cancellationToken);
@@ -58,27 +62,47 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
 
     private async Task<CrawlHistory> RunCrawlAsync(Func<RssProviderOptions, bool>? providerFilter, CancellationToken cancellationToken)
     {
-        var acquired = await _lockRepository.TryAcquireAsync(
-            _options.LockName, _ownerId, _options.LockTtl, cancellationToken);
+        var candidates = _options.Providers
+            .Where(p => p.Enabled && (providerFilter is null || providerFilter(p)))
+            .ToList();
 
-        if (!acquired)
+        var lockedProviders = new List<RssProviderOptions>();
+        foreach (var provider in candidates)
         {
-            _logger.LogInformation("Crawl skipped - lock '{Lock}' is held by another run", _options.LockName);
+            if (await _lockRepository.TryAcquireAsync(ProviderLockName(provider.Name), _ownerId, _options.LockTtl, cancellationToken))
+            {
+                lockedProviders.Add(provider);
+            }
+            else
+            {
+                _logger.LogInformation(
+                    "Crawl skipped for provider {Provider} - lock '{Lock}' is held by another run",
+                    provider.Name, ProviderLockName(provider.Name));
+            }
+        }
+
+        if (lockedProviders.Count == 0)
+        {
             var now = DateTimeOffset.UtcNow;
             return new CrawlHistory { StartTime = now, EndTime = now, Duration = TimeSpan.Zero, Status = CrawlStatus.Skipped };
         }
 
         try
         {
-            return await RunLockedAsync(providerFilter, cancellationToken);
+            return await RunLockedAsync(lockedProviders, cancellationToken);
         }
         finally
         {
-            await _lockRepository.ReleaseAsync(_options.LockName, _ownerId, CancellationToken.None);
+            foreach (var provider in lockedProviders)
+            {
+                await _lockRepository.ReleaseAsync(ProviderLockName(provider.Name), _ownerId, CancellationToken.None);
+            }
         }
     }
 
-    private async Task<CrawlHistory> RunLockedAsync(Func<RssProviderOptions, bool>? providerFilter, CancellationToken cancellationToken)
+    private string ProviderLockName(string providerName) => $"{_options.LockName}:{providerName}";
+
+    private async Task<CrawlHistory> RunLockedAsync(IReadOnlyList<RssProviderOptions> lockedProviders, CancellationToken cancellationToken)
     {
         var history = new CrawlHistory
         {
@@ -96,7 +120,7 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
 
         try
         {
-            foreach (var providerOptions in _options.Providers.Where(p => p.Enabled && (providerFilter is null || providerFilter(p))))
+            foreach (var providerOptions in lockedProviders)
             {
                 var provider = _providers.FirstOrDefault(p =>
                     string.Equals(p.Name, providerOptions.Name, StringComparison.OrdinalIgnoreCase));

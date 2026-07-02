@@ -259,6 +259,52 @@ public class NewsCrawlerOrchestratorTests
         abpNews.Verify(p => p.FetchAllFeedsAsync(It.IsAny<IReadOnlyList<RssFeedOptions>>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
+    [Fact]
+    public async Task RunCrawlAsync_OneProviderLockHeld_OthersStillCrawl()
+    {
+        var aajTak = new Mock<IRssProvider>();
+        aajTak.Setup(p => p.Name).Returns("AajTak");
+        aajTak.Setup(p => p.FetchAllFeedsAsync(It.IsAny<IReadOnlyList<RssFeedOptions>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync([BuildFeedResult(true, [BuildArticle("https://example.com/a1")])]);
+
+        var abpNews = new Mock<IRssProvider>();
+        abpNews.Setup(p => p.Name).Returns("ABPNews");
+
+        // Locks are per provider ("news-crawler:{Provider}"): ABPNews's is held elsewhere,
+        // AajTak's is free - AajTak must still crawl rather than the whole run being skipped.
+        var lockRepo = new Mock<ICrawlLockRepository>();
+        lockRepo
+            .Setup(l => l.TryAcquireAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((string name, string _, TimeSpan _, CancellationToken _) => !name.EndsWith(":ABPNews"));
+
+        var articleRepo = new Mock<INewsArticleRepository>();
+        articleRepo
+            .Setup(r => r.UpsertAsync(It.IsAny<NewsArticle>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(ArticleUpsertOutcome.Inserted);
+
+        var historyRepo = new Mock<ICrawlHistoryRepository>();
+        historyRepo
+            .Setup(r => r.InsertAsync(It.IsAny<CrawlHistory>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync("history-6");
+
+        var orchestrator = new NewsCrawlerOrchestrator(
+            [aajTak.Object, abpNews.Object],
+            articleRepo.Object,
+            historyRepo.Object,
+            lockRepo.Object,
+            BuildRawResponseRepo().Object,
+            Options.Create(BuildTwoProviderOptions()),
+            NullLogger<NewsCrawlerOrchestrator>.Instance);
+
+        var history = await orchestrator.RunCrawlAsync(CancellationToken.None);
+
+        Assert.Equal(CrawlStatus.Completed, history.Status);
+        Assert.Equal(1, history.NewArticles);
+        aajTak.Verify(p => p.FetchAllFeedsAsync(It.IsAny<IReadOnlyList<RssFeedOptions>>(), It.IsAny<CancellationToken>()), Times.Once);
+        abpNews.Verify(p => p.FetchAllFeedsAsync(It.IsAny<IReadOnlyList<RssFeedOptions>>(), It.IsAny<CancellationToken>()), Times.Never);
+        lockRepo.Verify(l => l.ReleaseAsync("news-crawler:AajTak", It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
     [Theory]
     [InlineData(true, true, true)]
     [InlineData(true, false, false)]

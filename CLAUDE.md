@@ -51,8 +51,14 @@ centrally in `Infrastructure/Mongo/MongoClassMapConfigurator.cs`, not via attrib
 console host, no HTTP) runs the cron schedule; `PoliticalNews.Web` exposes read endpoints plus a
 manual trigger. Both ultimately call the same `INewsCrawlerService.RunCrawlAsync` implementation
 (`NewsCrawlerOrchestrator` in `Application/Services`), which internally acquires a Mongo-backed
-distributed lock (`ICrawlLockRepository`) before running - so a scheduled tick and a manually
-triggered API call can never execute concurrently.
+distributed lock (`ICrawlLockRepository`) **per provider** (`"{LockName}:{Provider}"`, e.g.
+`news-crawler:AajTak`) before crawling that provider. The invariant is per-provider mutual
+exclusion (a scheduled tick, a manual API trigger, or another instance can never crawl the *same*
+provider concurrently) - different providers deliberately crawl in parallel, because every
+provider's Hangfire recurring job fires on the same cron tick and a single global lock would let
+exactly one provider win per tick and starve the rest (a real bug this design replaced). A run
+skips just the providers whose locks are held; only if *every* requested provider is lock-skipped
+does it return a non-persisted `Skipped` history.
 
 **Application layer is CQRS via `Mediator` (source-generator based, not MediatR - swapped
 deliberately to avoid MediatR's commercial licensing) + FluentValidation.** Each query/command
@@ -191,3 +197,30 @@ and a few utility categories (education, agriculture, GK, web-stories). `abplive
 Hindi-language edition (`Language: "hi"`, matching AajTak); ABP's other language editions
 (`bengali.`, `marathi.`, `tamil.`, `telugu.`, `gujarati.`, `punjabi.`, `news.` for English) live on
 separate subdomains and are not wired in.
+
+Five more English-language providers, each feed individually curl-verified before adding:
+**India TV** (`indiatvnews.com/rssnews/topstory{-slug}.xml` - the politics feed serves mostly
+stale 2023 items with only an occasional fresh one; kept, but don't expect volume from it).
+**News18** (`news18.com/rss/{slug}.xml`, 200-item feeds - its Akamai CDN returns 403 to
+crawler-style User-Agents while serving the same public feeds to browser UAs, so News18's named
+HttpClient is registered with `BrowserUserAgent` in `InfrastructureServiceCollectionExtensions`,
+the only provider that differs there). **NDTV** (feeds live on FeedBurner -
+`feeds.feedburner.com/ndtvnews-*` / `ndtvprofit-latest` / `gadgets360-latest` - not ndtv.com).
+**IndianExpress** (standard WordPress `/section/{name}/feed/`, 200-item feeds, `dc:creator`
+authors, sometimes empty descriptions). **TheHindu** (`{section}/feeder/default.rss`, 60-item
+feeds). All five use spec-cased `pubDate` and `media:content`/`media:thumbnail` image tags, so
+none of them needed `BaseRssProvider` changes.
+
+Zee News (`zeenews.india.com`, English - `Language: "en"`) uses `rss/{slug}.xml` with
+*inconsistent* slugs (`business.xml` but `sports-news.xml`; `cricket-news.xml` 302s into
+`sports-news.xml`) and has no public RSS index page - each of the 11 feeds under
+`NewsCrawler:Providers[Name=ZeeNews]` was individually curl-verified; invalid slugs 301 to the
+homepage rather than 404, so a "successful" fetch of HTML is the failure signature to watch for.
+No state-level feeds exist (every state slug tried redirects home). Three Zee-specific quirks are
+handled in `BaseRssProvider`, deliberately in the shared base since they're spec-tolerance, not
+Zee-only behavior: (1) items use lowercase `<pubdate>`, so the pubDate lookup is case-insensitive;
+(2) dates come as `"Thursday, July 02, 2026, 14:08 GMT +5:30"`, so `ParsePublishDate` falls back to
+stripping the literal `GMT` and zero-padding single-digit offsets before re-parsing; (3) items
+carry **no image tags at all**, so every article image comes from the `og:image` HTML fallback -
+one extra HTTP request per new article, which is why the 191-item `latest-news.xml` aggregate feed
+is configured but `Enabled: false`.

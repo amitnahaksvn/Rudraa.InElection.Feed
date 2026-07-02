@@ -131,7 +131,12 @@ public abstract partial class BaseRssProvider : IRssProvider
         var encodedContent = item.Element(Content + "encoded")?.Value.Trim();
         var author = item.Element("author")?.Value.Trim() ?? item.Element(DublinCore + "creator")?.Value.Trim();
         var tags = item.Elements("category").Select(e => e.Value.Trim()).Where(t => t.Length > 0).ToList();
-        var publishedAt = ParsePublishDate(item.Element("pubDate")?.Value);
+
+        // Case-insensitive lookup: Zee News emits lowercase <pubdate>, AajTak/ABP the spec's <pubDate>.
+        var pubDateRaw = item.Elements()
+            .FirstOrDefault(e => string.Equals(e.Name.LocalName, "pubDate", StringComparison.OrdinalIgnoreCase))?
+            .Value;
+        var publishedAt = ParsePublishDate(pubDateRaw);
         var imageUrl = ExtractImage(item) ?? await TryExtractOgImageAsync(link, cancellationToken);
 
         return new NormalizedArticle
@@ -211,7 +216,20 @@ public abstract partial class BaseRssProvider : IRssProvider
             return null;
         }
 
-        return DateTimeOffset.TryParse(raw, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed)
+        var trimmed = raw.Trim();
+        if (DateTimeOffset.TryParse(trimmed, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed))
+        {
+            return parsed;
+        }
+
+        // Zee News emits a nonstandard "Thursday, July 02, 2026, 14:08 GMT +5:30" - drop the
+        // literal "GMT" (leaving the trailing numeric offset) and pad the offset's hour to two
+        // digits ("+5:30" -> "+05:30") so the standard parser accepts it.
+        var cleaned = WhitespaceRegex().Replace(
+            trimmed.Replace("GMT", string.Empty, StringComparison.OrdinalIgnoreCase), " ").Trim();
+        cleaned = SingleDigitUtcOffsetRegex().Replace(cleaned, "${sign}0${hour}:");
+
+        return DateTimeOffset.TryParse(cleaned, CultureInfo.InvariantCulture, DateTimeStyles.None, out parsed)
             ? parsed
             : null;
     }
@@ -221,6 +239,12 @@ public abstract partial class BaseRssProvider : IRssProvider
 
     [GeneratedRegex("<[^>]+>")]
     private static partial Regex HtmlTagRegex();
+
+    [GeneratedRegex(@"\s+")]
+    private static partial Regex WhitespaceRegex();
+
+    [GeneratedRegex(@"(?<sign>[+-])(?<hour>\d):")]
+    private static partial Regex SingleDigitUtcOffsetRegex();
 
     [GeneratedRegex(
         """<meta[^>]+property=["']og:image["'][^>]+content=["'](?<url>[^"']+)["']""",

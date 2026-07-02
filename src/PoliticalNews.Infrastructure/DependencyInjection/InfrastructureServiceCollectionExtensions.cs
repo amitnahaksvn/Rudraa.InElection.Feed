@@ -13,6 +13,13 @@ namespace PoliticalNews.Infrastructure.DependencyInjection;
 
 public static class InfrastructureServiceCollectionExtensions
 {
+    private const string CrawlerUserAgent =
+        "Mozilla/5.0 (compatible; PoliticalNewsCrawler/1.0; +https://example.com/bot)";
+
+    /// <summary>Only for providers whose CDN rejects crawler UAs on public feeds (News18).</summary>
+    private const string BrowserUserAgent =
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
+
     /// <summary>
     /// Registers Mongo, the repository layer, and every <see cref="IRssProvider"/>. Adding a new
     /// provider in a future phase is one line here plus one appsettings.json config block.
@@ -41,21 +48,16 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddSingleton<ICrawlLockRepository, CrawlLockRepository>();
         services.AddSingleton<IRssRawResponseRepository, RssRawResponseRepository>();
 
-        services.AddHttpClient(AajTakRssProvider.ClientName, (sp, client) =>
-        {
-            client.Timeout = sp.GetRequiredService<IOptions<NewsCrawlerOptions>>().Value.FeedTimeout;
-            client.DefaultRequestHeaders.UserAgent.ParseAdd(
-                "Mozilla/5.0 (compatible; PoliticalNewsCrawler/1.0; +https://example.com/bot)");
-        });
-        services.AddSingleton<IRssProvider, AajTakRssProvider>();
-
-        services.AddHttpClient(AbpNewsRssProvider.ClientName, (sp, client) =>
-        {
-            client.Timeout = sp.GetRequiredService<IOptions<NewsCrawlerOptions>>().Value.FeedTimeout;
-            client.DefaultRequestHeaders.UserAgent.ParseAdd(
-                "Mozilla/5.0 (compatible; PoliticalNewsCrawler/1.0; +https://example.com/bot)");
-        });
-        services.AddSingleton<IRssProvider, AbpNewsRssProvider>();
+        AddRssProvider<AajTakRssProvider>(services, AajTakRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<AbpNewsRssProvider>(services, AbpNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<ZeeNewsRssProvider>(services, ZeeNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<IndiaTvRssProvider>(services, IndiaTvRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<NdtvRssProvider>(services, NdtvRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<IndianExpressRssProvider>(services, IndianExpressRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TheHinduRssProvider>(services, TheHinduRssProvider.ClientName, CrawlerUserAgent);
+        // News18's CDN (Akamai) returns 403 for crawler-style UAs while serving the same public
+        // RSS feeds to browsers - the one provider that needs a browser-style UA.
+        AddRssProvider<News18RssProvider>(services, News18RssProvider.ClientName, BrowserUserAgent);
 
         services.AddHostedService<MongoIndexInitializerHostedService>();
 
@@ -69,6 +71,17 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddTransient<HangfireCrawlJobExecutor>();
 
         return services;
+    }
+
+    private static void AddRssProvider<TProvider>(IServiceCollection services, string clientName, string userAgent)
+        where TProvider : class, IRssProvider
+    {
+        services.AddHttpClient(clientName, (sp, client) =>
+        {
+            client.Timeout = sp.GetRequiredService<IOptions<NewsCrawlerOptions>>().Value.FeedTimeout;
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
+        });
+        services.AddSingleton<IRssProvider, TProvider>();
     }
 
     /// <summary>
