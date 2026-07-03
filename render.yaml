@@ -1,0 +1,48 @@
+# Render Blueprint - declarative equivalent of the two manually-created dashboard services.
+# Deploy via Render Dashboard -> New -> Blueprint, pointing at this repo. Both services share
+# the one root Dockerfile (see its own header comment), differentiated only by dockerBuildArgs.PROJECT
+# - mirrors the two `docker build --build-arg PROJECT=...` invocations documented there and the
+# two docker-compose.yml services.
+#
+# `Worker` has no HTTP surface by design (see CLAUDE.md: "a plain BackgroundService console host,
+# no HTTP") - it must be `type: worker` (Render's Background Worker), never `type: web`, or
+# Render's mandatory port scan for web services times out forever waiting for a port that will
+# never open.
+#
+# No secrets are declared here on purpose: both src/Web/appsettings.json and
+# src/Worker/appsettings.json already carry a real MongoDb:ConnectionString and every
+# NewsApiKeys:* value baked directly into the committed file, so the container works with zero
+# Render environment variables configured, matching how it already runs today. If those secrets
+# are ever moved out of appsettings.json (recommended - see CLAUDE.md's user-secrets guidance),
+# add the equivalent MongoDb__ConnectionString / NewsApiKeys__<Provider> keys here with
+# `sync: false` so Render prompts for real values in its dashboard instead of committing them.
+services:
+  - type: web
+    name: rudraa-inelection-rssfeed-web
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    dockerBuildArgs:
+      PROJECT: Web
+    plan: starter
+    envVars:
+      - key: DOTNET_ENVIRONMENT
+        value: Production
+      # TLS terminates at Render's edge; the container only ever sees plain HTTP (see
+      # Web/Program.cs's UseHttpsRedirection comment) - matches docker-compose.yml's web service.
+      - key: ASPNETCORE_URLS
+        value: http://+:8080
+      - key: Api__EnableHangfireDashboard
+        value: "false"
+
+  - type: worker
+    name: rudraa-inelection-rssfeed-worker
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    dockerBuildArgs:
+      PROJECT: Worker
+    plan: starter
+    envVars:
+      - key: DOTNET_ENVIRONMENT
+        value: Production
