@@ -7,6 +7,7 @@ using Polly.Extensions.Http;
 using Application.Abstractions;
 using Application.Options;
 using Infrastructure.Mongo;
+using Infrastructure.NewsApiProviders;
 using Infrastructure.Persistence;
 using Infrastructure.RSS;
 using Infrastructure.RssProviders;
@@ -77,7 +78,9 @@ public static class InfrastructureServiceCollectionExtensions
         AddRssProvider<LiveHindustanRssProvider>(services, LiveHindustanRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<TheWeekRssProvider>(services, TheWeekRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<IndiaTodayRssProvider>(services, IndiaTodayRssProvider.ClientName, CrawlerUserAgent);
-        AddRssProvider<DeccanChronicleRssProvider>(services, DeccanChronicleRssProvider.ClientName, CrawlerUserAgent);
+        // DeccanChronicle's WAF returns 403 for the declared crawler UA while serving the same
+        // feed to browser UAs - same reasoning as News18/OneIndia/PIB.
+        AddRssProvider<DeccanChronicleRssProvider>(services, DeccanChronicleRssProvider.ClientName, BrowserUserAgent);
         // OneIndia's CDN returns 403 for crawler-style UAs while serving the same public RSS
         // feeds to browsers - same reasoning as News18.
         AddRssProvider<OneIndiaRssProvider>(services, OneIndiaRssProvider.ClientName, BrowserUserAgent);
@@ -113,6 +116,38 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddSingleton<IDynamicFeedIngestionService, DynamicFeedIngestionService>();
         services.AddSingleton<FeedSourceSeeder>();
         services.AddTransient<HangfireDynamicFeedJobExecutor>();
+
+        // The JSON news-API pipeline (NewsAPI.org, GNews, TheNewsAPI, Currents, Mediastack,
+        // NewsData.io, WorldNewsAPI) - one shared named HttpClient (same reasoning as
+        // DynamicFeedClient above: one DI registration, not one per provider, so a new provider
+        // never needs a code change to its HttpClient) with the same Polly transient-error retry.
+        // Per-provider timeout is enforced by BaseNewsApiProvider's own linked
+        // CancellationTokenSource from NewsApiProviderOptions.TimeoutSeconds.
+        services.AddHttpClient(BaseNewsApiProvider.HttpClientName, client =>
+        {
+            client.Timeout = TimeSpan.FromMinutes(2);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(BrowserUserAgent);
+        }).AddPolicyHandler(HttpPolicyExtensions
+            .HandleTransientHttpError()
+            .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+
+        services.AddSingleton<INewsApiProvider, NewsApiOrgProvider>();
+        services.AddSingleton<INewsApiProvider, GNewsProvider>();
+        services.AddSingleton<INewsApiProvider, TheNewsApiProvider>();
+        services.AddSingleton<INewsApiProvider, CurrentsApiProvider>();
+        services.AddSingleton<INewsApiProvider, MediastackProvider>();
+        services.AddSingleton<INewsApiProvider, NewsDataIoProvider>();
+        services.AddSingleton<INewsApiProvider, WorldNewsApiProvider>();
+        services.AddSingleton<INewsApiProvider, ApiTubeProvider>();
+        services.AddSingleton<INewsApiProvider, NewscatcherApiProvider>();
+        services.AddSingleton<INewsApiProvider, GdeltProvider>();
+        services.AddSingleton<INewsApiProvider, SerpApiGoogleNewsProvider>();
+        services.AddSingleton<INewsApiProvider, GuardianProvider>();
+        services.AddSingleton<INewsApiProvider, DataGovInProvider>();
+        // Custom INewsApiProvider implementation (not BaseNewsApiProvider - see its own doc
+        // comments): Event Registry needs a POST+JSON body.
+        services.AddSingleton<INewsApiProvider, EventRegistryProvider>();
+        services.AddTransient<HangfireNewsApiJobExecutor>();
 
         services.AddHostedService<MongoIndexInitializerHostedService>();
 

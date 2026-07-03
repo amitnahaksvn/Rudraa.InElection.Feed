@@ -24,7 +24,14 @@ public static class ApplicationServiceCollectionExtensions
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
+        services
+            .AddOptions<NewsApiCrawlerOptions>()
+            .Bind(configuration.GetSection(NewsApiCrawlerOptions.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
         services.AddSingleton<INewsCrawlerService, NewsCrawlerOrchestrator>();
+        services.AddSingleton<INewsApiCrawlerService, NewsApiCrawlerOrchestrator>();
         services.AddSingleton<IRawResponseCleanupService, RawResponseCleanupService>();
 
         services.AddMediator(options => options.ServiceLifetime = ServiceLifetime.Singleton);

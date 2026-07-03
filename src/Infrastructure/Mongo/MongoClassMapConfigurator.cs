@@ -1,7 +1,10 @@
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Bson.Serialization.IdGenerators;
+using MongoDB.Bson.Serialization.Serializers;
 using Domain.Entities;
+using Domain.Enums;
 
 namespace Infrastructure.Mongo;
 
@@ -24,6 +27,10 @@ public static class MongoClassMapConfigurator
             "PoliticalNewsConventions",
             new ConventionPack { new CamelCaseElementNameConvention(), new IgnoreExtraElementsConvention(true) },
             _ => true);
+
+        // Stored as the string "Rss"/"Api", not the default int32, so the origin of an article is
+        // legible straight out of a Mongo query/Compass view without cross-referencing the enum.
+        BsonSerializer.RegisterSerializer(typeof(ArticleSourceType), new EnumSerializer<ArticleSourceType>(BsonType.String));
 
         BsonClassMap.RegisterClassMap<NewsArticle>(cm =>
         {

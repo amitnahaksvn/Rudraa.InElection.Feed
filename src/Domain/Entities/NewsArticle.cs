@@ -1,3 +1,5 @@
+using Domain.Enums;
+
 namespace Domain.Entities;
 
 /// <summary>
@@ -10,6 +12,9 @@ public sealed class NewsArticle
 
     /// <summary>Provider key, e.g. "AajTak". Drives future multi-provider filtering.</summary>
     public string Provider { get; set; } = string.Empty;
+
+    /// <summary>Whether this article came from an RSS/Atom feed or a polled JSON news API. Defaults to Rss since every provider before the news-API pipeline was feed-based.</summary>
+    public ArticleSourceType SourceType { get; set; } = ArticleSourceType.Rss;
 
     /// <summary>Name of the specific RSS feed the article was crawled from, e.g. "AajTak-India".</summary>
     public string FeedName { get; set; } = string.Empty;

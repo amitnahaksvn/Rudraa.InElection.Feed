@@ -2,6 +2,7 @@ using Hangfire;
 using Hangfire.Mongo;
 using Hangfire.Mongo.Migration.Strategies;
 using Hangfire.Mongo.Migration.Strategies.Backup;
+using Hangfire.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using Microsoft.Extensions.Configuration.Json;
@@ -99,6 +100,7 @@ if (initDbOnly)
 RegisterNewsCrawlerRecurringJobs(host.Services, logger);
 RegisterRawResponseCleanupRecurringJob(host.Services, logger);
 await SeedAndRegisterDynamicFeedRecurringJobsAsync(host.Services, logger);
+RegisterNewsApiRecurringJobs(host.Services, logger);
 
 logger.LogInformation("Worker application started");
 
@@ -218,6 +220,73 @@ static async Task SeedAndRegisterDynamicFeedRecurringJobsAsync(IServiceProvider 
         logger.LogInformation(
             "Registered Hangfire recurring job '{JobId}' for FeedSource '{SourceCode}' with cron '{Cron}'",
             jobId, feedSource.SourceCode, cron);
+    }
+}
+
+/// <summary>
+/// Registers one Hangfire recurring job per enabled <see cref="NewsApiCrawlerOptions"/> provider -
+/// the <see cref="RegisterNewsCrawlerRecurringJobs"/> counterpart for JSON news-API providers.
+/// Targets <see cref="HangfireNewsApiJobExecutor"/> (tagged <c>[Queue("api")]</c>), never
+/// <see cref="INewsApiCrawlerService"/> directly, same reasoning as every other job registration
+/// in this file.
+/// </summary>
+static void RegisterNewsApiRecurringJobs(IServiceProvider services, ILogger logger)
+{
+    var options = services.GetRequiredService<IOptions<NewsApiCrawlerOptions>>().Value;
+
+    if (!options.Enabled)
+    {
+        logger.LogWarning(
+            "NewsApiCrawler is disabled via configuration ({Section}:Enabled=false) - no recurring jobs registered",
+            NewsApiCrawlerOptions.SectionName);
+        return;
+    }
+
+    var recurringJobManager = services.GetRequiredService<IRecurringJobManager>();
+    var enabledJobIds = new HashSet<string>(StringComparer.Ordinal);
+
+    foreach (var provider in options.Providers.Where(p => p.Enabled))
+    {
+        if (string.IsNullOrWhiteSpace(provider.Cron))
+        {
+            logger.LogWarning("News API provider '{Provider}' has no Cron configured - no recurring job registered", provider.Name);
+            continue;
+        }
+
+        var jobId = HangfireJobIds.NewsApi(provider.Name);
+        enabledJobIds.Add(jobId);
+
+        recurringJobManager.AddOrUpdate<HangfireNewsApiJobExecutor>(
+            jobId,
+            executor => executor.RunAsync(provider.Name, null!, CancellationToken.None),
+            provider.Cron,
+            new RecurringJobOptions { TimeZone = TimeZoneInfo.Utc });
+
+        // Run once immediately on startup, in addition to the normal Cron schedule from here on -
+        // Trigger() enqueues the job now without altering its recurring schedule.
+        recurringJobManager.Trigger(jobId);
+
+        logger.LogInformation(
+            "Registered Hangfire recurring job '{JobId}' for news API provider '{Provider}' with cron '{Cron}' (triggered immediately)",
+            jobId, provider.Name, provider.Cron);
+    }
+
+    // AddOrUpdate only ever adds/updates - it never removes a job for a provider that was
+    // previously enabled and is now disabled (or deleted from config entirely), which would
+    // otherwise leave a "zombie" recurring job firing forever on its old schedule. Sweep every
+    // "news-api-*" job actually registered in Hangfire storage and drop any that no longer
+    // corresponds to a currently-enabled provider.
+    var jobStorage = services.GetRequiredService<JobStorage>();
+    using var connection = jobStorage.GetConnection();
+    var staleJobIds = connection.GetRecurringJobs()
+        .Select(j => j.Id)
+        .Where(id => id.StartsWith("news-api-", StringComparison.Ordinal) && !enabledJobIds.Contains(id))
+        .ToList();
+
+    foreach (var staleJobId in staleJobIds)
+    {
+        recurringJobManager.RemoveIfExists(staleJobId);
+        logger.LogInformation("Removed stale Hangfire recurring job '{JobId}' - provider is disabled or no longer configured", staleJobId);
     }
 }
 

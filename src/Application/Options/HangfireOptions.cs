@@ -17,13 +17,14 @@ public sealed class HangfireOptions
 
     /// <summary>
     /// Queue names this server instance pulls jobs from, in priority order. Every recurring RSS
-    /// crawl job is tagged <c>[Queue("rss")]</c> on <c>HangfireCrawlJobExecutor</c>; "default" is
-    /// included so untagged jobs (e.g. the raw-response cleanup job) still run on a single-queue
-    /// deployment. A deployment that wants to run RSS crawling and (future) news-API fetching as
-    /// independently scaled replica groups would set this to just <c>["rss"]</c> on one group and
-    /// <c>["api"]</c> on another.
+    /// crawl job is tagged <c>[Queue("rss")]</c> on <c>HangfireCrawlJobExecutor</c>, every JSON
+    /// news-API fetch job <c>[Queue("api")]</c> on <c>HangfireNewsApiJobExecutor</c>; "default" is
+    /// included so untagged jobs (e.g. the raw-response cleanup job) still run. All three are
+    /// listed by default so a single Worker instance processes everything out of the box; a
+    /// deployment that wants RSS crawling and news-API fetching as independently scaled replica
+    /// groups would set this to just <c>["rss"]</c> on one group and <c>["api"]</c> on another.
     /// </summary>
-    public string[] Queues { get; set; } = ["rss", "default"];
+    public string[] Queues { get; set; } = ["rss", "api", "default"];
 
     /// <summary>
     /// Concurrent jobs this server instance processes. Null keeps Hangfire's own default

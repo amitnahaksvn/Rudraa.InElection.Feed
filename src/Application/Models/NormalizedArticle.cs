@@ -1,10 +1,16 @@
+using Domain.Enums;
+
 namespace Application.Models;
 
 /// <summary>
-/// Common shape every <see cref="Abstractions.IRssProvider"/> must normalize its feed items into,
-/// before the crawler orchestrator persists them. Providers never touch MongoDB directly.
+/// Common shape every <see cref="Abstractions.IRssProvider"/>/<see cref="Abstractions.INewsApiProvider"/>
+/// must normalize its items into, before the crawler orchestrator persists them. Providers never
+/// touch MongoDB directly. A <c>sealed record</c> (not a plain class) specifically so
+/// <see cref="Infrastructure.NewsApiProviders.BaseNewsApiProvider"/> can stamp
+/// <see cref="SourceType"/> onto every article a concrete provider's parser returns via a single
+/// <c>with</c> expression, instead of every JSON-API provider repeating that assignment itself.
 /// </summary>
-public sealed class NormalizedArticle
+public sealed record NormalizedArticle
 {
     public required string Provider { get; init; }
 
@@ -33,4 +39,7 @@ public sealed class NormalizedArticle
     public List<string> Tags { get; init; } = [];
 
     public required string Source { get; init; }
+
+    /// <summary>RSS/Atom by default - every RSS provider (including the Mongo <c>FeedSource</c> pipeline and YouTube's channel feeds) leaves this unset; JSON-API providers get it stamped to <see cref="ArticleSourceType.Api"/> centrally by <c>BaseNewsApiProvider</c>.</summary>
+    public ArticleSourceType SourceType { get; init; } = ArticleSourceType.Rss;
 }
