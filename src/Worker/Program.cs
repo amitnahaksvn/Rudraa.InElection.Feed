@@ -7,10 +7,12 @@ using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Application.Abstractions;
 using Application.DependencyInjection;
 using Application.Options;
 using Infrastructure.DependencyInjection;
 using Infrastructure.Scheduling;
+using Infrastructure.Seed;
 
 // `dotnet run --project src/Worker -- --init-db` creates every MongoDB
 // collection/index (see MongoIndexInitializerHostedService) and exits - a repeatable, idempotent
@@ -96,6 +98,7 @@ if (initDbOnly)
 
 RegisterNewsCrawlerRecurringJobs(host.Services, logger);
 RegisterRawResponseCleanupRecurringJob(host.Services, logger);
+await SeedAndRegisterDynamicFeedRecurringJobsAsync(host.Services, logger);
 
 logger.LogInformation("Worker application started");
 
@@ -180,6 +183,60 @@ static void RegisterRawResponseCleanupRecurringJob(IServiceProvider services, IL
     logger.LogInformation(
         "Registered Hangfire recurring job '{JobId}' with cron '{Cron}' ({TimeZone}), retention {Retention}",
         HangfireJobIds.RawResponseCleanup, options.RawResponseCleanupCron, timeZone.Id, options.RawResponseRetention);
+}
+
+/// <summary>
+/// Bootstraps the Mongo-driven <c>FeedSource</c> pipeline: seeds the Phase 1 PIB feed if missing,
+/// then registers one Hangfire recurring job per currently-active <c>FeedSource</c> document.
+/// Unlike <see cref="RegisterNewsCrawlerRecurringJobs"/> (whose provider list is fixed at compile
+/// time - a new provider needs a new C# class), this list comes from Mongo, so it can grow purely
+/// via document inserts. Re-synced on every Worker startup, same as every other recurring-job
+/// registration in this file - a brand-new FeedSource document takes effect on the next restart,
+/// not instantly (consistent with how a NewsCrawler.appsettings.json change already behaves here).
+/// </summary>
+static async Task SeedAndRegisterDynamicFeedRecurringJobsAsync(IServiceProvider services, ILogger logger)
+{
+    var seeder = services.GetRequiredService<FeedSourceSeeder>();
+    await seeder.SeedAsync(CancellationToken.None);
+
+    var feedSourceRepository = services.GetRequiredService<IFeedSourceRepository>();
+    var activeFeedSources = await feedSourceRepository.GetActiveAsync(CancellationToken.None);
+
+    var recurringJobManager = services.GetRequiredService<IRecurringJobManager>();
+
+    foreach (var feedSource in activeFeedSources)
+    {
+        var cron = BuildCronForInterval(feedSource.FetchIntervalMinutes);
+        var jobId = HangfireJobIds.DynamicFeed(feedSource.SourceCode);
+
+        recurringJobManager.AddOrUpdate<HangfireDynamicFeedJobExecutor>(
+            jobId,
+            executor => executor.RunAsync(feedSource.Id, null!, CancellationToken.None),
+            cron,
+            new RecurringJobOptions { TimeZone = TimeZoneInfo.Utc });
+
+        logger.LogInformation(
+            "Registered Hangfire recurring job '{JobId}' for FeedSource '{SourceCode}' with cron '{Cron}'",
+            jobId, feedSource.SourceCode, cron);
+    }
+}
+
+/// <summary>Builds a 5-field cron expression from a plain minute interval, since FeedSource stores <c>FetchIntervalMinutes</c>, not a raw cron string.</summary>
+static string BuildCronForInterval(int fetchIntervalMinutes)
+{
+    if (fetchIntervalMinutes is >= 1 and <= 59)
+    {
+        return $"*/{fetchIntervalMinutes} * * * *";
+    }
+
+    if (fetchIntervalMinutes % 60 == 0 && fetchIntervalMinutes <= 1440)
+    {
+        return $"0 */{fetchIntervalMinutes / 60} * * *";
+    }
+
+    // Not a clean minutes-or-hours interval (e.g. 90) - hourly is a safe, deterministic fallback
+    // rather than producing an invalid/misleading cron expression.
+    return "0 * * * *";
 }
 
 static void InsertNewsCrawlerConfigBeforeEnvironmentVariables(IConfigurationBuilder configuration)

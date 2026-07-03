@@ -18,4 +18,9 @@ public sealed class MongoDbOptions
     public string CrawlLockCollection { get; set; } = "CrawlLock";
 
     public string RssRawResponsesCollection { get; set; } = "RssRawResponses";
+
+    /// <summary>Mongo-driven feed configuration read by <c>DynamicFeedIngestionService</c> - the file-free alternative to <c>NewsCrawler.appsettings.json</c>.</summary>
+    public string FeedSourcesCollection { get; set; } = "FeedSources";
+
+    public string FeedErrorLogsCollection { get; set; } = "FeedErrorLogs";
 }

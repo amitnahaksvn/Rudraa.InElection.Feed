@@ -18,6 +18,8 @@ public sealed class MongoIndexInitializerHostedService : IHostedService
     private readonly ICrawlHistoryRepository _history;
     private readonly ICrawlLockRepository _locks;
     private readonly IRssRawResponseRepository _rawResponses;
+    private readonly IFeedSourceRepository _feedSources;
+    private readonly IFeedErrorLogRepository _feedErrorLogs;
     private readonly NewsCrawlerOptions _options;
     private readonly ILogger<MongoIndexInitializerHostedService> _logger;
 
@@ -26,6 +28,8 @@ public sealed class MongoIndexInitializerHostedService : IHostedService
         ICrawlHistoryRepository history,
         ICrawlLockRepository locks,
         IRssRawResponseRepository rawResponses,
+        IFeedSourceRepository feedSources,
+        IFeedErrorLogRepository feedErrorLogs,
         IOptions<NewsCrawlerOptions> options,
         ILogger<MongoIndexInitializerHostedService> logger)
     {
@@ -33,6 +37,8 @@ public sealed class MongoIndexInitializerHostedService : IHostedService
         _history = history;
         _locks = locks;
         _rawResponses = rawResponses;
+        _feedSources = feedSources;
+        _feedErrorLogs = feedErrorLogs;
         _options = options.Value;
         _logger = logger;
     }
@@ -44,6 +50,8 @@ public sealed class MongoIndexInitializerHostedService : IHostedService
         await _history.EnsureIndexesAsync(cancellationToken);
         await _locks.EnsureIndexesAsync(cancellationToken);
         await _rawResponses.EnsureIndexesAsync(_options.RawResponseRetention, cancellationToken);
+        await _feedSources.EnsureIndexesAsync(cancellationToken);
+        await _feedErrorLogs.EnsureIndexesAsync(cancellationToken);
         _logger.LogInformation("MongoDB indexes ready");
     }
 

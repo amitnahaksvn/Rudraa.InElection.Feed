@@ -123,7 +123,8 @@ public abstract partial class BaseRssProvider : IRssProvider
         }
     }
 
-    private static string ComputeContentHash(string rawXml) =>
+    /// <summary>Widened to internal so <c>DynamicFeedIngestionService</c> (Mongo-driven feeds) reuses the exact same hashing, not a duplicate.</summary>
+    internal static string ComputeContentHash(string rawXml) =>
         Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(rawXml))).ToLowerInvariant();
 
     private async Task<NormalizedArticle?> ParseItemAsync(XElement item, RssFeedOptions feed, string feedUrl, CancellationToken cancellationToken)
@@ -147,7 +148,8 @@ public abstract partial class BaseRssProvider : IRssProvider
             .FirstOrDefault(e => string.Equals(e.Name.LocalName, "pubDate", StringComparison.OrdinalIgnoreCase))?
             .Value;
         var publishedAt = ParsePublishDate(pubDateRaw);
-        var imageUrl = ExtractImage(item) ?? await TryExtractOgImageAsync(link, cancellationToken);
+        var imageUrl = ExtractImage(item)
+            ?? await TryExtractOgImageAsync(_httpClientFactory.CreateClient(HttpClientName), link, _logger, cancellationToken);
 
         return new NormalizedArticle
         {
@@ -168,7 +170,8 @@ public abstract partial class BaseRssProvider : IRssProvider
         };
     }
 
-    private static string? ExtractImage(XElement item)
+    /// <summary>Widened to internal so <c>DynamicFeedIngestionService</c> (Mongo-driven feeds) reuses the exact same extraction, not a duplicate.</summary>
+    internal static string? ExtractImage(XElement item)
     {
         var mediaContent = item.Elements(Media + "content")
             .FirstOrDefault(e => (string?)e.Attribute("url") is not null);
@@ -197,11 +200,15 @@ public abstract partial class BaseRssProvider : IRssProvider
         return null;
     }
 
-    private async Task<string?> TryExtractOgImageAsync(string articleUrl, CancellationToken cancellationToken)
+    /// <summary>
+    /// Widened to internal-static (taking the caller's HttpClient/logger rather than instance
+    /// fields) so <c>DynamicFeedIngestionService</c> (Mongo-driven feeds) reuses the exact same
+    /// fallback, not a duplicate.
+    /// </summary>
+    internal static async Task<string?> TryExtractOgImageAsync(HttpClient client, string articleUrl, ILogger logger, CancellationToken cancellationToken)
     {
         try
         {
-            var client = _httpClientFactory.CreateClient(HttpClientName);
             using var response = await client.GetAsync(articleUrl, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
             if (!response.IsSuccessStatusCode)
             {
@@ -214,12 +221,13 @@ public abstract partial class BaseRssProvider : IRssProvider
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            _logger.LogDebug(ex, "og:image fallback lookup failed for {Url}", articleUrl);
+            logger.LogDebug(ex, "og:image fallback lookup failed for {Url}", articleUrl);
             return null;
         }
     }
 
-    private static DateTimeOffset? ParsePublishDate(string? raw)
+    /// <summary>Widened to internal so <c>DynamicFeedIngestionService</c> (Mongo-driven feeds) reuses the exact same parsing, not a duplicate.</summary>
+    internal static DateTimeOffset? ParsePublishDate(string? raw)
     {
         if (string.IsNullOrWhiteSpace(raw))
         {
@@ -267,7 +275,8 @@ public abstract partial class BaseRssProvider : IRssProvider
             : null;
     }
 
-    private static string? StripHtml(string? html) =>
+    /// <summary>Widened to internal so <c>DynamicFeedIngestionService</c> (Mongo-driven feeds) reuses the exact same stripping, not a duplicate.</summary>
+    internal static string? StripHtml(string? html) =>
         string.IsNullOrWhiteSpace(html) ? null : HtmlTagRegex().Replace(html, string.Empty).Trim();
 
     [GeneratedRegex("<[^>]+>")]

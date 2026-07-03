@@ -10,6 +10,10 @@ namespace Infrastructure.RssProviders;
 /// silently fall back to Hindi content, so there is no genuine "regional" language variant beyond
 /// these three). Feed URLs live entirely in configuration under
 /// NewsCrawler:Providers[Name="PIB"]:Feeds, never hardcoded here.
+///
+/// PIB's WAF began returning 403 for the declared crawler UA after this provider had already been
+/// verified working - same behavior as News18/OneIndia's CDNs, so this provider is registered
+/// with the browser UA in <c>InfrastructureServiceCollectionExtensions</c>, not the default one.
 /// </summary>
 public sealed class PibRssProvider : BaseRssProvider
 {

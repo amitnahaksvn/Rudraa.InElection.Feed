@@ -2,12 +2,16 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using Polly;
+using Polly.Extensions.Http;
 using Application.Abstractions;
 using Application.Options;
 using Infrastructure.Mongo;
 using Infrastructure.Persistence;
+using Infrastructure.RSS;
 using Infrastructure.RssProviders;
 using Infrastructure.Scheduling;
+using Infrastructure.Seed;
 
 namespace Infrastructure.DependencyInjection;
 
@@ -47,6 +51,8 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddSingleton<ICrawlHistoryRepository, CrawlHistoryRepository>();
         services.AddSingleton<ICrawlLockRepository, CrawlLockRepository>();
         services.AddSingleton<IRssRawResponseRepository, RssRawResponseRepository>();
+        services.AddSingleton<IFeedSourceRepository, FeedSourceRepository>();
+        services.AddSingleton<IFeedErrorLogRepository, FeedErrorLogRepository>();
 
         AddRssProvider<AajTakRssProvider>(services, AajTakRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<AbpNewsRssProvider>(services, AbpNewsRssProvider.ClientName, CrawlerUserAgent);
@@ -77,12 +83,36 @@ public static class InfrastructureServiceCollectionExtensions
         AddRssProvider<OneIndiaRssProvider>(services, OneIndiaRssProvider.ClientName, BrowserUserAgent);
         AddRssProvider<NewsXRssProvider>(services, NewsXRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<DnaIndiaRssProvider>(services, DnaIndiaRssProvider.ClientName, CrawlerUserAgent);
-        AddRssProvider<PibRssProvider>(services, PibRssProvider.ClientName, CrawlerUserAgent);
+        // PIB's WAF returns 403 for the declared crawler UA while serving the same feed to
+        // browser UAs - same reasoning as News18/OneIndia.
+        AddRssProvider<PibRssProvider>(services, PibRssProvider.ClientName, BrowserUserAgent);
         AddRssProvider<NdmaRssProvider>(services, NdmaRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<MinistryOfPortsShippingRssProvider>(services, MinistryOfPortsShippingRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<MyGovIndiaRssProvider>(services, MyGovIndiaRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<GoogleNewsRssProvider>(services, GoogleNewsRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<YouTubeRssProvider>(services, YouTubeRssProvider.ClientName, CrawlerUserAgent);
+
+        // The Mongo-driven FeedSource pipeline (PIB first) - a generic alternative to the
+        // file-configured providers above, for feeds that need no publisher-specific quirks.
+        // One shared named HttpClient (rather than one per FeedSource, which would need a DI
+        // registration - i.e. a code change - per feed, defeating the whole point) with a Polly
+        // transient-error retry on top; the real per-feed timeout is enforced by
+        // DynamicFeedIngestionService's own linked CancellationTokenSource from
+        // FeedSource.TimeoutSeconds, so this HttpClient's own Timeout is just a generous ceiling.
+        // Browser UA, not CrawlerUserAgent: PIB (the first and currently only FeedSource) blocks
+        // the declared crawler UA with 403 - same WAF behavior as News18/OneIndia above. Revisit
+        // if a future FeedSource needs the opposite (unlikely, since a browser UA is accepted
+        // more broadly than a declared-bot one across every publisher seen in this codebase so far).
+        services.AddHttpClient(DynamicFeedIngestionService.HttpClientName, client =>
+        {
+            client.Timeout = TimeSpan.FromMinutes(5);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(BrowserUserAgent);
+        }).AddPolicyHandler(HttpPolicyExtensions
+            .HandleTransientHttpError()
+            .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+        services.AddSingleton<IDynamicFeedIngestionService, DynamicFeedIngestionService>();
+        services.AddSingleton<FeedSourceSeeder>();
+        services.AddTransient<HangfireDynamicFeedJobExecutor>();
 
         services.AddHostedService<MongoIndexInitializerHostedService>();
 

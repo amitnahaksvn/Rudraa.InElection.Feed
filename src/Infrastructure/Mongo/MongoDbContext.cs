@@ -21,6 +21,8 @@ public sealed class MongoDbContext
         CrawlHistory = Database.GetCollection<CrawlHistory>(settings.CrawlHistoryCollection);
         CrawlLocks = Database.GetCollection<CrawlLock>(settings.CrawlLockCollection);
         RssRawResponses = Database.GetCollection<RssRawResponse>(settings.RssRawResponsesCollection);
+        FeedSources = Database.GetCollection<FeedSource>(settings.FeedSourcesCollection);
+        FeedErrorLogs = Database.GetCollection<FeedErrorLog>(settings.FeedErrorLogsCollection);
     }
 
     public IMongoClient Client { get; }
@@ -34,4 +36,9 @@ public sealed class MongoDbContext
     public IMongoCollection<CrawlLock> CrawlLocks { get; }
 
     public IMongoCollection<RssRawResponse> RssRawResponses { get; }
+
+    /// <summary>Mongo-driven feed configuration - see <see cref="Application.Options.MongoDbOptions.FeedSourcesCollection"/>.</summary>
+    public IMongoCollection<FeedSource> FeedSources { get; }
+
+    public IMongoCollection<FeedErrorLog> FeedErrorLogs { get; }
 }
