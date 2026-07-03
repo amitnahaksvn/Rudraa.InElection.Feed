@@ -1,7 +1,9 @@
 using System.Diagnostics;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Application.Abstractions;
+using Application.Models;
 using Application.Options;
 using Domain.Entities;
 using Domain.Enums;
@@ -23,6 +25,8 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
     private readonly INewsArticleRepository _articleRepository;
     private readonly ICrawlHistoryRepository _historyRepository;
     private readonly ICrawlLockRepository _lockRepository;
+    private readonly IEmailService _emailService;
+    private readonly IHostEnvironment _hostEnvironment;
     private readonly NewsApiCrawlerOptions _options;
     private readonly ILogger<NewsApiCrawlerOrchestrator> _logger;
     private readonly string _ownerId = $"{Environment.MachineName}:{Environment.ProcessId}:{Guid.NewGuid():N}";
@@ -32,6 +36,8 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
         INewsArticleRepository articleRepository,
         ICrawlHistoryRepository historyRepository,
         ICrawlLockRepository lockRepository,
+        IEmailService emailService,
+        IHostEnvironment hostEnvironment,
         IOptions<NewsApiCrawlerOptions> options,
         ILogger<NewsApiCrawlerOrchestrator> logger)
     {
@@ -39,6 +45,8 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
         _articleRepository = articleRepository;
         _historyRepository = historyRepository;
         _lockRepository = lockRepository;
+        _emailService = emailService;
+        _hostEnvironment = hostEnvironment;
         _options = options.Value;
         _logger = logger;
     }
@@ -103,6 +111,7 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
         history.Id = await _historyRepository.InsertAsync(history, cancellationToken);
 
         var failedEndpoints = new List<string>();
+        var errors = new List<ErrorNotification>();
         var newCount = 0;
         var updatedCount = 0;
         var duplicateCount = 0;
@@ -147,6 +156,25 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
                         failedEndpoints.Add($"{provider.Name}/{result.EndpointName}");
                         providerFailedCount++;
                         _logger.LogError("News API endpoint failed: {Provider}/{Endpoint} - {Error}", provider.Name, result.EndpointName, result.Error);
+                        errors.Add(new ErrorNotification
+                        {
+                            Environment = _hostEnvironment.EnvironmentName,
+                            ApplicationName = _hostEnvironment.ApplicationName,
+                            Provider = provider.Name,
+                            FeedOrApiName = result.EndpointName,
+                            SourceUrl = result.EndpointUrl,
+                            Operation = "News API Fetch",
+                            ExceptionType = result.ExceptionType ?? "Unknown",
+                            ErrorMessage = result.Error ?? "Unknown error",
+                            StackTrace = result.StackTrace,
+                            InnerException = result.InnerException,
+                            HttpStatusCode = result.HttpStatusCode,
+                            RequestUrl = result.EndpointUrl,
+                            ResponseBody = result.ResponseBody,
+                            CorrelationId = history.Id,
+                            HangfireJobId = ExecutionContextAccessor.CurrentHangfireJobId,
+                            ExecutionDuration = TimeSpan.FromMilliseconds(result.ProcessingDurationMs)
+                        });
                         continue;
                     }
 
@@ -181,6 +209,13 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
             runError = ex.Message;
             history.Status = CrawlStatus.Failed;
             _logger.LogError(ex, "[{RunId}] News API crawl run failed unexpectedly", history.Id);
+            errors.Add(ErrorNotification.FromException(
+                ex,
+                _hostEnvironment.EnvironmentName,
+                _hostEnvironment.ApplicationName,
+                operation: "News API Crawl Run",
+                correlationId: history.Id,
+                hangfireJobId: ExecutionContextAccessor.CurrentHangfireJobId));
         }
 
         history.EndTime = DateTimeOffset.UtcNow;
@@ -197,6 +232,19 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
         _logger.LogInformation(
             "[{RunId}] Crawl completed: {Status} - {New} new, {Updated} updated, {Duplicate} duplicate, {Failed} failed ({Duration})",
             history.Id, history.Status, newCount, updatedCount, duplicateCount, failedEndpoints.Count, history.Duration);
+
+        if (errors.Count > 0)
+        {
+            var providerNames = string.Join(", ", lockedProviders.Select(p => p.Name));
+            try
+            {
+                await _emailService.SendErrorSummaryAsync(errors, $"News API Crawl Run [{providerNames}]", cancellationToken);
+            }
+            catch (Exception emailEx)
+            {
+                _logger.LogError(emailEx, "[{RunId}] Failed to send news API crawl error-summary email", history.Id);
+            }
+        }
 
         return history;
     }

@@ -4,8 +4,10 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Polly;
 using Polly.Extensions.Http;
+using Resend;
 using Application.Abstractions;
 using Application.Options;
+using Infrastructure.Email;
 using Infrastructure.Mongo;
 using Infrastructure.NewsApiProviders;
 using Infrastructure.Persistence;
@@ -54,6 +56,26 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddSingleton<IRssRawResponseRepository, RssRawResponseRepository>();
         services.AddSingleton<IFeedSourceRepository, FeedSourceRepository>();
         services.AddSingleton<IFeedErrorLogRepository, FeedErrorLogRepository>();
+
+        // Monitoring-alert email, backed by the official Resend SDK. AddResend registers IResend
+        // as a typed HttpClient and returns the IHttpClientBuilder, so the same Polly
+        // transient-error retry used by every other external HTTP dependency in this method
+        // attaches here too - "not raw HttpClient" (Resend's SDK owns the request shape) without
+        // giving up the retry behaviour. ResendEmailService (not IResend directly) is what every
+        // caller depends on via IEmailService, so swapping providers later never touches a caller.
+        services
+            .AddOptions<EmailOptions>()
+            .Bind(configuration.GetSection(EmailOptions.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services
+            .AddResend(o => o.ApiToken = configuration[$"{EmailOptions.SectionName}:{nameof(EmailOptions.ApiKey)}"] ?? string.Empty)
+            .AddPolicyHandler(HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+        services.AddSingleton<EmailTemplateBuilder>();
+        services.AddSingleton<IEmailService, ResendEmailService>();
 
         AddRssProvider<AajTakRssProvider>(services, AajTakRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<AbpNewsRssProvider>(services, AbpNewsRssProvider.ClientName, CrawlerUserAgent);

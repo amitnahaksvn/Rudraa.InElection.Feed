@@ -110,6 +110,8 @@ public class NewsCrawlerOrchestratorTests
             historyRepo.Object,
             BuildAcquiredLockRepo().Object,
             rawResponseRepo.Object,
+            Mock.Of<IEmailService>(),
+            new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
             Options.Create(BuildOptions("Home")),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 
@@ -147,6 +149,8 @@ public class NewsCrawlerOrchestratorTests
             historyRepo.Object,
             BuildAcquiredLockRepo().Object,
             rawResponseRepo.Object,
+            Mock.Of<IEmailService>(),
+            new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
             Options.Create(BuildOptions("Home")),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 
@@ -182,6 +186,8 @@ public class NewsCrawlerOrchestratorTests
             historyRepo.Object,
             BuildAcquiredLockRepo().Object,
             BuildRawResponseRepo().Object,
+            Mock.Of<IEmailService>(),
+            new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
             Options.Create(BuildOptions("Home")),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 
@@ -211,6 +217,8 @@ public class NewsCrawlerOrchestratorTests
             historyRepo.Object,
             lockRepo.Object,
             BuildRawResponseRepo().Object,
+            Mock.Of<IEmailService>(),
+            new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
             Options.Create(BuildOptions("Home")),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 
@@ -248,6 +256,8 @@ public class NewsCrawlerOrchestratorTests
             historyRepo.Object,
             BuildAcquiredLockRepo().Object,
             BuildRawResponseRepo().Object,
+            Mock.Of<IEmailService>(),
+            new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
             Options.Create(BuildTwoProviderOptions()),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 
@@ -293,6 +303,8 @@ public class NewsCrawlerOrchestratorTests
             historyRepo.Object,
             lockRepo.Object,
             BuildRawResponseRepo().Object,
+            Mock.Of<IEmailService>(),
+            new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
             Options.Create(BuildTwoProviderOptions()),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 
@@ -340,6 +352,8 @@ public class NewsCrawlerOrchestratorTests
             historyRepo.Object,
             BuildAcquiredLockRepo().Object,
             rawResponseRepo.Object,
+            Mock.Of<IEmailService>(),
+            new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
             Options.Create(options),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 

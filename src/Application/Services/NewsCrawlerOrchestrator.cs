@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Application.Abstractions;
@@ -21,6 +22,8 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
     private readonly ICrawlHistoryRepository _historyRepository;
     private readonly ICrawlLockRepository _lockRepository;
     private readonly IRssRawResponseRepository _rawResponseRepository;
+    private readonly IEmailService _emailService;
+    private readonly IHostEnvironment _hostEnvironment;
     private readonly NewsCrawlerOptions _options;
     private readonly ILogger<NewsCrawlerOrchestrator> _logger;
     private readonly string _ownerId = $"{Environment.MachineName}:{Environment.ProcessId}:{Guid.NewGuid():N}";
@@ -31,6 +34,8 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
         ICrawlHistoryRepository historyRepository,
         ICrawlLockRepository lockRepository,
         IRssRawResponseRepository rawResponseRepository,
+        IEmailService emailService,
+        IHostEnvironment hostEnvironment,
         IOptions<NewsCrawlerOptions> options,
         ILogger<NewsCrawlerOrchestrator> logger)
     {
@@ -39,6 +44,8 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
         _historyRepository = historyRepository;
         _lockRepository = lockRepository;
         _rawResponseRepository = rawResponseRepository;
+        _emailService = emailService;
+        _hostEnvironment = hostEnvironment;
         _options = options.Value;
         _logger = logger;
     }
@@ -112,6 +119,7 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
         history.Id = await _historyRepository.InsertAsync(history, cancellationToken);
 
         var failedFeeds = new List<string>();
+        var errors = new List<ErrorNotification>();
         var newCount = 0;
         var updatedCount = 0;
         var duplicateCount = 0;
@@ -178,6 +186,25 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
                         failedFeeds.Add($"{provider.Name}/{result.FeedName}");
                         providerFailedCount++;
                         _logger.LogError("Feed failed: {Provider}/{Feed} - {Error}", provider.Name, result.FeedName, result.Error);
+                        errors.Add(new ErrorNotification
+                        {
+                            Environment = _hostEnvironment.EnvironmentName,
+                            ApplicationName = _hostEnvironment.ApplicationName,
+                            Provider = provider.Name,
+                            FeedOrApiName = result.FeedName,
+                            SourceUrl = result.FeedUrl,
+                            Operation = "RSS Feed Fetch",
+                            ExceptionType = result.ExceptionType ?? "Unknown",
+                            ErrorMessage = result.Error ?? "Unknown error",
+                            StackTrace = result.StackTrace,
+                            InnerException = result.InnerException,
+                            HttpStatusCode = result.HttpStatusCode,
+                            RequestUrl = result.FeedUrl,
+                            ResponseBody = result.RawXml,
+                            CorrelationId = history.Id,
+                            HangfireJobId = ExecutionContextAccessor.CurrentHangfireJobId,
+                            ExecutionDuration = TimeSpan.FromMilliseconds(result.ProcessingDurationMs)
+                        });
                         continue;
                     }
 
@@ -213,6 +240,13 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
             runError = ex.Message;
             history.Status = CrawlStatus.Failed;
             _logger.LogError(ex, "[{RunId}] Crawl run failed unexpectedly", history.Id);
+            errors.Add(ErrorNotification.FromException(
+                ex,
+                _hostEnvironment.EnvironmentName,
+                _hostEnvironment.ApplicationName,
+                operation: "Crawl Run",
+                correlationId: history.Id,
+                hangfireJobId: ExecutionContextAccessor.CurrentHangfireJobId));
         }
 
         history.EndTime = DateTimeOffset.UtcNow;
@@ -229,6 +263,22 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
         _logger.LogInformation(
             "[{RunId}] Crawl completed: {Status} - {New} new, {Updated} updated, {Duplicate} duplicate, {Failed} failed ({Duration})",
             history.Id, history.Status, newCount, updatedCount, duplicateCount, failedFeeds.Count, history.Duration);
+
+        if (errors.Count > 0)
+        {
+            var providerNames = string.Join(", ", lockedProviders.Select(p => p.Name));
+            try
+            {
+                await _emailService.SendErrorSummaryAsync(errors, $"RSS Crawl Run [{providerNames}]", cancellationToken);
+            }
+            catch (Exception emailEx)
+            {
+                // IEmailService implementations must never throw, but this is cheap, defensive
+                // insurance regardless - a monitoring-alert failure must never fail the crawl run
+                // it was reporting on.
+                _logger.LogError(emailEx, "[{RunId}] Failed to send crawl error-summary email", history.Id);
+            }
+        }
 
         return history;
     }

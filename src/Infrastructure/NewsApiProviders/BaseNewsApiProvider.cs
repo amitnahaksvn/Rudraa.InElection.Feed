@@ -82,6 +82,7 @@ public abstract class BaseNewsApiProvider : INewsApiProvider
         using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         timeoutCts.CancelAfter(TimeSpan.FromSeconds(options.TimeoutSeconds));
 
+        string? responseBody = null;
         try
         {
             var client = _httpClientFactory.CreateClient(HttpClientName);
@@ -89,9 +90,13 @@ public abstract class BaseNewsApiProvider : INewsApiProvider
 
             using var response = await client.SendAsync(request, timeoutCts.Token);
             httpStatusCode = (int)response.StatusCode;
+            // Body read before the status check throws, not after, so a non-2xx response's body
+            // (a JSON error payload, a rate-limit message) is still captured for
+            // diagnostics/the monitoring-alert email instead of being discarded.
+            responseBody = await response.Content.ReadAsStringAsync(timeoutCts.Token);
             response.EnsureSuccessStatusCode();
 
-            var json = await response.Content.ReadAsStringAsync(timeoutCts.Token);
+            var json = responseBody;
             // Stamped here, once, rather than in every concrete provider's ParseArticles - every
             // JSON-API provider's articles are Api-sourced, so there's nothing provider-specific
             // about this assignment. NormalizedArticle is a record precisely so `with` works here.
@@ -123,6 +128,10 @@ public abstract class BaseNewsApiProvider : INewsApiProvider
                 EndpointUrl = url,
                 Success = false,
                 Error = ex.Message,
+                ExceptionType = ex.GetType().FullName ?? ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                InnerException = ex.InnerException is { } inner ? $"{inner.GetType().FullName}: {inner.Message}" : null,
+                ResponseBody = responseBody,
                 FetchedAt = fetchedAt,
                 HttpStatusCode = httpStatusCode,
                 ProcessingDurationMs = stopwatch.ElapsedMilliseconds

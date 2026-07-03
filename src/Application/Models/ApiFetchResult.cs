@@ -16,6 +16,21 @@ public sealed class ApiFetchResult
 
     public string? Error { get; init; }
 
+    /// <summary>Full type name of the exception behind <see cref="Error"/>; null on success.</summary>
+    public string? ExceptionType { get; init; }
+
+    public string? StackTrace { get; init; }
+
+    /// <summary>Type + message of the innermost exception; null when there was none.</summary>
+    public string? InnerException { get; init; }
+
+    /// <summary>
+    /// Raw response body, captured even when the HTTP status indicates failure (read before
+    /// <c>EnsureSuccessStatusCode</c> is checked, not after) so an error page/JSON error payload is
+    /// available for diagnostics instead of being discarded the moment the status check throws.
+    /// </summary>
+    public string? ResponseBody { get; init; }
+
     public IReadOnlyList<NormalizedArticle> Articles { get; init; } = [];
 
     public DateTimeOffset FetchedAt { get; init; }

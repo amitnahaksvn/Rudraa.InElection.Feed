@@ -10,12 +10,11 @@
 # never open.
 #
 # No secrets are declared here on purpose: both src/Web/appsettings.json and
-# src/Worker/appsettings.json already carry a real MongoDb:ConnectionString and every
-# NewsApiKeys:* value baked directly into the committed file, so the container works with zero
-# Render environment variables configured, matching how it already runs today. If those secrets
-# are ever moved out of appsettings.json (recommended - see CLAUDE.md's user-secrets guidance),
-# add the equivalent MongoDb__ConnectionString / NewsApiKeys__<Provider> keys here with
-# `sync: false` so Render prompts for real values in its dashboard instead of committing them.
+# src/Worker/appsettings.json carry a real MongoDb:ConnectionString, every NewsApiKeys:* value,
+# and Email:ApiKey baked directly into the committed file (these are development-tier
+# credentials, kept in appsettings.json by deliberate choice rather than user-secrets), so the
+# container works with zero Render environment variables configured, matching how it already
+# runs today.
 services:
   - type: web
     name: rudraa-inelection-rssfeed-web

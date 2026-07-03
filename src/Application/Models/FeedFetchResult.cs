@@ -15,6 +15,14 @@ public sealed class FeedFetchResult
 
     public string? Error { get; init; }
 
+    /// <summary>Full type name of the exception behind <see cref="Error"/>; null on success.</summary>
+    public string? ExceptionType { get; init; }
+
+    public string? StackTrace { get; init; }
+
+    /// <summary>Type + message of the innermost exception; null when there was none.</summary>
+    public string? InnerException { get; init; }
+
     public IReadOnlyList<NormalizedArticle> Articles { get; init; } = [];
 
     public DateTimeOffset FetchedAt { get; init; }

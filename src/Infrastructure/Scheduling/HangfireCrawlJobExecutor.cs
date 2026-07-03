@@ -2,6 +2,7 @@ using Hangfire;
 using Hangfire.Server;
 using Microsoft.Extensions.Logging;
 using Application.Abstractions;
+using Application.Services;
 
 namespace Infrastructure.Scheduling;
 
@@ -40,6 +41,7 @@ public sealed class HangfireCrawlJobExecutor
             ["Provider"] = providerName
         });
 
+        ExecutionContextAccessor.CurrentHangfireJobId = context.BackgroundJob.Id;
         await _crawlerService.RunCrawlAsync(new[] { providerName }, cancellationToken);
     }
 }

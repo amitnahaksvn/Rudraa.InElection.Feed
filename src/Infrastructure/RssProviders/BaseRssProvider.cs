@@ -73,9 +73,12 @@ public abstract partial class BaseRssProvider : IRssProvider
             var client = _httpClientFactory.CreateClient(HttpClientName);
             using var response = await client.GetAsync(url, cancellationToken);
             httpStatusCode = (int)response.StatusCode;
+            // Body read before the status check throws, not after, so a non-2xx response's body
+            // (an error page, a WAF block, a JSON error payload) is still captured for
+            // diagnostics/the monitoring-alert email instead of being discarded.
+            rawXml = await response.Content.ReadAsStringAsync(cancellationToken);
             response.EnsureSuccessStatusCode();
 
-            rawXml = await response.Content.ReadAsStringAsync(cancellationToken);
             var document = XDocument.Parse(rawXml);
 
             var articles = new List<NormalizedArticle>();
@@ -114,6 +117,9 @@ public abstract partial class BaseRssProvider : IRssProvider
                 FeedUrl = url,
                 Success = false,
                 Error = ex.Message,
+                ExceptionType = ex.GetType().FullName ?? ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                InnerException = ex.InnerException is { } inner ? $"{inner.GetType().FullName}: {inner.Message}" : null,
                 FetchedAt = fetchedAt,
                 HttpStatusCode = httpStatusCode,
                 RawXml = rawXml,
