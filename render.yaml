@@ -1,8 +1,15 @@
 # Render Blueprint - declarative equivalent of the two manually-created dashboard services.
-# Deploy via Render Dashboard -> New -> Blueprint, pointing at this repo. Both services share
-# the one root Dockerfile (see its own header comment), differentiated only by dockerBuildArgs.PROJECT
-# - mirrors the two `docker build --build-arg PROJECT=...` invocations documented there and the
-# two docker-compose.yml services.
+# Deploy via Render Dashboard -> New -> Blueprint, pointing at this repo.
+#
+# Render's Blueprint spec has no field for passing --build-arg to a Dockerfile (confirmed against
+# https://render.com/schema/render.yaml.json - an earlier version of this file used a
+# `dockerBuildArgs` key that doesn't actually exist and Render rejected outright: "field
+# dockerBuildArgs not found in type file.Service"). So, unlike the single shared Dockerfile used
+# by `docker build --build-arg PROJECT=...` and docker-compose.yml, Render needs two separate
+# Dockerfiles: the root ./Dockerfile (ARG PROJECT=Worker default - unchanged, still what local
+# docker build/docker-compose use) for the worker service below, and ./Dockerfile.web (see its own
+# header comment) for the web service - each hardcodes which project it publishes so no build-arg
+# is ever needed.
 #
 # `Worker` has no HTTP surface by design (see CLAUDE.md: "a plain BackgroundService console host,
 # no HTTP") - it must be `type: worker` (Render's Background Worker), never `type: web`, or
@@ -19,10 +26,8 @@ services:
   - type: web
     name: rudraa-inelection-rssfeed-web
     runtime: docker
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: ./Dockerfile.web
     dockerContext: .
-    dockerBuildArgs:
-      PROJECT: Web
     plan: starter
     envVars:
       - key: DOTNET_ENVIRONMENT
@@ -39,8 +44,6 @@ services:
     runtime: docker
     dockerfilePath: ./Dockerfile
     dockerContext: .
-    dockerBuildArgs:
-      PROJECT: Worker
     plan: starter
     envVars:
       - key: DOTNET_ENVIRONMENT
