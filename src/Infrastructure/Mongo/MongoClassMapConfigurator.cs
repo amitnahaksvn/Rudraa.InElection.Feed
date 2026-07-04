@@ -23,10 +23,17 @@ public static class MongoClassMapConfigurator
             return;
         }
 
+        // Scoped to this app's own Domain entities only (`_ => true` previously applied this
+        // process-wide, to every BSON-serialized type including Hangfire.Mongo's own internal
+        // documents - its migration/query code expects its own PascalCase field names like
+        // "Field"/"StateHistory", and this convention was silently camelCasing them too, causing
+        // "Element 'Field' not found" migration crashes and "conditional update did not apply"
+        // queue-ack warnings against documents whose field names didn't match what Hangfire itself
+        // was reading/writing).
         ConventionRegistry.Register(
             "PoliticalNewsConventions",
             new ConventionPack { new CamelCaseElementNameConvention(), new IgnoreExtraElementsConvention(true) },
-            _ => true);
+            t => t.Namespace == typeof(NewsArticle).Namespace);
 
         // Stored as the string "Rss"/"Api", not the default int32, so the origin of an article is
         // legible straight out of a Mongo query/Compass view without cross-referencing the enum.
