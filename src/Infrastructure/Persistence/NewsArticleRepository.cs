@@ -73,8 +73,23 @@ public sealed class NewsArticleRepository : INewsArticleRepository
         article.CrawledAt = existing.CrawledAt;
         article.UpdatedAt = DateTimeOffset.UtcNow;
 
-        await _collection.ReplaceOneAsync(a => a.Id == existing.Id, article, cancellationToken: cancellationToken);
-        return ArticleUpsertOutcome.Updated;
+        try
+        {
+            await _collection.ReplaceOneAsync(a => a.Id == existing.Id, article, cancellationToken: cancellationToken);
+            return ArticleUpsertOutcome.Updated;
+        }
+        catch (MongoWriteException ex) when (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)
+        {
+            // The article's own content changed enough to recompute its Hash (Title/PublishedAt),
+            // and that new Hash now collides with a *different* document's Hash - typically two
+            // providers independently carrying the same wire story (identical normalized title +
+            // identical PublishedAt) under different Urls. Per the documented dedup contract
+            // (Url -> OriginalGuid -> Hash, any Hash match is a no-op duplicate), leave the existing
+            // document as-is rather than crash the whole run over what is, by design, "the same
+            // story already recorded elsewhere" - the ReplaceOneAsync counterpart to the
+            // InsertOneAsync race guard above.
+            return ArticleUpsertOutcome.DuplicateSkipped;
+        }
     }
 
     public async Task<IReadOnlyList<NewsArticle>> GetLatestAsync(int count, CancellationToken cancellationToken) =>

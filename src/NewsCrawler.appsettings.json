@@ -680,7 +680,7 @@
       },
       {
         "Name": "News18",
-        "Enabled": true,
+        "Enabled": false,
         "Cron": "*/20 * * * *",
         "SaveRawResponses": true,
         "Feeds": [
