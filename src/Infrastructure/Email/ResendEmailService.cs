@@ -3,8 +3,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Resend;
 using Application.Abstractions;
-using Application.Models;
 using Application.Options;
+using Domain.Entities;
 
 namespace Infrastructure.Email;
 
@@ -33,55 +33,48 @@ public sealed class ResendEmailService : IEmailService
         _logger = logger;
     }
 
-    public Task SendErrorAsync(ErrorNotification notification, CancellationToken cancellationToken = default)
+    public Task<bool> SendErrorLogBatchAsync(IReadOnlyList<ErrorLog> errors, CancellationToken cancellationToken = default)
     {
-        var (subject, html) = _templateBuilder.BuildError(notification);
-        return SendAsync(subject, html, "Error", cancellationToken);
-    }
-
-    public Task SendErrorSummaryAsync(
-        IReadOnlyList<ErrorNotification> notifications, string executionContext, CancellationToken cancellationToken = default)
-    {
-        if (notifications.Count == 0)
+        if (errors.Count == 0)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(false);
         }
 
-        var (subject, html) = _templateBuilder.BuildErrorSummary(notifications, executionContext);
-        return SendAsync(subject, html, "ErrorSummary", cancellationToken);
+        var (subject, html) = _templateBuilder.BuildErrorLogBatch(errors);
+        return SendAsync(subject, html, "ErrorLogBatch", cancellationToken);
     }
 
-    public Task SendWarningAsync(string subject, string message, CancellationToken cancellationToken = default)
+    public Task<bool> SendWarningAsync(string subject, string message, CancellationToken cancellationToken = default)
     {
         var (fullSubject, html) = _templateBuilder.BuildSimple("Warning", subject, message);
         return SendAsync(fullSubject, html, "Warning", cancellationToken);
     }
 
-    public Task SendInformationAsync(string subject, string message, CancellationToken cancellationToken = default)
+    public Task<bool> SendInformationAsync(string subject, string message, CancellationToken cancellationToken = default)
     {
         var (fullSubject, html) = _templateBuilder.BuildSimple("Information", subject, message);
         return SendAsync(fullSubject, html, "Information", cancellationToken);
     }
 
-    public Task SendSuccessAsync(string subject, string message, CancellationToken cancellationToken = default)
+    public Task<bool> SendSuccessAsync(string subject, string message, CancellationToken cancellationToken = default)
     {
         var (fullSubject, html) = _templateBuilder.BuildSimple("Success", subject, message);
         return SendAsync(fullSubject, html, "Success", cancellationToken);
     }
 
-    private async Task SendAsync(string subject, string html, string category, CancellationToken cancellationToken)
+    private async Task<bool> SendAsync(string subject, string html, string category, CancellationToken cancellationToken)
     {
         if (!_options.Enabled)
         {
             _logger.LogInformation("Email notifications disabled (Email:Enabled=false) - skipped {Category} email '{Subject}'", category, subject);
-            return;
+            return false;
         }
 
         if (string.IsNullOrWhiteSpace(_options.ApiKey) || string.IsNullOrWhiteSpace(_options.From) || _options.To.Count == 0)
         {
             _logger.LogWarning(
                 "Email not configured (Email:ApiKey/From/To) - skipped {Category} email '{Subject}'", category, subject);
-            return;
+            return false;
         }
 
         var message = new EmailMessage
@@ -109,19 +102,20 @@ public sealed class ResendEmailService : IEmailService
                 _logger.LogInformation(
                     "Sent {Category} email '{Subject}' to {To} (Resend id {EmailId})",
                     category, subject, string.Join(",", _options.To), response.Content);
+                return true;
             }
-            else
-            {
-                _logger.LogError(
-                    response.Exception,
-                    "Failed to send {Category} email '{Subject}' to {To} - Resend API returned an unsuccessful response",
-                    category, subject, string.Join(",", _options.To));
-            }
+
+            _logger.LogError(
+                response.Exception,
+                "Failed to send {Category} email '{Subject}' to {To} - Resend API returned an unsuccessful response",
+                category, subject, string.Join(",", _options.To));
+            return false;
         }
         catch (Exception ex)
         {
             // Never rethrow: a broken email pipeline must never take the crawler down with it.
             _logger.LogError(ex, "Failed to send {Category} email '{Subject}' to {To}", category, subject, string.Join(",", _options.To));
+            return false;
         }
     }
 }

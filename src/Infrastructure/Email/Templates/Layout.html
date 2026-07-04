@@ -1,13 +1,17 @@
 <!--
-  Shared outer shell for every monitoring email (error/summary/warning/information/success).
+  Shared outer shell for every monitoring email (error-log batch/warning/information/success).
   This is the one file to edit for branding/style changes (colors, fonts, footer copy, logo) -
   EmailTemplateBuilder.cs only fills in the placeholders below and generates the dynamic inner
   content (tables/detail sections), it never hardcodes chrome. Copied to the output directory as-is
   (see Infrastructure.csproj) and reloaded from disk on every send, so editing this file takes
   effect on the next email without recompiling anything.
 
+  Deliberately a light, low-contrast palette throughout (light header, soft tinted badges/icon
+  instead of a solid near-black header with a saturated icon fill) - readable and clearly
+  color-coded by severity without being visually loud.
+
   Placeholders (replaced verbatim, case-sensitive):
-    {{AccentColor}}     - hex color for the top bar / icon badge / section accents (severity color)
+    {{AccentColor}}     - hex color for the top bar / icon outline / section accents (severity color)
     {{AccentColorSoft}} - pale tint of AccentColor used for subtle backgrounds
     {{Icon}}            - single emoji shown in the header badge
     {{HeaderTitle}}      - already HTML-encoded by the caller
@@ -24,18 +28,18 @@
         <table role="presentation" style="width:100%;max-width:680px;border-collapse:collapse;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(16,24,40,0.08);">
 
           <!-- severity accent bar -->
-          <tr><td style="height:5px;background:{{AccentColor}};line-height:0;font-size:0;">&nbsp;</td></tr>
+          <tr><td style="height:4px;background:{{AccentColor}};line-height:0;font-size:0;">&nbsp;</td></tr>
 
           <!-- header -->
           <tr>
-            <td style="background:#111827;padding:24px 28px;">
+            <td style="background:#f9fafb;padding:22px 28px;border-bottom:1px solid #eef0f2;">
               <table role="presentation" style="border-collapse:collapse;">
                 <tr>
                   <td style="width:44px;vertical-align:top;">
-                    <div style="width:36px;height:36px;border-radius:50%;background:{{AccentColor}};text-align:center;line-height:36px;font-size:18px;">{{Icon}}</div>
+                    <div style="width:36px;height:36px;border-radius:50%;background:{{AccentColorSoft}};border:1px solid {{AccentColor}};text-align:center;line-height:36px;font-size:16px;">{{Icon}}</div>
                   </td>
-                  <td style="vertical-align:top;padding-left:8px;">
-                    <div style="font-size:16px;font-weight:700;color:#ffffff;letter-spacing:0.2px;">{{HeaderTitle}}</div>
+                  <td style="vertical-align:top;padding-left:10px;">
+                    <div style="font-size:16px;font-weight:700;color:#111827;letter-spacing:0.2px;">{{HeaderTitle}}</div>
                     <div style="margin-top:6px;">{{HeaderSubtitle}}</div>
                   </td>
                 </tr>

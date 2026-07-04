@@ -74,5 +74,11 @@ public static class MongoClassMapConfigurator
             cm.AutoMap();
             cm.MapIdMember(x => x.Id).SetIdGenerator(StringObjectIdGenerator.Instance);
         });
+
+        BsonClassMap.RegisterClassMap<ErrorLog>(cm =>
+        {
+            cm.AutoMap();
+            cm.MapIdMember(x => x.Id).SetIdGenerator(StringObjectIdGenerator.Instance);
+        });
     }
 }

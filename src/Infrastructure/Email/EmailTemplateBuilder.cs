@@ -2,7 +2,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
-using Application.Models;
+using Domain.Entities;
 
 namespace Infrastructure.Email;
 
@@ -13,7 +13,7 @@ namespace Infrastructure.Email;
 /// - the two are split deliberately so branding/style tweaks (colors, footer copy, fonts) never
 /// need a C# change, only an edit to the .html file. Lives in Infrastructure (not Application)
 /// specifically because "how a notification renders" is a provider/presentation concern, unlike
-/// <see cref="ErrorNotification"/> itself which is provider-agnostic business data.
+/// <see cref="ErrorLog"/> itself which is provider-agnostic business data.
 /// </summary>
 public sealed class EmailTemplateBuilder
 {
@@ -22,7 +22,7 @@ public sealed class EmailTemplateBuilder
     private static readonly string LayoutPath = Path.Combine(AppContext.BaseDirectory, "Email", "Templates", "Layout.html");
     private const string FallbackLayout =
         "<!doctype html><html><body style=\"font-family:sans-serif;\">" +
-        "<div style=\"border-top:5px solid {{AccentColor}};padding:16px;background:#111827;color:#fff;\">" +
+        "<div style=\"border-top:4px solid {{AccentColor}};padding:16px;background:#f9fafb;color:#111827;\">" +
         "<b>{{Icon}} {{HeaderTitle}}</b><br/>{{HeaderSubtitle}}</div>" +
         "<div style=\"padding:16px;\">{{Body}}</div>" +
         "<div style=\"padding:12px;color:#999;font-size:11px;\">{{FooterNote}}</div>" +
@@ -59,53 +59,52 @@ public sealed class EmailTemplateBuilder
         }
     }
 
-    private static readonly (string Icon, string Color, string ColorSoft) Critical = ("🚨", "#DC2626", "#FEE2E2");
-    private static readonly (string Icon, string Color, string ColorSoft) Warning = ("⚠️", "#D97706", "#FEF3C7");
-    private static readonly (string Icon, string Color, string ColorSoft) Info = ("ℹ️", "#2563EB", "#DBEAFE");
-    private static readonly (string Icon, string Color, string ColorSoft) Success = ("✅", "#16A34A", "#DCFCE7");
+    // Deliberately soft/muted, not saturated - paired with Layout.html's light header (see that
+    // file's own comment) so the whole email reads as clear and prominent without being visually
+    // loud ("very high contrast" was flagged explicitly as something to avoid).
+    private static readonly (string Icon, string Color, string ColorSoft) Error = ("⚠️", "#C0392B", "#FDECEA");
+    private static readonly (string Icon, string Color, string ColorSoft) Warning = ("⚠️", "#B7791F", "#FEF3C7");
+    private static readonly (string Icon, string Color, string ColorSoft) Info = ("ℹ️", "#2B6CB0", "#E8F1FB");
+    private static readonly (string Icon, string Color, string ColorSoft) Success = ("✅", "#2F855A", "#E6F6ED");
 
-    public (string Subject, string Html) BuildError(ErrorNotification n)
+    /// <summary>
+    /// One email covering a batch of persisted, not-yet-dispatched <see cref="ErrorLog"/> records -
+    /// a summary table (each row carrying its own <see cref="ErrorLog.Id"/>) plus a full detail
+    /// section per error, so a burst of failures produces one readable email instead of a flood.
+    /// Called only by the error-notification dispatch job, on its own schedule - never at the
+    /// moment an error actually occurs.
+    /// </summary>
+    public (string Subject, string Html) BuildErrorLogBatch(IReadOnlyList<ErrorLog> errors)
     {
-        var subject = $"🚨 InElection Monitoring Alert - {n.ApplicationName}: {n.Operation} failed" + (n.Provider is { } p ? $" ({p})" : "");
+        var subject = $"⚠️ InElection Monitoring - {errors.Count} pending error(s)";
+        var first = errors[0];
+        var sourcesAffected = errors.Select(x => x.Provider ?? x.Source).Distinct().Count();
+        var oldest = errors.Min(x => x.CreatedOn);
 
         var body = new StringBuilder();
         body.Append(StatStrip([
-            ("Status", "FAILED", Critical.Color),
-            ("Provider", n.Provider ?? "-", "#374151"),
-            ("Operation", n.Operation, "#374151")
-        ]));
-        body.Append(ErrorSections(n));
-
-        var html = Render(Critical, "InElection Monitoring Alert", HeaderBadges(n.Environment, n.ApplicationName), body.ToString());
-        return (subject, html);
-    }
-
-    public (string Subject, string Html) BuildErrorSummary(IReadOnlyList<ErrorNotification> notifications, string executionContext)
-    {
-        var subject = $"🚨 InElection Monitoring Alert - {executionContext}: {notifications.Count} error(s)";
-        var first = notifications[0];
-        var providersAffected = notifications.Select(x => x.Provider ?? x.Operation).Distinct().Count();
-
-        var body = new StringBuilder();
-        body.Append(StatStrip([
-            ("Execution", executionContext, "#374151"),
-            ("Total Errors", notifications.Count.ToString(), Critical.Color),
-            ("Providers Affected", providersAffected.ToString(), "#374151")
+            ("Pending Errors", errors.Count.ToString(), Error.Color),
+            ("Sources Affected", sourcesAffected.ToString(), "#374151"),
+            ("Oldest Error (UTC)", oldest.UtcDateTime.ToString("yyyy-MM-dd HH:mm"), "#374151")
         ]));
 
         body.Append(PanelOpen("📋", "Summary"));
-        body.Append(SummaryTable(notifications));
+        body.Append(ErrorLogSummaryTable(errors));
         body.Append(PanelClose());
 
         body.Append("""<h3 style="margin:24px 0 4px;font-size:13px;color:#374151;text-transform:uppercase;letter-spacing:0.4px;">Error Details</h3>""");
-        for (var i = 0; i < notifications.Count; i++)
+        for (var i = 0; i < errors.Count; i++)
         {
-            var n = notifications[i];
-            body.Append($"""<div style="margin:14px 0 6px;font-size:13px;font-weight:700;color:#111827;">#{i + 1} &middot; {Encode(n.Provider ?? n.Operation)}{(n.FeedOrApiName is { } f ? $" / {Encode(f)}" : "")}</div>""");
-            body.Append(ErrorSections(n));
+            var e = errors[i];
+            body.Append($"""
+                <div style="margin:14px 0 6px;font-size:13px;font-weight:700;color:#111827;">
+                #{i + 1} &middot; <span style="color:{Error.Color};">Error ID: {Encode(e.Id)}</span> &middot; {Encode(e.Provider ?? e.Source)}{(e.FeedOrApiName is { } f ? $" / {Encode(f)}" : "")}
+                </div>
+                """);
+            body.Append(ErrorLogSections(e));
         }
 
-        var html = Render(Critical, "InElection Monitoring Alert", HeaderBadges(first.Environment, first.ApplicationName), body.ToString());
+        var html = Render(Error, "InElection Monitoring Alert", HeaderBadges(first.Environment, first.ApplicationName), body.ToString());
         return (subject, html);
     }
 
@@ -148,8 +147,8 @@ public sealed class EmailTemplateBuilder
         """;
 
     private static string BadgeStyle() =>
-        "display:inline-block;background:rgba(255,255,255,0.14);color:#e5e7eb;font-size:11px;font-weight:600;" +
-        "padding:3px 9px;border-radius:20px;letter-spacing:0.3px;";
+        "display:inline-block;background:#f1f5f9;color:#475569;font-size:11px;font-weight:600;" +
+        "padding:3px 9px;border-radius:20px;letter-spacing:0.3px;border:1px solid #e2e8f0;";
 
     private static string StatStrip((string Label, string Value, string Color)[] stats)
     {
@@ -175,57 +174,92 @@ public sealed class EmailTemplateBuilder
 
     private static string PanelClose() => "</div></div>";
 
-    private static string ErrorSections(ErrorNotification n)
+    private static string ErrorLogSections(ErrorLog e)
     {
         var sb = new StringBuilder();
 
         sb.Append(PanelOpen("🧭", "Context"));
         sb.Append(KeyValueGrid([
-            ("Date & Time (UTC)", n.OccurredAt.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss")),
-            ("Provider Name", n.Provider),
-            ("Feed/API Name", n.FeedOrApiName),
-            ("Source URL", n.SourceUrl),
-            ("Operation", n.Operation)
+            ("Error Id", e.Id),
+            ("Occurred On (UTC)", e.CreatedOn.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss")),
+            ("Environment", e.Environment),
+            ("Application", e.ApplicationName),
+            ("Service Name", e.ServiceName),
+            ("Machine Name", e.MachineName),
+            ("Provider", e.Provider),
+            ("Feed/API Name", e.FeedOrApiName),
+            ("Source", e.Source),
+            ("Source URL", e.SourceUrl)
         ]));
         sb.Append(PanelClose());
 
         sb.Append(PanelOpen("💥", "Exception"));
         sb.Append(KeyValueGrid([
-            ("Exception Type", n.ExceptionType),
-            ("Error Message", n.ErrorMessage),
-            ("Inner Exception", n.InnerException)
+            ("Exception Type", e.ExceptionType),
+            ("Message", e.Message),
+            ("Inner Exception", e.InnerException),
+            ("Error Code", e.ErrorCode)
         ]));
         sb.Append(PanelClose());
 
-        if (n.HttpStatusCode is not null || n.ResponseBody is not null || n.RequestUrl is not null)
+        if (e.HttpStatusCode is not null || e.ResponseBody is not null || e.SourceUrl is not null
+            || e.RequestPath is not null || e.HttpMethod is not null || e.QueryString is not null)
         {
             sb.Append(PanelOpen("🌐", "HTTP"));
             sb.Append(KeyValueGrid([
-                ("HTTP Status Code", n.HttpStatusCode?.ToString()),
-                ("Request URL", n.RequestUrl)
+                ("HTTP Status Code", e.HttpStatusCode?.ToString()),
+                ("HTTP Method", e.HttpMethod),
+                ("Request Path", e.RequestPath),
+                ("Query String", e.QueryString)
             ]));
-            if (!string.IsNullOrWhiteSpace(n.ResponseBody))
+            if (!string.IsNullOrWhiteSpace(e.RequestBody))
+            {
+                sb.Append("""<div style="font-size:11px;color:#9aa1ab;text-transform:uppercase;letter-spacing:0.4px;margin:8px 0 4px;">Request Body</div>""");
+                sb.Append(CodeBlock(Truncate(e.RequestBody)!));
+            }
+            if (!string.IsNullOrWhiteSpace(e.ResponseBody))
             {
                 sb.Append("""<div style="font-size:11px;color:#9aa1ab;text-transform:uppercase;letter-spacing:0.4px;margin:8px 0 4px;">Response Body</div>""");
-                sb.Append(CodeBlock(Truncate(n.ResponseBody)!));
+                sb.Append(CodeBlock(Truncate(e.ResponseBody)!));
             }
             sb.Append(PanelClose());
         }
 
-        if (!string.IsNullOrWhiteSpace(n.StackTrace))
+        if (e.UserId is not null || e.UserName is not null || e.IpAddress is not null || e.UserAgent is not null)
+        {
+            sb.Append(PanelOpen("👤", "Request Context"));
+            sb.Append(KeyValueGrid([
+                ("User Id", e.UserId),
+                ("User Name", e.UserName),
+                ("IP Address", e.IpAddress),
+                ("User Agent", e.UserAgent)
+            ]));
+            sb.Append(PanelClose());
+        }
+
+        if (!string.IsNullOrWhiteSpace(e.StackTrace))
         {
             sb.Append(PanelOpen("🧵", "Stack Trace"));
-            sb.Append(CodeBlock(Truncate(n.StackTrace)!));
+            sb.Append(CodeBlock(Truncate(e.StackTrace)!));
             sb.Append(PanelClose());
         }
 
         sb.Append(PanelOpen("🔗", "Tracing"));
         sb.Append(KeyValueGrid([
-            ("Correlation Id", n.CorrelationId),
-            ("Hangfire Job Id", n.HangfireJobId),
-            ("Execution Duration", n.ExecutionDuration?.ToString("g"))
+            ("Correlation Id", e.CorrelationId),
+            ("Hangfire Job Id", e.HangfireJobId),
+            ("Trace Id", e.TraceId),
+            ("Assembly Version", e.AssemblyVersion),
+            ("Execution Duration", e.ExecutionDuration?.ToString("g"))
         ]));
         sb.Append(PanelClose());
+
+        if (!string.IsNullOrWhiteSpace(e.AdditionalData))
+        {
+            sb.Append(PanelOpen("🧩", "Additional Data"));
+            sb.Append(CodeBlock(Truncate(e.AdditionalData)!));
+            sb.Append(PanelClose());
+        }
 
         return sb.ToString();
     }
@@ -250,30 +284,31 @@ public sealed class EmailTemplateBuilder
     }
 
     private static string CodeBlock(string content) => $"""
-        <pre style="margin:0;white-space:pre-wrap;word-break:break-word;font-family:'SF Mono',Consolas,Menlo,monospace;font-size:12px;line-height:1.5;background:#0f172a;color:#d1e3ff;padding:12px 14px;border-radius:6px;">{Encode(content)}</pre>
+        <pre style="margin:0;white-space:pre-wrap;word-break:break-word;font-family:'SF Mono',Consolas,Menlo,monospace;font-size:12px;line-height:1.5;background:#f8fafc;color:#334155;padding:12px 14px;border-radius:6px;border:1px solid #e2e8f0;">{Encode(content)}</pre>
         """;
 
-    private static string SummaryTable(IReadOnlyList<ErrorNotification> notifications)
+    private static string ErrorLogSummaryTable(IReadOnlyList<ErrorLog> errors)
     {
         var sb = new StringBuilder("""<table role="presentation" style="width:100%;border-collapse:collapse;font-size:12px;">""");
         sb.Append("""<tr style="background:#f9fafb;">""");
-        foreach (var col in new[] { "#", "Provider", "Feed/API", "Operation", "Exception", "HTTP" })
+        foreach (var col in new[] { "#", "Error Id", "Provider", "Feed/API", "Exception", "HTTP", "Occurred (UTC)" })
         {
             sb.Append($"""<th style="text-align:left;padding:8px 10px;border-bottom:2px solid #eef0f2;color:#6b7280;text-transform:uppercase;font-size:10px;letter-spacing:0.3px;">{col}</th>""");
         }
         sb.Append("</tr>");
 
-        for (var i = 0; i < notifications.Count; i++)
+        for (var i = 0; i < errors.Count; i++)
         {
-            var n = notifications[i];
+            var e = errors[i];
             var rowBg = i % 2 == 0 ? "#ffffff" : "#fbfbfc";
             sb.Append($"""<tr style="background:{rowBg};">""");
-            sb.Append(Cell($"""<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:{Critical.Color};margin-right:6px;"></span>{i + 1}"""));
-            sb.Append(Cell(Encode(n.Provider ?? "-")));
-            sb.Append(Cell(Encode(n.FeedOrApiName ?? "-")));
-            sb.Append(Cell(Encode(n.Operation)));
-            sb.Append(Cell(Encode(n.ExceptionType)));
-            sb.Append(Cell(Encode(n.HttpStatusCode?.ToString() ?? "-")));
+            sb.Append(Cell($"""<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:{Error.Color};margin-right:6px;"></span>{i + 1}"""));
+            sb.Append(Cell($"""<span style="font-family:'SF Mono',Consolas,Menlo,monospace;">{Encode(e.Id)}</span>"""));
+            sb.Append(Cell(Encode(e.Provider ?? "-")));
+            sb.Append(Cell(Encode(e.FeedOrApiName ?? "-")));
+            sb.Append(Cell(Encode(e.ExceptionType)));
+            sb.Append(Cell(Encode(e.HttpStatusCode?.ToString() ?? "-")));
+            sb.Append(Cell(Encode(e.CreatedOn.UtcDateTime.ToString("yyyy-MM-dd HH:mm"))));
             sb.Append("</tr>");
         }
         sb.Append("</table>");

@@ -25,7 +25,7 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
     private readonly INewsArticleRepository _articleRepository;
     private readonly ICrawlHistoryRepository _historyRepository;
     private readonly ICrawlLockRepository _lockRepository;
-    private readonly IEmailService _emailService;
+    private readonly IErrorLogRepository _errorLogRepository;
     private readonly IHostEnvironment _hostEnvironment;
     private readonly NewsApiCrawlerOptions _options;
     private readonly ILogger<NewsApiCrawlerOrchestrator> _logger;
@@ -36,7 +36,7 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
         INewsArticleRepository articleRepository,
         ICrawlHistoryRepository historyRepository,
         ICrawlLockRepository lockRepository,
-        IEmailService emailService,
+        IErrorLogRepository errorLogRepository,
         IHostEnvironment hostEnvironment,
         IOptions<NewsApiCrawlerOptions> options,
         ILogger<NewsApiCrawlerOrchestrator> logger)
@@ -45,7 +45,7 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
         _articleRepository = articleRepository;
         _historyRepository = historyRepository;
         _lockRepository = lockRepository;
-        _emailService = emailService;
+        _errorLogRepository = errorLogRepository;
         _hostEnvironment = hostEnvironment;
         _options = options.Value;
         _logger = logger;
@@ -227,9 +227,7 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
             "[{RunId}] Crawl completed: {Status} - {New} new, {Updated} updated, {Duplicate} duplicate, {Failed} failed ({Duration})",
             history.Id, history.Status, newCount, updatedCount, duplicateCount, failedEndpoints.Count, history.Duration);
 
-        var providerNames = string.Join(", ", lockedProviders.Select(p => p.Name));
-        await CrawlErrorEmailSender.SendIfAnyAsync(
-            _emailService, errors, $"News API Crawl Run [{providerNames}]", _logger, history.Id, cancellationToken);
+        await ErrorLogRecorder.RecordIfAnyAsync(_errorLogRepository, errors, _logger, history.Id, cancellationToken);
 
         return history;
     }

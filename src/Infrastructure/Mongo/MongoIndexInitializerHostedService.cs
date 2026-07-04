@@ -19,6 +19,7 @@ public sealed class MongoIndexInitializerHostedService : IHostedService
     private readonly IRssRawResponseRepository _rawResponses;
     private readonly IFeedSourceRepository _feedSources;
     private readonly IFeedErrorLogRepository _feedErrorLogs;
+    private readonly IErrorLogRepository _errorLogs;
     private readonly NewsCrawlerOptions _options;
     private readonly ILogger<MongoIndexInitializerHostedService> _logger;
 
@@ -29,6 +30,7 @@ public sealed class MongoIndexInitializerHostedService : IHostedService
         IRssRawResponseRepository rawResponses,
         IFeedSourceRepository feedSources,
         IFeedErrorLogRepository feedErrorLogs,
+        IErrorLogRepository errorLogs,
         IOptions<NewsCrawlerOptions> options,
         ILogger<MongoIndexInitializerHostedService> logger)
     {
@@ -38,6 +40,7 @@ public sealed class MongoIndexInitializerHostedService : IHostedService
         _rawResponses = rawResponses;
         _feedSources = feedSources;
         _feedErrorLogs = feedErrorLogs;
+        _errorLogs = errorLogs;
         _options = options.Value;
         _logger = logger;
     }
@@ -51,6 +54,7 @@ public sealed class MongoIndexInitializerHostedService : IHostedService
         await _rawResponses.EnsureIndexesAsync(_options.RawResponseRetention, cancellationToken);
         await _feedSources.EnsureIndexesAsync(cancellationToken);
         await _feedErrorLogs.EnsureIndexesAsync(cancellationToken);
+        await _errorLogs.EnsureIndexesAsync(cancellationToken);
         _logger.LogInformation("MongoDB indexes ready");
     }
 

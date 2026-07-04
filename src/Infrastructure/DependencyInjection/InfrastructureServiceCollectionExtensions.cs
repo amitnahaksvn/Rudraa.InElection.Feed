@@ -56,6 +56,7 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddSingleton<IRssRawResponseRepository, RssRawResponseRepository>();
         services.AddSingleton<IFeedSourceRepository, FeedSourceRepository>();
         services.AddSingleton<IFeedErrorLogRepository, FeedErrorLogRepository>();
+        services.AddSingleton<IErrorLogRepository, ErrorLogRepository>();
 
         // Monitoring-alert email, backed by the official Resend SDK. AddResend registers IResend
         // as a typed HttpClient and returns the IHttpClientBuilder, so the same Polly
@@ -87,7 +88,9 @@ public static class InfrastructureServiceCollectionExtensions
         AddRssProvider<ZeeNewsRssProvider>(services, ZeeNewsRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<IndiaTvRssProvider>(services, IndiaTvRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<NdtvRssProvider>(services, NdtvRssProvider.ClientName, CrawlerUserAgent);
-        AddRssProvider<IndianExpressRssProvider>(services, IndianExpressRssProvider.ClientName, CrawlerUserAgent);
+        // IndianExpress's CDN (Akamai) started returning 403 for the crawler UA after previously
+        // working fine with it - same WAF signature as News18/OneIndia/PIB below.
+        AddRssProvider<IndianExpressRssProvider>(services, IndianExpressRssProvider.ClientName, BrowserUserAgent);
         AddRssProvider<TheHinduRssProvider>(services, TheHinduRssProvider.ClientName, CrawlerUserAgent);
         // News18's CDN (Akamai) returns 403 for crawler-style UAs while serving the same public
         // RSS feeds to browsers - the one provider that needs a browser-style UA.
@@ -137,6 +140,11 @@ public static class InfrastructureServiceCollectionExtensions
         {
             client.Timeout = TimeSpan.FromMinutes(5);
             client.DefaultRequestHeaders.UserAgent.ParseAdd(BrowserUserAgent);
+            // Same reasoning as AddRssProvider below - a real Chrome tab always sends these
+            // alongside its User-Agent, and WAFs like Akamai Bot Manager can still flag a request
+            // as bot-like when a "browser" UA shows up without them.
+            client.DefaultRequestHeaders.Accept.ParseAdd("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+            client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("en-US,en;q=0.9");
         }).AddPolicyHandler(HttpPolicyExtensions
             .HandleTransientHttpError()
             .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
@@ -187,6 +195,7 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddSingleton<ICrawlJobStatusReader, HangfireCrawlJobStatusReader>();
         services.AddTransient<HangfireCrawlJobExecutor>();
         services.AddTransient<HangfireRawResponseCleanupExecutor>();
+        services.AddTransient<HangfireErrorNotificationDispatchExecutor>();
 
         return services;
     }
@@ -198,6 +207,14 @@ public static class InfrastructureServiceCollectionExtensions
         {
             client.Timeout = sp.GetRequiredService<IOptions<NewsCrawlerOptions>>().Value.FeedTimeout;
             client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
+
+            // A real Chrome tab always sends these alongside its User-Agent - some WAFs (Akamai
+            // Bot Manager in particular, seen blocking News18/IndianExpress) score a request as
+            // more bot-like when a "browser" User-Agent shows up without them, even though the UA
+            // string alone matches. Harmless to send for CrawlerUserAgent providers too, so this
+            // isn't conditional on which UA was passed in.
+            client.DefaultRequestHeaders.Accept.ParseAdd("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+            client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("en-US,en;q=0.9");
         });
         services.AddSingleton<IRssProvider, TProvider>();
     }

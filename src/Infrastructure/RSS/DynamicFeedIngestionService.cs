@@ -30,8 +30,8 @@ public sealed class DynamicFeedIngestionService : IDynamicFeedIngestionService
     private readonly INewsArticleRepository _articleRepository;
     private readonly ICrawlHistoryRepository _historyRepository;
     private readonly IRssRawResponseRepository _rawResponseRepository;
-    private readonly IFeedErrorLogRepository _errorLogRepository;
-    private readonly IEmailService _emailService;
+    private readonly IFeedErrorLogRepository _feedErrorLogRepository;
+    private readonly IErrorLogRepository _errorLogRepository;
     private readonly IHostEnvironment _hostEnvironment;
     private readonly ILogger<DynamicFeedIngestionService> _logger;
 
@@ -41,8 +41,8 @@ public sealed class DynamicFeedIngestionService : IDynamicFeedIngestionService
         INewsArticleRepository articleRepository,
         ICrawlHistoryRepository historyRepository,
         IRssRawResponseRepository rawResponseRepository,
-        IFeedErrorLogRepository errorLogRepository,
-        IEmailService emailService,
+        IFeedErrorLogRepository feedErrorLogRepository,
+        IErrorLogRepository errorLogRepository,
         IHostEnvironment hostEnvironment,
         ILogger<DynamicFeedIngestionService> logger)
     {
@@ -51,8 +51,8 @@ public sealed class DynamicFeedIngestionService : IDynamicFeedIngestionService
         _articleRepository = articleRepository;
         _historyRepository = historyRepository;
         _rawResponseRepository = rawResponseRepository;
+        _feedErrorLogRepository = feedErrorLogRepository;
         _errorLogRepository = errorLogRepository;
-        _emailService = emailService;
         _hostEnvironment = hostEnvironment;
         _logger = logger;
     }
@@ -191,7 +191,8 @@ public sealed class DynamicFeedIngestionService : IDynamicFeedIngestionService
                 },
                 cancellationToken);
 
-            await _emailService.SendErrorAsync(
+            await ErrorLogRecorder.RecordAsync(
+                _errorLogRepository,
                 ErrorNotification.FromException(
                     ex,
                     _hostEnvironment.EnvironmentName,
@@ -205,9 +206,10 @@ public sealed class DynamicFeedIngestionService : IDynamicFeedIngestionService
                     correlationId: history.Id,
                     hangfireJobId: ExecutionContextAccessor.CurrentHangfireJobId,
                     executionDuration: stopwatch.Elapsed),
+                _logger,
                 cancellationToken);
 
-            await _errorLogRepository.InsertAsync(
+            await _feedErrorLogRepository.InsertAsync(
                 new FeedErrorLog
                 {
                     FeedSourceId = feedSource.Id,

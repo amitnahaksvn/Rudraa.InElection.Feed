@@ -11,6 +11,8 @@ public static class HangfireJobIds
 
     public const string RawResponseCleanup = "cleanup-raw-responses";
 
+    public const string ErrorNotificationDispatch = "dispatch-error-notifications";
+
     /// <summary>Job id for a <see cref="Domain.Entities.FeedSource"/>-driven feed, keyed by its own SourceCode (e.g. "dynamic-feed-PIB").</summary>
     public static string DynamicFeed(string sourceCode) => $"dynamic-feed-{sourceCode}";
 

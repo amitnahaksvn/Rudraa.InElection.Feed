@@ -23,6 +23,7 @@ public sealed class MongoDbContext
         RssRawResponses = Database.GetCollection<RssRawResponse>(settings.RssRawResponsesCollection);
         FeedSources = Database.GetCollection<FeedSource>(settings.FeedSourcesCollection);
         FeedErrorLogs = Database.GetCollection<FeedErrorLog>(settings.FeedErrorLogsCollection);
+        ErrorLogs = Database.GetCollection<ErrorLog>(settings.ErrorLogsCollection);
     }
 
     public IMongoClient Client { get; }
@@ -41,4 +42,6 @@ public sealed class MongoDbContext
     public IMongoCollection<FeedSource> FeedSources { get; }
 
     public IMongoCollection<FeedErrorLog> FeedErrorLogs { get; }
+
+    public IMongoCollection<ErrorLog> ErrorLogs { get; }
 }

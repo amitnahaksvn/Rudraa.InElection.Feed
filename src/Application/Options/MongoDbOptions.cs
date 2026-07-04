@@ -33,4 +33,8 @@ public sealed class MongoDbOptions
 
     [Required]
     public string FeedErrorLogsCollection { get; set; } = "FeedErrorLogs";
+
+    /// <summary>General app-wide exception log (crawl failures, dynamic feed failures, unhandled HTTP request exceptions) - see <c>Domain.Entities.ErrorLog</c>.</summary>
+    [Required]
+    public string ErrorLogsCollection { get; set; } = "ErrorLogs";
 }

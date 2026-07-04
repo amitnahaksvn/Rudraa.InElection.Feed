@@ -110,7 +110,7 @@ public class NewsCrawlerOrchestratorTests
             historyRepo.Object,
             BuildAcquiredLockRepo().Object,
             rawResponseRepo.Object,
-            Mock.Of<IEmailService>(),
+            Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
             Options.Create(BuildOptions("Home")),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
@@ -142,6 +142,7 @@ public class NewsCrawlerOrchestratorTests
             .ReturnsAsync("history-2");
 
         var rawResponseRepo = BuildRawResponseRepo();
+        var errorLogRepo = new Mock<IErrorLogRepository>();
 
         var orchestrator = new NewsCrawlerOrchestrator(
             [provider.Object],
@@ -149,7 +150,7 @@ public class NewsCrawlerOrchestratorTests
             historyRepo.Object,
             BuildAcquiredLockRepo().Object,
             rawResponseRepo.Object,
-            Mock.Of<IEmailService>(),
+            errorLogRepo.Object,
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
             Options.Create(BuildOptions("Home")),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
@@ -160,6 +161,13 @@ public class NewsCrawlerOrchestratorTests
         Assert.Contains("AajTak/Home", history.FailedFeeds);
         articleRepo.Verify(r => r.UpsertAsync(It.IsAny<NewsArticle>(), It.IsAny<CancellationToken>()), Times.Never);
         rawResponseRepo.Verify(r => r.InsertAsync(It.Is<RssRawResponse>(x => !x.ParseSucceeded), It.IsAny<CancellationToken>()), Times.Once);
+        // The error is persisted immediately (not emailed) - a separate scheduled job dispatches
+        // pending ErrorLog rows as a batch email later.
+        errorLogRepo.Verify(
+            r => r.InsertAsync(
+                It.Is<ErrorLog>(e => e.Provider == "AajTak" && e.FeedOrApiName == "Home" && e.Message == "network timeout" && !e.IsSent),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
     }
 
     [Fact]
@@ -186,7 +194,7 @@ public class NewsCrawlerOrchestratorTests
             historyRepo.Object,
             BuildAcquiredLockRepo().Object,
             BuildRawResponseRepo().Object,
-            Mock.Of<IEmailService>(),
+            Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
             Options.Create(BuildOptions("Home")),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
@@ -217,7 +225,7 @@ public class NewsCrawlerOrchestratorTests
             historyRepo.Object,
             lockRepo.Object,
             BuildRawResponseRepo().Object,
-            Mock.Of<IEmailService>(),
+            Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
             Options.Create(BuildOptions("Home")),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
@@ -256,7 +264,7 @@ public class NewsCrawlerOrchestratorTests
             historyRepo.Object,
             BuildAcquiredLockRepo().Object,
             BuildRawResponseRepo().Object,
-            Mock.Of<IEmailService>(),
+            Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
             Options.Create(BuildTwoProviderOptions()),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
@@ -303,7 +311,7 @@ public class NewsCrawlerOrchestratorTests
             historyRepo.Object,
             lockRepo.Object,
             BuildRawResponseRepo().Object,
-            Mock.Of<IEmailService>(),
+            Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
             Options.Create(BuildTwoProviderOptions()),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
@@ -352,7 +360,7 @@ public class NewsCrawlerOrchestratorTests
             historyRepo.Object,
             BuildAcquiredLockRepo().Object,
             rawResponseRepo.Object,
-            Mock.Of<IEmailService>(),
+            Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
             Options.Create(options),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
