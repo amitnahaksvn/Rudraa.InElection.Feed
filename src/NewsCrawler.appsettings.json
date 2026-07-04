@@ -2003,7 +2003,7 @@
     ]
   },
   "NewsApiCrawler": {
-    "Enabled": true,
+    "Enabled": false,
     "BatchSize": 100,
     "LockName": "news-api-crawler",
     "LockTtl": "00:15:00",
