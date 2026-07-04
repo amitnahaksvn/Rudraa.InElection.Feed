@@ -14,9 +14,6 @@ public interface IRssRawResponseRepository
 {
     Task InsertAsync(RssRawResponse response, CancellationToken cancellationToken);
 
-    Task<IReadOnlyList<RssRawResponse>> GetRecentAsync(
-        string provider, string feedName, int count, CancellationToken cancellationToken);
-
     /// <returns>The number of documents deleted.</returns>
     Task<long> DeleteOlderThanAsync(DateTimeOffset olderThan, CancellationToken cancellationToken);
 

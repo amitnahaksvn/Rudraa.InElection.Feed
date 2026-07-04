@@ -219,11 +219,10 @@ public sealed class EmailTemplateBuilder
             sb.Append(PanelClose());
         }
 
-        sb.Append(PanelOpen("🔗", "Tracing & Retry"));
+        sb.Append(PanelOpen("🔗", "Tracing"));
         sb.Append(KeyValueGrid([
             ("Correlation Id", n.CorrelationId),
             ("Hangfire Job Id", n.HangfireJobId),
-            ("Retry Count", n.RetryCount.ToString()),
             ("Execution Duration", n.ExecutionDuration?.ToString("g"))
         ]));
         sb.Append(PanelClose());

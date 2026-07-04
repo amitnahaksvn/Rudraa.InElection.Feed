@@ -18,14 +18,6 @@ public sealed class RssRawResponseRepository : IRssRawResponseRepository
     public Task InsertAsync(RssRawResponse response, CancellationToken cancellationToken) =>
         _collection.InsertOneAsync(response, options: null, cancellationToken);
 
-    public async Task<IReadOnlyList<RssRawResponse>> GetRecentAsync(
-        string provider, string feedName, int count, CancellationToken cancellationToken) =>
-        await _collection
-            .Find(r => r.Provider == provider && r.FeedName == feedName)
-            .SortByDescending(r => r.FetchedAt)
-            .Limit(count)
-            .ToListAsync(cancellationToken);
-
     public async Task<long> DeleteOlderThanAsync(DateTimeOffset olderThan, CancellationToken cancellationToken)
     {
         var result = await _collection.DeleteManyAsync(r => r.CreatedAt < olderThan, cancellationToken);
@@ -34,12 +26,14 @@ public sealed class RssRawResponseRepository : IRssRawResponseRepository
 
     private const string TtlIndexName = "ttl_rawresponse_createdat";
 
+    // Existed solely to support GetRecentAsync(provider, feedName, ...), which had zero callers
+    // anywhere in the solution and was removed - dropped below if a pre-existing database still has it.
+    private const string SupersededProviderFeedIndexName = "ix_rawresponse_provider_feed";
+
     public async Task EnsureIndexesAsync(TimeSpan retention, CancellationToken cancellationToken)
     {
         var models = new List<CreateIndexModel<RssRawResponse>>
         {
-            new(Builders<RssRawResponse>.IndexKeys.Ascending(r => r.Provider).Ascending(r => r.FeedName),
-                new CreateIndexOptions { Name = "ix_rawresponse_provider_feed" }),
             new(Builders<RssRawResponse>.IndexKeys.Descending(r => r.FetchedAt),
                 new CreateIndexOptions { Name = "ix_rawresponse_fetchedat" }),
             new(Builders<RssRawResponse>.IndexKeys.Ascending(r => r.ContentHash),
@@ -54,6 +48,12 @@ public sealed class RssRawResponseRepository : IRssRawResponseRepository
         // different options rather than updating it in place. So this index is handled separately:
         // drop and recreate only when the existing one's expireAfterSeconds actually differs.
         await EnsureTtlIndexAsync(retention, cancellationToken);
+
+        var existingIndexes = await (await _collection.Indexes.ListAsync(cancellationToken)).ToListAsync(cancellationToken);
+        if (existingIndexes.Any(i => i["name"].AsString == SupersededProviderFeedIndexName))
+        {
+            await _collection.Indexes.DropOneAsync(SupersededProviderFeedIndexName, cancellationToken);
+        }
     }
 
     private async Task EnsureTtlIndexAsync(TimeSpan retention, CancellationToken cancellationToken)

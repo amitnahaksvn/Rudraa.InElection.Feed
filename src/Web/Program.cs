@@ -176,7 +176,22 @@ app.MapEndpoints(Assembly.GetExecutingAssembly());
 
 if (builder.Configuration.GetValue($"{ApiOptions.SectionName}:EnableHangfireDashboard", false))
 {
-    app.UseHangfireDashboard();
+    var dashboardOptions = new DashboardOptions();
+
+    if (!app.Environment.IsDevelopment())
+    {
+        // Hangfire's dashboard has no authorization of its own by default (despite older versions
+        // defaulting to local-requests-only, current Hangfire allows everyone unless an
+        // Authorization filter is supplied) - this requires Basic Auth and fails closed (denies
+        // everyone) if either credential below is blank, so flipping EnableHangfireDashboard on
+        // can never by itself expose it unauthenticated again. Skipped in Development since that's
+        // localhost-only already, so requiring credentials there is friction with no real benefit.
+        var dashboardUsername = builder.Configuration[$"{ApiOptions.SectionName}:HangfireDashboardUsername"] ?? string.Empty;
+        var dashboardPassword = builder.Configuration[$"{ApiOptions.SectionName}:HangfireDashboardPassword"] ?? string.Empty;
+        dashboardOptions.Authorization = [new HangfireBasicAuthAuthorizationFilter(dashboardUsername, dashboardPassword)];
+    }
+
+    app.UseHangfireDashboard("/hangfire", dashboardOptions);
 }
 
 app.Run();

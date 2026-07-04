@@ -1,7 +1,9 @@
 using System.Diagnostics;
 using System.Xml.Linq;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Application.Abstractions;
+using Application.Models;
 using Application.Services;
 using Domain.Entities;
 using Domain.Enums;
@@ -21,12 +23,16 @@ public sealed class DynamicFeedIngestionService : IDynamicFeedIngestionService
 {
     public const string HttpClientName = "DynamicFeedClient";
 
+    private static readonly XNamespace ContentEncodedNamespace = "http://purl.org/rss/1.0/modules/content/";
+
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IFeedSourceRepository _feedSourceRepository;
     private readonly INewsArticleRepository _articleRepository;
     private readonly ICrawlHistoryRepository _historyRepository;
     private readonly IRssRawResponseRepository _rawResponseRepository;
     private readonly IFeedErrorLogRepository _errorLogRepository;
+    private readonly IEmailService _emailService;
+    private readonly IHostEnvironment _hostEnvironment;
     private readonly ILogger<DynamicFeedIngestionService> _logger;
 
     public DynamicFeedIngestionService(
@@ -36,6 +42,8 @@ public sealed class DynamicFeedIngestionService : IDynamicFeedIngestionService
         ICrawlHistoryRepository historyRepository,
         IRssRawResponseRepository rawResponseRepository,
         IFeedErrorLogRepository errorLogRepository,
+        IEmailService emailService,
+        IHostEnvironment hostEnvironment,
         ILogger<DynamicFeedIngestionService> logger)
     {
         _httpClientFactory = httpClientFactory;
@@ -44,6 +52,8 @@ public sealed class DynamicFeedIngestionService : IDynamicFeedIngestionService
         _historyRepository = historyRepository;
         _rawResponseRepository = rawResponseRepository;
         _errorLogRepository = errorLogRepository;
+        _emailService = emailService;
+        _hostEnvironment = hostEnvironment;
         _logger = logger;
     }
 
@@ -84,9 +94,13 @@ public sealed class DynamicFeedIngestionService : IDynamicFeedIngestionService
             var client = _httpClientFactory.CreateClient(HttpClientName);
             using var response = await client.GetAsync(feedSource.FeedUrl, linkedToken);
             httpStatusCode = (int)response.StatusCode;
+            // Body read before the status check throws, not after, so a non-2xx response's body
+            // (an error page, a WAF block, a JSON error payload) is still captured for
+            // diagnostics/the monitoring-alert email instead of being discarded - same reasoning
+            // as BaseRssProvider.FetchFeedAsync.
+            rawXml = await response.Content.ReadAsStringAsync(linkedToken);
             response.EnsureSuccessStatusCode();
 
-            rawXml = await response.Content.ReadAsStringAsync(linkedToken);
             var document = XDocument.Parse(rawXml);
 
             foreach (var item in document.Descendants("item"))
@@ -156,6 +170,43 @@ public sealed class DynamicFeedIngestionService : IDynamicFeedIngestionService
             history.FailedFeeds = [feedSource.FeedName];
             await _historyRepository.UpdateAsync(history, cancellationToken);
 
+            // Same two things every file-configured provider's failure path already does
+            // (NewsCrawlerOrchestrator/NewsApiCrawlerOrchestrator) - previously missing here, so a
+            // broken FeedSource failed completely silently: no raw body saved for diagnostics and
+            // no monitoring-alert email, unlike every other provider's failures.
+            await _rawResponseRepository.InsertAsync(
+                new RssRawResponse
+                {
+                    Provider = feedSource.SourceCode,
+                    FeedName = feedSource.FeedName,
+                    FeedUrl = feedSource.FeedUrl,
+                    FetchedAt = startedOn,
+                    HttpStatusCode = httpStatusCode,
+                    RawXml = rawXml,
+                    ContentHash = rawXml is null ? null : BaseRssProvider.ComputeContentHash(rawXml),
+                    ParseSucceeded = false,
+                    ParseError = ex.Message,
+                    ProcessingDurationMs = stopwatch.ElapsedMilliseconds,
+                    CreatedAt = DateTimeOffset.UtcNow
+                },
+                cancellationToken);
+
+            await _emailService.SendErrorAsync(
+                ErrorNotification.FromException(
+                    ex,
+                    _hostEnvironment.EnvironmentName,
+                    _hostEnvironment.ApplicationName,
+                    operation: "Dynamic Feed Fetch",
+                    provider: feedSource.SourceCode,
+                    feedOrApiName: feedSource.FeedName,
+                    sourceUrl: feedSource.FeedUrl,
+                    httpStatusCode: httpStatusCode,
+                    responseBody: rawXml,
+                    correlationId: history.Id,
+                    hangfireJobId: ExecutionContextAccessor.CurrentHangfireJobId,
+                    executionDuration: stopwatch.Elapsed),
+                cancellationToken);
+
             await _errorLogRepository.InsertAsync(
                 new FeedErrorLog
                 {
@@ -182,6 +233,11 @@ public sealed class DynamicFeedIngestionService : IDynamicFeedIngestionService
 
         var guid = item.Element("guid")?.Value.Trim();
         var description = item.Element("description")?.Value.Trim();
+        // Same content:encoded fallback as BaseRssProvider.ParseItemAsync - richer HTML body
+        // some feeds emit alongside (or instead of) a plain <description> summary. Previously
+        // missing here despite this class's own doc comment claiming it reuses "the exact same"
+        // parsing helpers as the shared pipeline.
+        var encodedContent = item.Element(ContentEncodedNamespace + "encoded")?.Value.Trim();
         var author = item.Element("author")?.Value.Trim();
         var tags = item.Elements("category").Select(e => e.Value.Trim()).Where(t => t.Length > 0).ToList();
 
@@ -203,7 +259,7 @@ public sealed class DynamicFeedIngestionService : IDynamicFeedIngestionService
             Category = feedSource.Category,
             Title = title,
             Summary = BaseRssProvider.StripHtml(description),
-            Content = description,
+            Content = encodedContent ?? description,
             Url = link,
             OriginalGuid = string.IsNullOrWhiteSpace(guid) ? null : guid,
             Author = string.IsNullOrWhiteSpace(author) ? null : author,

@@ -11,10 +11,12 @@ namespace Web.Infrastructure;
 /// </summary>
 public sealed class ProblemDetailsExceptionHandler : IExceptionHandler
 {
+    private readonly IHostEnvironment _environment;
     private readonly ILogger<ProblemDetailsExceptionHandler> _logger;
 
-    public ProblemDetailsExceptionHandler(ILogger<ProblemDetailsExceptionHandler> logger)
+    public ProblemDetailsExceptionHandler(IHostEnvironment environment, ILogger<ProblemDetailsExceptionHandler> logger)
     {
+        _environment = environment;
         _logger = logger;
     }
 
@@ -41,7 +43,10 @@ public sealed class ProblemDetailsExceptionHandler : IExceptionHandler
             {
                 Status = StatusCodes.Status500InternalServerError,
                 Title = "An unexpected error occurred.",
-                Detail = exception.Message,
+                // The raw exception message can contain internal details (connection info, file
+                // paths, library internals) that shouldn't reach an API client in production - the
+                // full exception is already logged server-side just below regardless.
+                Detail = _environment.IsDevelopment() ? exception.Message : null,
                 Instance = httpContext.Request.Path
             }
         };

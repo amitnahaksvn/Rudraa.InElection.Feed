@@ -48,9 +48,6 @@ public sealed record ErrorNotification
 
     public string? HangfireJobId { get; init; }
 
-    /// <summary>Number of attempts already made for this operation before it was recorded as failed (0 when there was no retry).</summary>
-    public int RetryCount { get; init; }
-
     public TimeSpan? ExecutionDuration { get; init; }
 
     /// <summary>
@@ -71,7 +68,6 @@ public sealed record ErrorNotification
         string? responseBody = null,
         string? correlationId = null,
         string? hangfireJobId = null,
-        int retryCount = 0,
         TimeSpan? executionDuration = null) => new()
     {
         Environment = environment,
@@ -89,7 +85,6 @@ public sealed record ErrorNotification
         ResponseBody = responseBody,
         CorrelationId = correlationId,
         HangfireJobId = hangfireJobId,
-        RetryCount = retryCount,
         ExecutionDuration = executionDuration
     };
 }

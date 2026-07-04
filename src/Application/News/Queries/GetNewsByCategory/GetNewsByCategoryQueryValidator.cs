@@ -7,6 +7,8 @@ public sealed class GetNewsByCategoryQueryValidator : AbstractValidator<GetNewsB
     public GetNewsByCategoryQueryValidator()
     {
         RuleFor(q => q.Category).NotEmpty();
-        RuleFor(q => q.Count).GreaterThan(0);
+        // Application-layer cap, independent of Web's own ApiOptions.MaxPageSize clamping - the
+        // last line of defense against an unbounded Mongo .Limit(count) for any caller of this query.
+        RuleFor(q => q.Count).GreaterThan(0).LessThanOrEqualTo(500);
     }
 }

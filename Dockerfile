@@ -20,4 +20,7 @@ WORKDIR /app
 COPY --from=build /app .
 
 ENV DOTNET_EnableDiagnostics=0
+# The base image ships an unprivileged "app" user (APP_UID) but runs as root unless told
+# otherwise - drop to it so the container never runs the actual process as root.
+USER $APP_UID
 ENTRYPOINT ["dotnet", "Web.dll"]

@@ -73,20 +73,16 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
             .Where(p => p.Enabled && (providerFilter is null || providerFilter(p)))
             .ToList();
 
-        var lockedProviders = new List<RssProviderOptions>();
-        foreach (var provider in candidates)
-        {
-            if (await _lockRepository.TryAcquireAsync(ProviderLockName(provider.Name), _ownerId, _options.LockTtl, cancellationToken))
-            {
-                lockedProviders.Add(provider);
-            }
-            else
-            {
-                _logger.LogInformation(
-                    "Crawl skipped for provider {Provider} - lock '{Lock}' is held by another run",
-                    provider.Name, ProviderLockName(provider.Name));
-            }
-        }
+        var lockedProviders = await ProviderLockCoordinator.AcquireAsync(
+            candidates,
+            p => p.Name,
+            ProviderLockName,
+            _lockRepository,
+            _ownerId,
+            _options.LockTtl,
+            _logger,
+            "Crawl skipped for provider {Provider} - lock '{Lock}' is held by another run",
+            cancellationToken);
 
         if (lockedProviders.Count == 0)
         {
@@ -100,10 +96,8 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
         }
         finally
         {
-            foreach (var provider in lockedProviders)
-            {
-                await _lockRepository.ReleaseAsync(ProviderLockName(provider.Name), _ownerId, CancellationToken.None);
-            }
+            await ProviderLockCoordinator.ReleaseAsync(
+                lockedProviders, p => p.Name, ProviderLockName, _lockRepository, _ownerId, CancellationToken.None);
         }
     }
 
@@ -264,21 +258,9 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
             "[{RunId}] Crawl completed: {Status} - {New} new, {Updated} updated, {Duplicate} duplicate, {Failed} failed ({Duration})",
             history.Id, history.Status, newCount, updatedCount, duplicateCount, failedFeeds.Count, history.Duration);
 
-        if (errors.Count > 0)
-        {
-            var providerNames = string.Join(", ", lockedProviders.Select(p => p.Name));
-            try
-            {
-                await _emailService.SendErrorSummaryAsync(errors, $"RSS Crawl Run [{providerNames}]", cancellationToken);
-            }
-            catch (Exception emailEx)
-            {
-                // IEmailService implementations must never throw, but this is cheap, defensive
-                // insurance regardless - a monitoring-alert failure must never fail the crawl run
-                // it was reporting on.
-                _logger.LogError(emailEx, "[{RunId}] Failed to send crawl error-summary email", history.Id);
-            }
-        }
+        var providerNames = string.Join(", ", lockedProviders.Select(p => p.Name));
+        await CrawlErrorEmailSender.SendIfAnyAsync(
+            _emailService, errors, $"RSS Crawl Run [{providerNames}]", _logger, history.Id, cancellationToken);
 
         return history;
     }

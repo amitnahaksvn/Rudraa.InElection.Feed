@@ -65,20 +65,16 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
             .Where(p => p.Enabled && (providerFilter is null || providerFilter(p)))
             .ToList();
 
-        var lockedProviders = new List<NewsApiProviderOptions>();
-        foreach (var provider in candidates)
-        {
-            if (await _lockRepository.TryAcquireAsync(ProviderLockName(provider.Name), _ownerId, _options.LockTtl, cancellationToken))
-            {
-                lockedProviders.Add(provider);
-            }
-            else
-            {
-                _logger.LogInformation(
-                    "News API crawl skipped for provider {Provider} - lock '{Lock}' is held by another run",
-                    provider.Name, ProviderLockName(provider.Name));
-            }
-        }
+        var lockedProviders = await ProviderLockCoordinator.AcquireAsync(
+            candidates,
+            p => p.Name,
+            ProviderLockName,
+            _lockRepository,
+            _ownerId,
+            _options.LockTtl,
+            _logger,
+            "News API crawl skipped for provider {Provider} - lock '{Lock}' is held by another run",
+            cancellationToken);
 
         if (lockedProviders.Count == 0)
         {
@@ -92,10 +88,8 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
         }
         finally
         {
-            foreach (var provider in lockedProviders)
-            {
-                await _lockRepository.ReleaseAsync(ProviderLockName(provider.Name), _ownerId, CancellationToken.None);
-            }
+            await ProviderLockCoordinator.ReleaseAsync(
+                lockedProviders, p => p.Name, ProviderLockName, _lockRepository, _ownerId, CancellationToken.None);
         }
     }
 
@@ -233,18 +227,9 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
             "[{RunId}] Crawl completed: {Status} - {New} new, {Updated} updated, {Duplicate} duplicate, {Failed} failed ({Duration})",
             history.Id, history.Status, newCount, updatedCount, duplicateCount, failedEndpoints.Count, history.Duration);
 
-        if (errors.Count > 0)
-        {
-            var providerNames = string.Join(", ", lockedProviders.Select(p => p.Name));
-            try
-            {
-                await _emailService.SendErrorSummaryAsync(errors, $"News API Crawl Run [{providerNames}]", cancellationToken);
-            }
-            catch (Exception emailEx)
-            {
-                _logger.LogError(emailEx, "[{RunId}] Failed to send news API crawl error-summary email", history.Id);
-            }
-        }
+        var providerNames = string.Join(", ", lockedProviders.Select(p => p.Name));
+        await CrawlErrorEmailSender.SendIfAnyAsync(
+            _emailService, errors, $"News API Crawl Run [{providerNames}]", _logger, history.Id, cancellationToken);
 
         return history;
     }

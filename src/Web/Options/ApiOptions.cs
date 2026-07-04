@@ -14,7 +14,18 @@ public sealed class ApiOptions
     /// <summary>
     /// Hangfire's dashboard has no built-in auth - off by default so it's never accidentally
     /// exposed unauthenticated in production. Enable explicitly per environment (see
-    /// appsettings.Development.json) once you've decided who should be able to reach it.
+    /// appsettings.Development.json) once you've decided who should be able to reach it. Even when
+    /// true, <see cref="HangfireDashboardUsername"/>/<see cref="HangfireDashboardPassword"/> must
+    /// also be set (see <c>Web.Infrastructure.HangfireBasicAuthAuthorizationFilter</c>) - leaving
+    /// either blank keeps the dashboard locked rather than falling open to "true = anyone can see
+    /// it", which is what made it briefly reachable unauthenticated in production before this
+    /// filter existed.
     /// </summary>
     public bool EnableHangfireDashboard { get; set; }
+
+    /// <summary>Basic-auth username required to view <c>/hangfire</c> - see <see cref="EnableHangfireDashboard"/>.</summary>
+    public string HangfireDashboardUsername { get; set; } = string.Empty;
+
+    /// <summary>Basic-auth password required to view <c>/hangfire</c> - see <see cref="EnableHangfireDashboard"/>.</summary>
+    public string HangfireDashboardPassword { get; set; } = string.Empty;
 }

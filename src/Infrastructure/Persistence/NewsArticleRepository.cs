@@ -119,21 +119,50 @@ public sealed class NewsArticleRepository : INewsArticleRepository
                 new CreateIndexOptions { Name = "ix_news_originalguid" }),
             new(Builders<NewsArticle>.IndexKeys.Descending(a => a.PublishedAt),
                 new CreateIndexOptions { Name = "ix_news_publishedat" }),
-            new(Builders<NewsArticle>.IndexKeys.Descending(a => a.CrawledAt),
-                new CreateIndexOptions { Name = "ix_news_crawledat" }),
-            new(Builders<NewsArticle>.IndexKeys.Ascending(a => a.Provider),
-                new CreateIndexOptions { Name = "ix_news_provider" }),
-            new(Builders<NewsArticle>.IndexKeys.Ascending(a => a.Category),
-                new CreateIndexOptions { Name = "ix_news_category" })
+            // Compound, not single-field, because every actual read query
+            // (GetLatestAsync/GetByProviderAsync/GetByCategoryAsync) filters on IsActive (plus
+            // Provider/Category for the latter two) and always sorts by CrawledAt descending -
+            // Mongo can only use one index per query, so three separate single-field indexes here
+            // forced an index scan plus an in-memory sort instead of one fully-covered compound
+            // index. No query filters on Provider/Category/CrawledAt without IsActive, so these
+            // fully subsume what the old single-field indexes covered.
+            new(Builders<NewsArticle>.IndexKeys.Ascending(a => a.IsActive).Descending(a => a.CrawledAt),
+                new CreateIndexOptions { Name = "ix_news_active_crawledat" }),
+            new(Builders<NewsArticle>.IndexKeys.Ascending(a => a.IsActive).Ascending(a => a.Provider).Descending(a => a.CrawledAt),
+                new CreateIndexOptions { Name = "ix_news_active_provider_crawledat" }),
+            new(Builders<NewsArticle>.IndexKeys.Ascending(a => a.IsActive).Ascending(a => a.Category).Descending(a => a.CrawledAt),
+                new CreateIndexOptions { Name = "ix_news_active_category_crawledat" })
         };
 
         await _collection.Indexes.CreateManyAsync(models, cancellationToken);
 
         await EnsureUniqueHashIndexAsync(cancellationToken);
+        await DropSupersededSingleFieldIndexesAsync(cancellationToken);
     }
 
     private const string HashIndexName = "ux_news_hash";
     private const string LegacyHashIndexName = "ix_news_hash";
+
+    private static readonly string[] SupersededIndexNames = ["ix_news_crawledat", "ix_news_provider", "ix_news_category"];
+
+    /// <summary>
+    /// Drops the three single-field indexes the compound ones above replaced, if they still exist
+    /// from before this change - an existing database would otherwise carry both, paying the
+    /// write overhead of five indexes doing the job three compound ones already cover in full.
+    /// </summary>
+    private async Task DropSupersededSingleFieldIndexesAsync(CancellationToken cancellationToken)
+    {
+        var existingIndexes = await (await _collection.Indexes.ListAsync(cancellationToken)).ToListAsync(cancellationToken);
+        var existingNames = existingIndexes.Select(i => i["name"].AsString).ToHashSet(StringComparer.Ordinal);
+
+        foreach (var indexName in SupersededIndexNames)
+        {
+            if (existingNames.Contains(indexName))
+            {
+                await _collection.Indexes.DropOneAsync(indexName, cancellationToken);
+            }
+        }
+    }
 
     /// <summary>
     /// The Hash tier of <c>UpsertAsync</c>'s dedup check (Url -&gt; OriginalGuid -&gt; Hash) was

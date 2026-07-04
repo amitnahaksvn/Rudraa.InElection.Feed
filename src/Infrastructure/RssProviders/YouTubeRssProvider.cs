@@ -74,9 +74,12 @@ public sealed class YouTubeRssProvider : IRssProvider
             var client = _httpClientFactory.CreateClient(ClientName);
             using var response = await client.GetAsync(feed.Url, cancellationToken);
             httpStatusCode = (int)response.StatusCode;
+            // Body read before the status check throws, not after, so a non-2xx response's body
+            // is still captured for diagnostics/the monitoring-alert email instead of being
+            // discarded - same reasoning as BaseRssProvider.FetchFeedAsync.
+            rawXml = await response.Content.ReadAsStringAsync(cancellationToken);
             response.EnsureSuccessStatusCode();
 
-            rawXml = await response.Content.ReadAsStringAsync(cancellationToken);
             var document = XDocument.Parse(rawXml);
 
             var articles = document.Descendants(Atom + "entry")

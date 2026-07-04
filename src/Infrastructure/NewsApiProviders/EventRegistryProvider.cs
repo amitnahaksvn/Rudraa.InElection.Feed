@@ -59,6 +59,7 @@ public sealed class EventRegistryProvider : INewsApiProvider
         var fetchedAt = DateTimeOffset.UtcNow;
         var stopwatch = Stopwatch.StartNew();
         int? httpStatusCode = null;
+        string? responseBody = null;
         var url = options.BaseUrl;
 
         var apiKey = _configuration[$"NewsApiKeys:{options.Name}"];
@@ -102,10 +103,14 @@ public sealed class EventRegistryProvider : INewsApiProvider
 
             using var response = await client.SendAsync(request, timeoutCts.Token);
             httpStatusCode = (int)response.StatusCode;
+            // Body read before the status check throws, not after, so a non-2xx response's body
+            // (a JSON error payload, a rate-limit message) is still captured for
+            // diagnostics/the monitoring-alert email instead of being discarded - same reasoning
+            // as BaseNewsApiProvider.FetchEndpointAsync.
+            responseBody = await response.Content.ReadAsStringAsync(timeoutCts.Token);
             response.EnsureSuccessStatusCode();
 
-            var json = await response.Content.ReadAsStringAsync(timeoutCts.Token);
-            var articles = ParseArticles(json, endpoint);
+            var articles = ParseArticles(responseBody, endpoint);
 
             return new ApiFetchResult
             {
@@ -127,6 +132,13 @@ public sealed class EventRegistryProvider : INewsApiProvider
                 EndpointUrl = url,
                 Success = false,
                 Error = ex.Message,
+                // Same diagnostic fields BaseNewsApiProvider's own catch block populates for every
+                // other provider - previously missing here, so Event Registry failures showed
+                // blank exception detail in monitoring emails where every other provider doesn't.
+                ExceptionType = ex.GetType().FullName ?? ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                InnerException = ex.InnerException is { } inner ? $"{inner.GetType().FullName}: {inner.Message}" : null,
+                ResponseBody = responseBody,
                 FetchedAt = fetchedAt,
                 HttpStatusCode = httpStatusCode,
                 ProcessingDurationMs = stopwatch.ElapsedMilliseconds

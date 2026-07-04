@@ -69,11 +69,16 @@ public static class InfrastructureServiceCollectionExtensions
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
+        // EmailOptions.MaxRetryAttempts drives this retry count directly (read from raw
+        // configuration, not the bound EmailOptions instance, since DI registration happens before
+        // any options are actually resolved) - previously this was a hardcoded 3 regardless of
+        // what MaxRetryAttempts was configured to, making that setting a no-op.
+        var emailMaxRetryAttempts = configuration.GetValue($"{EmailOptions.SectionName}:{nameof(EmailOptions.MaxRetryAttempts)}", 3);
         services
             .AddResend(o => o.ApiToken = configuration[$"{EmailOptions.SectionName}:{nameof(EmailOptions.ApiKey)}"] ?? string.Empty)
             .AddPolicyHandler(HttpPolicyExtensions
                 .HandleTransientHttpError()
-                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+                .WaitAndRetryAsync(emailMaxRetryAttempts, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
         services.AddSingleton<EmailTemplateBuilder>();
         services.AddSingleton<IEmailService, ResendEmailService>();
 
