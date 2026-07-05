@@ -422,3 +422,90 @@ retention and drops + recreates just that one index rather than crashing
 `MongoIndexInitializerHostedService` (and therefore the whole host) the way it did when
 `RawResponseRetention` was first changed from its original 30-day default down to 7 days against
 an Atlas database that already had the old TTL value baked in.
+
+Three more providers, added specifically to close a gap against Inshorts' publicly-known source
+list (Reuters, Indian Express, PTI, The Guardian, NYT, Outlook, TechCrunch, Sportskeeda), each
+individually curl-verified before adding: **NYTimes** (`rss.nytimes.com/services/xml/rss/nyt/
+{Section}.xml` - a legacy but still-working feed path; `Sports.xml` returns 0 items and is
+excluded; `World`/`Business`/`Technology`/`Politics`/`Science` all verified with real items,
+`media:content` images, and spec-cased `pubDate`, so no `BaseRssProvider` changes needed).
+**TechCrunch** (standard WordPress `/feed/`, no image tags, relies on the `og:image` HTML
+fallback). **Sportskeeda** (only the bare `/feed` works - it redirects to
+`api.sportskeeda.com/v3/feeds_v2/1414`, a single all-sports aggregate mixing cricket/football/
+NFL/WWE/etc.; no section-specific feed or `rel="alternate"` RSS link exists on any category page,
+so unlike ZeeNews/TheWeek/IndiaToday's "narrow feeds over noisy aggregate" pattern, this one
+aggregate is the only option and is `Enabled: true`; standard `media:thumbnail` and `pubDate`).
+
+**Two more providers from that same Inshorts gap-check could not be added.** **Reuters**: no
+working public RSS survives today - the old `feeds.reuters.com/reuters/topNews` path no longer
+resolves, `reutersagency.com`'s feed (that's their PR/licensing site, not their news site) 404s,
+and `reuters.com/rssFeed/topNews` / `reuters.com/world/rss` both return 401 behind a
+"please enable JS and disable any ad blocker" challenge page - Reuters discontinued public RSS
+some years back and now actively blocks non-browser requests at the edge. Two legacy FeedBurner
+slugs (`feeds.feedburner.com/reuters/topNews`, `.../Reuters/worldNews`) still return HTTP 200 but
+have been squatted by an unrelated third-party aggregator ("Flipso") - a live example of the
+"successful fetch of HTML/wrong-content is the failure signature to watch for" caveat already
+noted for Zee News. **PTI** (`ptinews.com`): `/feed` and `/rss` both return HTTP 200, but the body
+is an Angular SPA HTML shell (`<!DOCTYPE html>`), not real RSS - the same disguised-non-content
+failure signature, not a working feed. Neither is wired into `NewsCrawler.appsettings.json`.
+
+**12 more providers, cross-checked against Feedspot's "Indian News RSS Feeds" list
+(rss.feedspot.com/indian_news_rss_feeds/), each individually curl-verified before adding.** The
+Feedspot list runs to 126 entries; the overwhelming majority are hyper-regional/small-town outlets
+(Kashmir/Assam/Northeast/Chandigarh-local papers) or PR/startup content mills (KNN India,
+BioVoice News, TechGenYZ, ...) that don't match this codebase's existing scope of major
+national/institutional sources - those were deliberately not attempted. Nine are standard RSS 2.0,
+no `BaseRssProvider` changes needed (all spec-cased `pubDate`, verified parseable): **Frontline**
+(The Hindu Group's magazine, same `{section}/feeder/default.rss` pattern as TheHindu itself).
+**HinduBusinessLine** (plain `?service=rss` on the site root). **TimesNow**
+(`timesnownews.com/feeds/gns-en-latest.xml`, a single 100-item aggregate, no section-specific
+variant found; no image tags, relies on `og:image`). **AltNews** (a fact-checking outlet, standard
+WordPress `/feed/`; no image tags, relies on `og:image`). **TheBetterIndia** (`/feed/`, redirects
+once - HttpClient follows it transparently). **TheProbe** (investigative journalism; the working
+URL is the bare `theprobe.in/rss`, discovered via the homepage's own
+`rel="alternate" type="application/rss+xml"` link tag - `/feed` and `/rss.xml` both 404).
+**IndiaDotCom** (`india.com/feed/`; no image tags, relies on `og:image`). **Onmanorama** (Kerala's
+Manorama Group English edition, `onmanorama.com/news.feeds.rss.xml`). **TelanganaToday**: only the
+bare `/feed` actually works - every guessed category path (`telangana/feed`,
+`category/andhra-pradesh/feed`, `opinion/feed`) silently returns the identical 500-item
+everything-feed rather than filtering, and `national-international/feed` returns 0 items, so
+(same situation as DeccanChronicle/DeccanHerald/NewIndianExpress) this one large aggregate is the
+only real option and is wired up as-is.
+
+Three more turned out to be **Atom 1.0, not RSS 2.0** - all three are hosted on the same QuintType
+CMS platform's CDN (`prod-qt-images.s3.amazonaws.com/production/{site}/feed.xml`) and serve
+identical `<entry>`/`<published>`/`<id>`/`<link href="..." rel="alternate">` markup, a different
+element vocabulary throughout rather than a `BaseRssProvider`-style spec-tolerance quirk - the
+same reasoning `YouTubeRssProvider` already implements `IRssProvider` directly instead of
+extending `BaseRssProvider`. A new shared `BaseAtomRssProvider` (`Infrastructure/RssProviders/`)
+factors out that parsing once; unlike YouTube's entries (which carry their own
+`media:thumbnail`), these have no image tag at all, so every article's image comes from the
+`og:image` HTML fallback - reusing `BaseRssProvider.TryExtractOgImageAsync` rather than
+duplicating it, since that method was already provider-agnostic. The three providers: **TheQuint**,
+**FreePressJournal**, and **NationalHerald** - each just a thin `BaseAtomRssProvider` subclass
+supplying `Name`/`HttpClientName`, same shape as every RSS 2.0 provider subclassing
+`BaseRssProvider`.
+
+**Six more from that same Feedspot cross-check could not be added, each verified rather than
+guessed-and-gave-up.** **Financial Express**: explicit `wp_die` `"Feeds have been disabled."` error
+with HTTP 410 on every path tried - a deliberate, stated policy, not a technical block (same
+"provider turned RSS off on purpose" category as Business Standard/Firstpost). **LiveLaw** (legal
+news): every guessed path (`/feed`, `/rss.xml`) 404s, no `rel="alternate"` RSS link on the
+homepage either. **The News Minute**: same - `/rss.xml`, `/feed` both return either 404 or an
+empty 0-item body, no discoverable feed link on the homepage. **Rediff**: every guessed path
+404s. **The Asian Age**: every attempt (including with a browser User-Agent) returns a bare HTTP
+500 server error - the site itself appears to be in a broken/deprecated state, not actively
+blocking. **Tribune India**: `/rss/feed` returns HTTP 403 even with a browser User-Agent - the
+same WAF-block signature already seen with News18/IndianExpress/PIB, just not confirmed to have a
+working feed underneath it worth working around. None of these six are wired into
+`NewsCrawler.appsettings.json`.
+
+**Three explicitly partisan/opinion outlets from that same Feedspot list - OpIndia, TFIPost,
+Organiser (right-leaning) - were added deliberately, not by default. The Feedspot list included
+these alongside National Herald (left-leaning, Congress-affiliated) added just above; since this
+is specifically an election-news app, whether to include openly opinion-leaning sources at all -
+and from which side(s) - was treated as the user's call rather than a coverage/technical one,
+raised explicitly rather than silently deciding either way.** The user chose to include all four
+"for balance" rather than exclude opinion-leaning sources entirely. All three are standard
+WordPress `/feed/` (spec-cased `pubDate`, no image tags - relies on `og:image`), no
+`BaseRssProvider` changes needed.

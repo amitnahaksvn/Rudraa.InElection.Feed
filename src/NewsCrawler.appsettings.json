@@ -1999,6 +1999,304 @@
             "Enabled": true
           }
         ]
+      },
+      {
+        "Name": "NYTimes",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "World",
+            "Url": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
+            "Category": "World",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Business",
+            "Url": "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml",
+            "Category": "Business",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Technology",
+            "Url": "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml",
+            "Category": "Technology",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Politics",
+            "Url": "https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml",
+            "Category": "Politics",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Science",
+            "Url": "https://rss.nytimes.com/services/xml/rss/nyt/Science.xml",
+            "Category": "Science",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "TechCrunch",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://techcrunch.com/feed/",
+            "Category": "Technology",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "Sportskeeda",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://www.sportskeeda.com/feed",
+            "Category": "Sports",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "Frontline",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "CoverStory",
+            "Url": "https://frontline.thehindu.com/cover-story/feeder/default.rss",
+            "Category": "Politics",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "HinduBusinessLine",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://www.thehindubusinessline.com/?service=rss",
+            "Category": "Business",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "TimesNow",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://www.timesnownews.com/feeds/gns-en-latest.xml",
+            "Category": "General",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "AltNews",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://www.altnews.in/feed/",
+            "Category": "FactCheck",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "TheBetterIndia",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://www.thebetterindia.com/feed/",
+            "Category": "General",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "TheProbe",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://theprobe.in/rss",
+            "Category": "General",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "IndiaDotCom",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://www.india.com/feed/",
+            "Category": "General",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "Onmanorama",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://www.onmanorama.com/news.feeds.rss.xml",
+            "Category": "General",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "TelanganaToday",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://telanganatoday.com/feed",
+            "Category": "General",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "TheQuint",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://prod-qt-images.s3.amazonaws.com/production/thequint/feed.xml",
+            "Category": "General",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "FreePressJournal",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://prod-qt-images.s3.amazonaws.com/production/freepressjournal/feed.xml",
+            "Category": "General",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "NationalHerald",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://prod-qt-images.s3.amazonaws.com/production/nationalherald/feed.xml",
+            "Category": "Politics",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "OpIndia",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://www.opindia.com/feed",
+            "Category": "Politics",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "TFIPost",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://tfipost.com/feed",
+            "Category": "Politics",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "Organiser",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://organiser.org/feed",
+            "Category": "Politics",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
       }
     ]
   },

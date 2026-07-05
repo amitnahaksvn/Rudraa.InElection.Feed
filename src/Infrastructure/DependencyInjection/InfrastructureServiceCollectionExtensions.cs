@@ -124,6 +124,24 @@ public static class InfrastructureServiceCollectionExtensions
         AddRssProvider<MyGovIndiaRssProvider>(services, MyGovIndiaRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<GoogleNewsRssProvider>(services, GoogleNewsRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<YouTubeRssProvider>(services, YouTubeRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<NyTimesRssProvider>(services, NyTimesRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TechCrunchRssProvider>(services, TechCrunchRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<SportskeedaRssProvider>(services, SportskeedaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<FrontlineRssProvider>(services, FrontlineRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<HinduBusinessLineRssProvider>(services, HinduBusinessLineRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TimesNowRssProvider>(services, TimesNowRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<AltNewsRssProvider>(services, AltNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TheBetterIndiaRssProvider>(services, TheBetterIndiaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TheProbeRssProvider>(services, TheProbeRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<IndiaDotComRssProvider>(services, IndiaDotComRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<OnmanoramaRssProvider>(services, OnmanoramaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TelanganaTodayRssProvider>(services, TelanganaTodayRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TheQuintRssProvider>(services, TheQuintRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<FreePressJournalRssProvider>(services, FreePressJournalRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<NationalHeraldRssProvider>(services, NationalHeraldRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<OpIndiaRssProvider>(services, OpIndiaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TfiPostRssProvider>(services, TfiPostRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<OrganiserRssProvider>(services, OrganiserRssProvider.ClientName, CrawlerUserAgent);
 
         // The Mongo-driven FeedSource pipeline (PIB first) - a generic alternative to the
         // file-configured providers above, for feeds that need no publisher-specific quirks.
