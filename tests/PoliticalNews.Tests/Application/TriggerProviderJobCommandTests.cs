@@ -10,12 +10,20 @@ public class TriggerProviderJobCommandTests
 {
     private static NewsCrawlerOptions BuildOptions() => new()
     {
-        Providers =
+        Countries =
         [
-            new RssProviderOptions { Name = "AajTak", Enabled = true, Cron = "*/5 * * * *" },
-            new RssProviderOptions { Name = "ABPNews", Enabled = true, Cron = "*/5 * * * *" },
-            new RssProviderOptions { Name = "Disabled", Enabled = false, Cron = "*/5 * * * *" },
-            new RssProviderOptions { Name = "NoCron", Enabled = true, Cron = "" }
+            new CountryOptions
+            {
+                Name = "India",
+                Enabled = true,
+                Providers =
+                [
+                    new RssProviderOptions { Name = "AajTak", Enabled = true, Cron = "*/5 * * * *" },
+                    new RssProviderOptions { Name = "ABPNews", Enabled = true, Cron = "*/5 * * * *" },
+                    new RssProviderOptions { Name = "Disabled", Enabled = false, Cron = "*/5 * * * *" },
+                    new RssProviderOptions { Name = "NoCron", Enabled = true, Cron = "" }
+                ]
+            }
         ]
     };
 

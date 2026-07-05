@@ -36,6 +36,9 @@ public sealed class NewsArticle
 
     public string Language { get; set; } = "hi";
 
+    /// <summary>Country the publisher is based in, e.g. "India", "United States" - see <see cref="Application.Options.RssFeedOptions.Country"/>.</summary>
+    public string Country { get; set; } = "India";
+
     public string? ImageUrl { get; set; }
 
     public DateTimeOffset? PublishedAt { get; set; }

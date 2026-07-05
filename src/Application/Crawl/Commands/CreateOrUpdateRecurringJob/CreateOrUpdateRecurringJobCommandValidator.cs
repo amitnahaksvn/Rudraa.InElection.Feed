@@ -9,7 +9,9 @@ public sealed class CreateOrUpdateRecurringJobCommandValidator : AbstractValidat
 {
     public CreateOrUpdateRecurringJobCommandValidator(IOptions<NewsCrawlerOptions> options)
     {
-        var enabledProviders = options.Value.Providers
+        var enabledProviders = options.Value.Countries
+            .Where(c => c.Enabled)
+            .SelectMany(c => c.Providers)
             .Where(p => p.Enabled)
             .Select(p => p.Name)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);

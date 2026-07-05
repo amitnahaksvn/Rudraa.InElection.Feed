@@ -81,6 +81,7 @@ public static class ErrorLogRecorder
         HangfireJobId = n.HangfireJobId,
         Provider = n.Provider,
         FeedOrApiName = n.FeedOrApiName,
+        Country = n.Country,
         SourceUrl = n.SourceUrl,
         HttpStatusCode = n.HttpStatusCode,
         ResponseBody = n.ResponseBody,

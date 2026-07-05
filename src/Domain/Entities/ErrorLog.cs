@@ -72,6 +72,9 @@ public sealed class ErrorLog
     /// <summary>Feed name (RSS) or endpoint name (JSON API).</summary>
     public string? FeedOrApiName { get; set; }
 
+    /// <summary>Country the failing feed's publisher is based in - lets a batch of pending errors be scanned by country at a glance, not just by provider name.</summary>
+    public string? Country { get; set; }
+
     public string? SourceUrl { get; set; }
 
     public int? HttpStatusCode { get; set; }

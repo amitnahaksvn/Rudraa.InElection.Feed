@@ -252,9 +252,14 @@ public abstract partial class BaseRssProvider : IRssProvider
         // "Thu May 28 21:09:41 IST 2026" (Java's Date.toString() format) - .NET's parser doesn't
         // recognize the "IST" zone abbreviation at all (only "GMT"/"UTC"/numeric offsets), so it's
         // replaced with its fixed numeric offset - unambiguously India Standard Time for every
-        // provider in this app, not Israel/Ireland's IST.
+        // provider in this app, not Israel/Ireland's IST. CBC (Canada) emits
+        // "Wed, 24 Jun 2026 21:33:43 EDT" - same unrecognized-abbreviation problem, just North
+        // American zones instead of IST; replaced with each abbreviation's own fixed numeric
+        // offset (not DST-aware, but CBC's own abbreviation already encodes DST vs standard time,
+        // so a fixed EDT->-04:00/EST->-05:00 style mapping is exact, not an approximation).
         var cleaned = trimmed.Replace("GMT", string.Empty, StringComparison.OrdinalIgnoreCase);
         cleaned = IstAbbreviationRegex().Replace(cleaned, " +05:30 ");
+        cleaned = UsTimeZoneAbbreviationRegex().Replace(cleaned, match => $" {UsTimeZoneOffsets[match.Value.ToUpperInvariant()]} ");
         cleaned = WhitespaceRegex().Replace(cleaned, " ").Trim();
         cleaned = SingleDigitUtcOffsetRegex().Replace(cleaned, "${sign}0${hour}:");
 
@@ -296,6 +301,21 @@ public abstract partial class BaseRssProvider : IRssProvider
 
     [GeneratedRegex(@"\bIST\b")]
     private static partial Regex IstAbbreviationRegex();
+
+    private static readonly Dictionary<string, string> UsTimeZoneOffsets = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["EDT"] = "-04:00",
+        ["EST"] = "-05:00",
+        ["CDT"] = "-05:00",
+        ["CST"] = "-06:00",
+        ["MDT"] = "-06:00",
+        ["MST"] = "-07:00",
+        ["PDT"] = "-07:00",
+        ["PST"] = "-08:00",
+    };
+
+    [GeneratedRegex(@"\b(?:EDT|EST|CDT|CST|MDT|MST|PDT|PST)\b")]
+    private static partial Regex UsTimeZoneAbbreviationRegex();
 
     [GeneratedRegex(
         @"^\w{3}\s+(?<month>\w{3})\s+(?<day>\d{1,2})\s+(?<time>\d{2}:\d{2}:\d{2})\s+(?<offset>[+-]\d{2}:\d{2})\s+(?<year>\d{4})$")]

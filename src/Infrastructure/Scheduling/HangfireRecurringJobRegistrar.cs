@@ -37,7 +37,15 @@ public static class HangfireRecurringJobRegistrar
         var recurringJobManager = services.GetRequiredService<IRecurringJobManager>();
         var enabledJobIds = new HashSet<string>(StringComparer.Ordinal);
 
-        foreach (var provider in options.Providers.Where(p => p.Enabled))
+        // Skips providers under a disabled country entirely, same as the crawl orchestrator's own
+        // candidate filtering - a country-disabled provider gets no recurring job at all, not just
+        // a skipped run.
+        var enabledProviders = options.Countries
+            .Where(c => c.Enabled)
+            .SelectMany(c => c.Providers)
+            .Where(p => p.Enabled);
+
+        foreach (var provider in enabledProviders)
         {
             if (string.IsNullOrWhiteSpace(provider.Cron))
             {

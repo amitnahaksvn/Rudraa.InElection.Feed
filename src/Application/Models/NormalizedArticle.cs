@@ -32,6 +32,9 @@ public sealed record NormalizedArticle
 
     public string Language { get; init; } = "hi";
 
+    /// <summary>Country the publisher is based in - see <see cref="Options.RssFeedOptions.Country"/>. Defaults to "India" for every provider that predates the first international additions.</summary>
+    public string Country { get; init; } = "India";
+
     public string? ImageUrl { get; init; }
 
     public DateTimeOffset? PublishedAt { get; init; }

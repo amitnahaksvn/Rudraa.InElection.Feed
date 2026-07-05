@@ -67,15 +67,20 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
     public Task<CrawlHistory> RunCrawlAsync(IReadOnlyCollection<string> providerNames, CancellationToken cancellationToken) =>
         RunCrawlAsync(p => providerNames.Contains(p.Name, StringComparer.OrdinalIgnoreCase), cancellationToken);
 
+    /// <summary>One provider together with the country group it was configured under - <see cref="NewsCrawlerOptions.Countries"/> is the source of truth, this is just the flattened-for-iteration shape.</summary>
+    private readonly record struct CountryProvider(string Country, RssProviderOptions Provider);
+
     private async Task<CrawlHistory> RunCrawlAsync(Func<RssProviderOptions, bool>? providerFilter, CancellationToken cancellationToken)
     {
-        var candidates = _options.Providers
-            .Where(p => p.Enabled && (providerFilter is null || providerFilter(p)))
+        var candidates = _options.Countries
+            .Where(c => c.Enabled)
+            .SelectMany(c => c.Providers.Select(p => new CountryProvider(c.Name, p)))
+            .Where(cp => cp.Provider.Enabled && (providerFilter is null || providerFilter(cp.Provider)))
             .ToList();
 
         var lockedProviders = await ProviderLockCoordinator.AcquireAsync(
             candidates,
-            p => p.Name,
+            cp => cp.Provider.Name,
             ProviderLockName,
             _lockRepository,
             _ownerId,
@@ -97,13 +102,13 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
         finally
         {
             await ProviderLockCoordinator.ReleaseAsync(
-                lockedProviders, p => p.Name, ProviderLockName, _lockRepository, _ownerId, CancellationToken.None);
+                lockedProviders, cp => cp.Provider.Name, ProviderLockName, _lockRepository, _ownerId, CancellationToken.None);
         }
     }
 
     private string ProviderLockName(string providerName) => $"{_options.LockName}:{providerName}";
 
-    private async Task<CrawlHistory> RunLockedAsync(IReadOnlyList<RssProviderOptions> lockedProviders, CancellationToken cancellationToken)
+    private async Task<CrawlHistory> RunLockedAsync(IReadOnlyList<CountryProvider> lockedProviders, CancellationToken cancellationToken)
     {
         var history = new CrawlHistory
         {
@@ -122,7 +127,7 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
 
         try
         {
-            foreach (var providerOptions in lockedProviders)
+            foreach (var (country, providerOptions) in lockedProviders)
             {
                 var provider = _providers.FirstOrDefault(p =>
                     string.Equals(p.Name, providerOptions.Name, StringComparison.OrdinalIgnoreCase));
@@ -186,6 +191,7 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
                             ApplicationName = _hostEnvironment.ApplicationName,
                             Provider = provider.Name,
                             FeedOrApiName = result.FeedName,
+                            Country = country,
                             SourceUrl = result.FeedUrl,
                             Operation = "RSS Feed Fetch",
                             ExceptionType = result.ExceptionType ?? "Unknown",
@@ -203,7 +209,7 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
                     }
 
                     var (inserted, updated, duplicates) = await PersistArticlesAsync(
-                        result.Articles.Take(_options.BatchSize),
+                        result.Articles.Take(_options.BatchSize).Select(a => a with { Country = country }),
                         cancellationToken);
 
                     newCount += inserted;

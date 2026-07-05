@@ -98,7 +98,7 @@ public sealed class EmailTemplateBuilder
             var e = errors[i];
             body.Append($"""
                 <div style="margin:14px 0 6px;font-size:13px;font-weight:700;color:#111827;">
-                #{i + 1} &middot; <span style="color:{Error.Color};">Error ID: {Encode(e.Id)}</span> &middot; {Encode(e.Provider ?? e.Source)}{(e.FeedOrApiName is { } f ? $" / {Encode(f)}" : "")}
+                #{i + 1} &middot; <span style="color:{Error.Color};">Error ID: {Encode(e.Id)}</span> &middot; {(e.Country is { } c ? $"[{Encode(c)}] " : "")}{Encode(e.Provider ?? e.Source)}{(e.FeedOrApiName is { } f ? $" / {Encode(f)}" : "")}
                 </div>
                 """);
             body.Append(ErrorLogSections(e));
@@ -188,6 +188,7 @@ public sealed class EmailTemplateBuilder
             ("Machine Name", e.MachineName),
             ("Provider", e.Provider),
             ("Feed/API Name", e.FeedOrApiName),
+            ("Country", e.Country),
             ("Source", e.Source),
             ("Source URL", e.SourceUrl)
         ]));
@@ -291,7 +292,7 @@ public sealed class EmailTemplateBuilder
     {
         var sb = new StringBuilder("""<table role="presentation" style="width:100%;border-collapse:collapse;font-size:12px;">""");
         sb.Append("""<tr style="background:#f9fafb;">""");
-        foreach (var col in new[] { "#", "Error Id", "Provider", "Feed/API", "Exception", "HTTP", "Occurred (UTC)" })
+        foreach (var col in new[] { "#", "Error Id", "Country", "Provider", "Feed/API", "Exception", "HTTP", "Occurred (UTC)" })
         {
             sb.Append($"""<th style="text-align:left;padding:8px 10px;border-bottom:2px solid #eef0f2;color:#6b7280;text-transform:uppercase;font-size:10px;letter-spacing:0.3px;">{col}</th>""");
         }
@@ -304,6 +305,7 @@ public sealed class EmailTemplateBuilder
             sb.Append($"""<tr style="background:{rowBg};">""");
             sb.Append(Cell($"""<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:{Error.Color};margin-right:6px;"></span>{i + 1}"""));
             sb.Append(Cell($"""<span style="font-family:'SF Mono',Consolas,Menlo,monospace;">{Encode(e.Id)}</span>"""));
+            sb.Append(Cell(Encode(e.Country ?? "-")));
             sb.Append(Cell(Encode(e.Provider ?? "-")));
             sb.Append(Cell(Encode(e.FeedOrApiName ?? "-")));
             sb.Append(Cell(Encode(e.ExceptionType)));

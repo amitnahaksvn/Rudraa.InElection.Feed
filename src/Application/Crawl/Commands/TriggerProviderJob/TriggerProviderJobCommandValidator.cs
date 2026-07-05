@@ -8,7 +8,9 @@ public sealed class TriggerProviderJobCommandValidator : AbstractValidator<Trigg
 {
     public TriggerProviderJobCommandValidator(IOptions<NewsCrawlerOptions> options)
     {
-        var triggerableProviders = options.Value.Providers
+        var triggerableProviders = options.Value.Countries
+            .Where(c => c.Enabled)
+            .SelectMany(c => c.Providers)
             .Where(p => p.Enabled && !string.IsNullOrWhiteSpace(p.Cron))
             .Select(p => p.Name)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);

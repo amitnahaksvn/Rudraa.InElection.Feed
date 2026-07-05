@@ -5,7 +5,7 @@ namespace Application.Options;
 /// <summary>
 /// Root configuration section ("NewsCrawler") controlling the crawl scheduler and providers.
 /// Validated via <c>ValidateDataAnnotations()</c> at startup - note that this only validates these
-/// top-level scalar properties, not the nested <see cref="Providers"/> list items, since .NET's
+/// top-level scalar properties, not the nested <see cref="Countries"/> list items, since .NET's
 /// options validation does not recurse into nested complex properties.
 /// </summary>
 public sealed class NewsCrawlerOptions
@@ -52,5 +52,12 @@ public sealed class NewsCrawlerOptions
     /// </summary>
     public bool SaveRawResponses { get; set; } = true;
 
-    public List<RssProviderOptions> Providers { get; set; } = [];
+    /// <summary>
+    /// Every provider grouped by country - see <see cref="CountryOptions"/>. Replaced a flat
+    /// <c>Providers</c> list so a whole country's feeds could be disabled with one flag; a
+    /// provider's own name must still be unique across every country, since Hangfire job ids
+    /// (<c>news-crawl-{provider}</c>) and the crawl lock name are keyed on provider name alone,
+    /// not on country.
+    /// </summary>
+    public List<CountryOptions> Countries { get; set; } = [];
 }

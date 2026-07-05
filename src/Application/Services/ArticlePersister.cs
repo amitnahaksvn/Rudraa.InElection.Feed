@@ -39,6 +39,7 @@ internal static class ArticlePersister
                 OriginalGuid = normalized.OriginalGuid,
                 Author = normalized.Author,
                 Language = normalized.Language,
+                Country = normalized.Country,
                 ImageUrl = normalized.ImageUrl,
                 PublishedAt = normalized.PublishedAt,
                 CrawledAt = now,

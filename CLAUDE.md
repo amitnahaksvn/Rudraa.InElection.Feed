@@ -430,11 +430,19 @@ individually curl-verified before adding: **NYTimes** (`rss.nytimes.com/services
 excluded; `World`/`Business`/`Technology`/`Politics`/`Science` all verified with real items,
 `media:content` images, and spec-cased `pubDate`, so no `BaseRssProvider` changes needed).
 **TechCrunch** (standard WordPress `/feed/`, no image tags, relies on the `og:image` HTML
-fallback). **Sportskeeda** (only the bare `/feed` works - it redirects to
-`api.sportskeeda.com/v3/feeds_v2/1414`, a single all-sports aggregate mixing cricket/football/
-NFL/WWE/etc.; no section-specific feed or `rel="alternate"` RSS link exists on any category page,
-so unlike ZeeNews/TheWeek/IndiaToday's "narrow feeds over noisy aggregate" pattern, this one
-aggregate is the only option and is `Enabled: true`; standard `media:thumbnail` and `pubDate`).
+fallback). **Sportskeeda** (a single all-sports aggregate mixing cricket/football/NFL/WWE/etc.;
+no section-specific feed or `rel="alternate"` RSS link exists on any category page, so unlike
+ZeeNews/TheWeek/IndiaToday's "narrow feeds over noisy aggregate" pattern, this one aggregate is
+the only option and is `Enabled: true`; standard `media:thumbnail` and `pubDate`). Configured
+directly against `api.sportskeeda.com/v3/feeds_v2/1414?limit=1000&response_type=w3c`, not the
+human-friendly `sportskeeda.com/feed` alias - that alias 301s via a **CloudFront Function** (edge
+compute, not a static redirect rule - visible as `x-cache: FunctionGeneratedResponse from
+cloudfront` on the 301 response itself), which returned a 405 in production while still 301-ing
+fine from this environment - almost certainly PoP/request-dependent function behavior, not a
+fixed rule, so it's a different mechanism from the Akamai-WAF-blocks-Render's-IP pattern seen with
+News18/IndianExpress even though the symptom ("works here, not in production") looks the same.
+Hitting the resolved API URL directly serves identical content with zero redirect involved,
+sidestepping the function entirely.
 
 **Two more providers from that same Inshorts gap-check could not be added.** **Reuters**: no
 working public RSS survives today - the old `feeds.reuters.com/reuters/topNews` path no longer
@@ -509,3 +517,146 @@ raised explicitly rather than silently deciding either way.** The user chose to 
 "for balance" rather than exclude opinion-leaning sources entirely. All three are standard
 WordPress `/feed/` (spec-cased `pubDate`, no image tags - relies on `og:image`), no
 `BaseRssProvider` changes needed.
+
+**International expansion (24 providers, 16 countries) from a user-supplied Country/Publisher/Feed
+table spanning 21 countries** - the first non-India-focused feeds this app carries. Every URL was
+individually curl-verified (not just the ones that "looked" like they'd work) before being wired
+in, and this pass introduced a genuinely new cross-cutting concern:
+
+**`NewsCrawler:Providers` became `NewsCrawler:Countries` - a new grouping level above providers,
+not a field bolted onto individual feeds.** The first cut of this (Country as a property on
+`RssFeedOptions`) was wrong: it gave visibility but no actual lever - there was still no single
+switch to turn off "every India feed" or "every UK feed" at once, only per-provider/per-feed
+`Enabled`. The corrected shape is `NewsCrawlerOptions.Countries: List<CountryOptions>`, each with
+its own `Name` + `Enabled` + `Providers: List<RssProviderOptions>` (which still holds its own
+`Enabled` and each of its `Feeds` still holds its own `Enabled`, unchanged) - three independent
+on/off switches: country, provider, feed. `RssFeedOptions`/`FeedFetchResult` themselves carry no
+`Country` at all; `NewsCrawlerOrchestrator` knows the country from the `Countries` loop it's
+already iterating and stamps it directly onto the results - `NormalizedArticle.Country` via a
+`with` expression on the articles returned from a successful fetch (record, so non-destructive),
+and `ErrorNotification.Country` directly from the loop variable on a failed one. From there it
+still flows `NormalizedArticle.Country` -> `NewsArticle.Country` (via `ArticlePersister`) and
+`ErrorNotification.Country` -> `ErrorLog.Country` (via `ErrorLogRecorder`) -> shown as its own
+column in the error-notification batch email's summary table and context panel, same end result
+as before (a batch of crawl failures can be scanned by country at a glance) but the config
+structure now actually supports "turn off Israel for now" as a one-line edit.
+`HangfireRecurringJobRegistrar.RegisterNewsCrawlerRecurringJobs` and the two FluentValidation
+validators that check "is this an enabled provider" (`TriggerProviderJobCommandValidator`,
+`CreateOrUpdateRecurringJobCommandValidator`) all flatten `Countries.Where(Enabled).SelectMany(
+Providers).Where(Enabled)` the same way - a provider under a disabled country gets no recurring
+job registered at all, not just a skipped run.
+
+**`BaseRssProvider.ParsePublishDate` gained a fourth tolerance tier for North American timezone
+abbreviations** (EDT/EST/CDT/CST/MDT/MST/PDT/PST -> their fixed numeric UTC offset, e.g.
+`EDT -> -04:00`) - same category of fix as the existing GMT-strip (Zee News) and IST-replace (The
+Week) tiers, needed because CBC News emits `"Wed, 24 Jun 2026 21:33:43 EDT"` and .NET's
+`DateTimeOffset.Parse` doesn't recognize named zone abbreviations beyond GMT/UTC. Deliberately a
+fixed offset per abbreviation (not DST-aware calculation) since CBC's own abbreviation already
+tells you which of standard/daylight time it is - EDT is always `-04:00`, EST is always `-05:00`,
+by definition.
+
+**24 providers added, standard RSS 2.0 (no other `BaseRssProvider` changes needed), one per
+country except where noted:**
+**United States**: NPR (`feeds.npr.org/1001/rss.xml`).
+**United Kingdom**: BBCNews (3 feeds: TopStories/World/Politics, classic `feeds.bbci.co.uk`
+endpoints), SkyNews (`feeds.skynews.com/feeds/rss/home.xml`), TheGuardian
+(`theguardian.com/world/rss` - a plain RSS feed, distinct from the already-existing JSON
+News-API `Guardian` provider which needs an API key and whose pipeline is disabled).
+**Canada**: CBCNews (see the EDT tolerance tier above), GlobalNews (standard WordPress `/feed/`).
+**Australia**: ABCNewsAustralia (`abc.net.au` - the Australian Broadcasting Corporation, distinct
+from the American ABC network), SBSNews, SydneyMorningHerald.
+**Germany**: DW/Deutsche Welle (`rss.dw.com/xml/rss-en-all`, no image tags - relies on `og:image`),
+DerSpiegel (the English "International" edition).
+**France**: France24 (the English edition at `france24.com/en/rss`).
+**Japan**: NHKWorld (no image tags - relies on `og:image`), JapanTimes (standard WordPress
+`/feed/`).
+**South Korea**: Yonhap (the English edition, `en.yna.co.kr/RSS/news.xml`).
+**Singapore**: CNA/Channel News Asia (`channelnewsasia.com/rssfeeds/8395986`).
+**Indonesia**: Antara (the English edition, no image tags - relies on `og:image`).
+**Thailand**: BangkokPost (no image tags - relies on `og:image`).
+**Qatar**: AlJazeera (`aljazeera.com/xml/rss/all.xml`, no image tags - relies on `og:image`).
+**Israel**: JerusalemPost, TimesOfIsrael (standard WordPress `/feed/`).
+**Mexico**: MexicoNewsDaily (standard WordPress `/feed/`).
+**Turkey**: AnadoluAgency (the English World feed, no image tags - relies on `og:image`).
+**Russia**: TASS (`tass.com/rss/v2.xml`, no image tags - relies on `og:image`).
+
+**Three technically-"working" feeds were deliberately excluded despite returning HTTP 200 with
+well-formed XML and a real item count - a new failure signature this codebase hadn't documented
+before: a live-looking feed that's actually frozen/abandoned.** **CNN**
+(`rss.cnn.com/rss/cnn_topstories.rss` and `cnn_world.rss`): every item's `pubDate` is from April
+2023 - CNN's classic RSS feeds are no longer updated, over three years stale. **Xinhua**
+(`english.news.cn/rss/worldrss.xml`) and **China Daily** (`chinadaily.com.cn/rss/world_rss.xml`):
+items date from 2017-2018 (China Daily's items have no `pubDate` at all, and its linked article
+URLs are literally path-stamped `/a/201712/...`) - both frozen for the better part of a decade.
+None of the three would ever deliver a single current article, so despite passing every technical
+check, they're not wired into `NewsCrawler.appsettings.json`. Worth remembering as its own
+category distinct from "blocked" or "wrong content type": a feed can return 200 and valid RSS and
+still be dead.
+
+**A handful of India rows from the same source table were already covered and skipped as
+duplicates**: The Hindu's National/International/Business/Opinion feeds, NDTV's Top Stories, and
+Times of India's India feed (same numeric id, `-2128936835.cms`, just labeled differently) all
+already existed. Two India rows were checked and don't work: India Today's bare `/rss` (200, but
+an HTML discovery/index page, not a feed - the already-existing numbered-id feeds under
+`IndiaToday` are the real thing) and PIB's `rss.aspx` (404 - the already-existing `RssMain.aspx`
+scheme is the real one).
+
+**Ten more from the same table were verified and don't work, each checked rather than
+guessed-and-gave-up**: **Reuters** (`reutersagency.com/feed/?best-topics=world` - 404; that's
+their PR/licensing site, not their news site, consistent with Reuters having no working public
+RSS at all, per the earlier Inshorts-gap-check entry above). **AP News**
+(`apnews.com/hub/ap-top-news?output=rss` returns the plain homepage HTML, not RSS; `/apf-topnews`
+redirects to the homepage too; `/rss` 404s - AP has no accessible classic RSS from this
+environment). **CTV News** and **Le Monde**'s English edition: given URLs 404, no working
+alternate found. **Bernama** (Malaysia): 404. **Gulf News** and **The National** (UAE): 404 on the
+given URL and on guessed alternates. **Arab News** (Saudi Arabia): HTTP 403 even with a browser
+User-Agent - blocked. **News24** (South Africa): the given `feeds.news24.com` subdomain doesn't
+resolve at all (DNS failure); `www.news24.com/news24/rss` redirects to a 404. **Agência Brasil**
+(Brazil): the given URL 404s; `/feed` redirects to a 500 server error. **Ukrinform** (Ukraine):
+the given URL 404s; `/rss.xml` redirects to a 404 page. None of these ten are wired into
+`NewsCrawler.appsettings.json`.
+
+**19 more United States providers**, verified against a second user-supplied publisher table
+(all individually curl-tested, several with more than one candidate URL before landing on the
+real one), added to the existing `United States` country block alongside NYTimes/TechCrunch/NPR:
+**ABCNews** (3 feeds: TopStories/US/Politics, classic `feeds.abcnews.com` endpoints).
+**CBSNews** (3 feeds: Main/US/Politics, `cbsnews.com/latest/rss/{section}`). **NBCNews** (2 feeds:
+News/Politics, classic `feeds.nbcnews.com`). **FoxNews** (3 feeds: Latest/Politics/National,
+classic `feeds.foxnews.com`). **WashingtonPost** (3 feeds: Politics/National/World, classic
+`feeds.washingtonpost.com/rss/{section}` - Politics is a genuinely low-volume feed, 1 item at
+verification time, not broken). **WSJ** (2 feeds: WorldNews/Markets from `feeds.a.dj.com/rss/`;
+a third, `RSSUSnews.xml`, returns a bare S3/CloudFront `<Error><Code>AccessDenied</Code>` XML body
+- not real content - and is excluded). **Bloomberg** (3 feeds: Markets/Politics/Technology,
+`feeds.bloomberg.com/{section}/news.rss`). **TheHill** (standard WordPress `/feed`, 100-item
+aggregate). **Newsweek** (`/rss`). **Time** (standard WordPress `/feed`). **Forbes** - only
+`/business/feed/` is wired up; `/most-popular/feed/` returns real, well-formed RSS but every item
+is dated Jan-Oct 2024 (stale by well over a year) - an evergreen "most read" list, not recent
+news, the same "technically 200 but dead" trap as CNN/Xinhua/China Daily above, so deliberately
+excluded. **Fortune** (standard WordPress `/feed`). **BusinessInsider** (`/rss`, ISO-8601
+`pubDate`, parses fine via the default tier). **MarketWatch** (`feeds.marketwatch.com/marketwatch/
+topstories`). **CNBC** (2 feeds keyed by CNBC's own legacy numeric content ids -
+`cnbc.com/id/{id}/device/rss/rss.html` - not a human-readable slug scheme). **LATimes**
+(`world-nation/rss2.0.xml`). **ProPublica** (`/feeds/propublica/main`). **PBSNews** - the working
+URL is `pbs.org/newshour/feeds/rss/headlines`; the bare `.../feeds/rss` returns HTTP 202 with an
+empty body, not real content. **Vox** (`/rss/index.xml`, ISO-8601 `pubDate`).
+
+**Ten more from that same US table verified and don't work.** **Reuters** (`reuters.com/tools/
+rss` - HTTP 401, consistent with Reuters having no accessible public RSS from this environment at
+all, per the two earlier Reuters entries above). **AP News** (`apnews.com/rss` 404s;
+`?outputType=rss` on the top-news hub URL returns the plain homepage HTML, not RSS - no working
+classic feed found). **USA TODAY** (`rssfeeds.usatoday.com/usatoday-NewsTopStories` returns 200
+but HTML, not RSS; `usatoday.com/rss` returns HTTP 406 Not Acceptable). **Politico**
+(`politico.com/rss/politicopicks.xml` serves a Cloudflare "Just a moment..." bot-challenge page -
+blocked, not a working feed, despite returning HTTP 200). **Axios** (`/feed` returns HTTP 403 even
+with a browser User-Agent). **Chicago Tribune** (`/arcio/rss` returns HTTP 403 even with a browser
+User-Agent). **HuffPost** (`/section/front-page/feed` returns genuinely well-formed RSS - real
+`<channel>` metadata, correct namespaces - but zero `<item>` elements; an empty feed, not a broken
+one). **U.S. News & World Report** (`usnews.com/rss` - connection times out outright, not an
+HTTP-level block). **WSJ's `RSSUSnews.xml`** and **Forbes's `/most-popular/feed/`** - covered
+above (blocked-disguised-as-XML and stale-content respectively). None of these ten are wired
+into `NewsCrawler.appsettings.json`.
+
+(In the course of correcting the `Countries` config restructure above, 26 stale per-feed
+`Country` properties - leftover from before that fix, when `RssFeedOptions` briefly carried its
+own `Country` field - were found and removed from the JSON; harmless since the C# model no longer
+declares that property so they were silently ignored, but removed for clarity.)

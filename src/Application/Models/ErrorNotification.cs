@@ -23,6 +23,9 @@ public sealed record ErrorNotification
     /// <summary>Feed name (RSS) or endpoint name (JSON API), e.g. "India" or "LatestHeadlines".</summary>
     public string? FeedOrApiName { get; init; }
 
+    /// <summary>Country the failing feed's publisher is based in - see <see cref="Options.RssFeedOptions.Country"/>. Null for errors not tied to a specific feed.</summary>
+    public string? Country { get; init; }
+
     public string? SourceUrl { get; init; }
 
     /// <summary>What was being attempted, e.g. "RSS Feed Fetch", "News API Fetch", "MongoDB Persist", "Crawl Run".</summary>
@@ -62,6 +65,7 @@ public sealed record ErrorNotification
         string operation,
         string? provider = null,
         string? feedOrApiName = null,
+        string? country = null,
         string? sourceUrl = null,
         int? httpStatusCode = null,
         string? requestUrl = null,
@@ -74,6 +78,7 @@ public sealed record ErrorNotification
         ApplicationName = applicationName,
         Provider = provider,
         FeedOrApiName = feedOrApiName,
+        Country = country,
         SourceUrl = sourceUrl,
         Operation = operation,
         ExceptionType = exception.GetType().FullName ?? exception.GetType().Name,

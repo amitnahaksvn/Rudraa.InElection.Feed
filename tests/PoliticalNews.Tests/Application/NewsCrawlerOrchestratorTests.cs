@@ -15,15 +15,23 @@ public class NewsCrawlerOrchestratorTests
     private static NewsCrawlerOptions BuildOptions(params string[] feedNames) => new()
     {
         BatchSize = 100,
-        Providers =
+        Countries =
         [
-            new RssProviderOptions
+            new CountryOptions
             {
-                Name = "AajTak",
+                Name = "India",
                 Enabled = true,
-                Feeds = feedNames
-                    .Select(name => new RssFeedOptions { Name = name, Url = $"https://example.com/{name}", Category = "General", Enabled = true })
-                    .ToList()
+                Providers =
+                [
+                    new RssProviderOptions
+                    {
+                        Name = "AajTak",
+                        Enabled = true,
+                        Feeds = feedNames
+                            .Select(name => new RssFeedOptions { Name = name, Url = $"https://example.com/{name}", Category = "General", Enabled = true })
+                            .ToList()
+                    }
+                ]
             }
         ]
     };
@@ -31,19 +39,27 @@ public class NewsCrawlerOrchestratorTests
     private static NewsCrawlerOptions BuildTwoProviderOptions() => new()
     {
         BatchSize = 100,
-        Providers =
+        Countries =
         [
-            new RssProviderOptions
+            new CountryOptions
             {
-                Name = "AajTak",
+                Name = "India",
                 Enabled = true,
-                Feeds = [new RssFeedOptions { Name = "Home", Url = "https://example.com/Home", Category = "General", Enabled = true }]
-            },
-            new RssProviderOptions
-            {
-                Name = "ABPNews",
-                Enabled = true,
-                Feeds = [new RssFeedOptions { Name = "Home", Url = "https://example.com/ABPHome", Category = "General", Enabled = true }]
+                Providers =
+                [
+                    new RssProviderOptions
+                    {
+                        Name = "AajTak",
+                        Enabled = true,
+                        Feeds = [new RssFeedOptions { Name = "Home", Url = "https://example.com/Home", Category = "General", Enabled = true }]
+                    },
+                    new RssProviderOptions
+                    {
+                        Name = "ABPNews",
+                        Enabled = true,
+                        Feeds = [new RssFeedOptions { Name = "Home", Url = "https://example.com/ABPHome", Category = "General", Enabled = true }]
+                    }
+                ]
             }
         ]
     };
@@ -238,6 +254,37 @@ public class NewsCrawlerOrchestratorTests
     }
 
     [Fact]
+    public async Task RunCrawlAsync_CountryDisabled_SkipsEveryProviderUnderIt()
+    {
+        var provider = new Mock<IRssProvider>();
+        provider.Setup(p => p.Name).Returns("AajTak");
+
+        var articleRepo = new Mock<INewsArticleRepository>();
+        var historyRepo = new Mock<ICrawlHistoryRepository>();
+
+        var options = BuildOptions("Home");
+        options.Countries[0].Enabled = false;
+
+        var orchestrator = new NewsCrawlerOrchestrator(
+            [provider.Object],
+            articleRepo.Object,
+            historyRepo.Object,
+            BuildAcquiredLockRepo().Object,
+            BuildRawResponseRepo().Object,
+            Mock.Of<IErrorLogRepository>(),
+            new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
+            Options.Create(options),
+            NullLogger<NewsCrawlerOrchestrator>.Instance);
+
+        var history = await orchestrator.RunCrawlAsync(CancellationToken.None);
+
+        // A country-disabled provider is skipped exactly like a lock-held one - no persisted run.
+        Assert.Equal(CrawlStatus.Skipped, history.Status);
+        provider.Verify(p => p.FetchAllFeedsAsync(It.IsAny<IReadOnlyList<RssFeedOptions>>(), It.IsAny<CancellationToken>()), Times.Never);
+        historyRepo.Verify(r => r.InsertAsync(It.IsAny<CrawlHistory>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
     public async Task RunCrawlAsync_WithProviderNames_OnlyCrawlsNamedProviders()
     {
         var aajTak = new Mock<IRssProvider>();
@@ -352,7 +399,7 @@ public class NewsCrawlerOrchestratorTests
 
         var options = BuildOptions("Home");
         options.SaveRawResponses = globalSave;
-        options.Providers[0].SaveRawResponses = providerSave;
+        options.Countries[0].Providers[0].SaveRawResponses = providerSave;
 
         var orchestrator = new NewsCrawlerOrchestrator(
             [provider.Object],

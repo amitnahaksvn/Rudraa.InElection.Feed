@@ -143,6 +143,56 @@ public static class InfrastructureServiceCollectionExtensions
         AddRssProvider<TfiPostRssProvider>(services, TfiPostRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<OrganiserRssProvider>(services, OrganiserRssProvider.ClientName, CrawlerUserAgent);
 
+        // International providers (Feedspot cross-check) - each provider's own doc comment notes
+        // its country; NewsCrawler:Providers[...]:Feeds[...]:Country carries that same value
+        // through to NormalizedArticle/NewsArticle and, on failure, ErrorLog, so a batch of crawl
+        // failures in the error-notification email can be scanned by country, not just provider.
+        AddRssProvider<NprRssProvider>(services, NprRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<BbcNewsRssProvider>(services, BbcNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<SkyNewsRssProvider>(services, SkyNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TheGuardianRssProvider>(services, TheGuardianRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<CbcNewsRssProvider>(services, CbcNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<GlobalNewsRssProvider>(services, GlobalNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<AbcNewsAustraliaRssProvider>(services, AbcNewsAustraliaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<SbsNewsRssProvider>(services, SbsNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<SydneyMorningHeraldRssProvider>(services, SydneyMorningHeraldRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<DwRssProvider>(services, DwRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<DerSpiegelRssProvider>(services, DerSpiegelRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<France24RssProvider>(services, France24RssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<NhkWorldRssProvider>(services, NhkWorldRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<JapanTimesRssProvider>(services, JapanTimesRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<YonhapRssProvider>(services, YonhapRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<CnaRssProvider>(services, CnaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<AntaraRssProvider>(services, AntaraRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<BangkokPostRssProvider>(services, BangkokPostRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<AlJazeeraRssProvider>(services, AlJazeeraRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<JerusalemPostRssProvider>(services, JerusalemPostRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TimesOfIsraelRssProvider>(services, TimesOfIsraelRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<MexicoNewsDailyRssProvider>(services, MexicoNewsDailyRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<AnadoluAgencyRssProvider>(services, AnadoluAgencyRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TassRssProvider>(services, TassRssProvider.ClientName, CrawlerUserAgent);
+
+        // More United States providers, verified against a user-supplied publisher list.
+        AddRssProvider<AbcNewsRssProvider>(services, AbcNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<CbsNewsRssProvider>(services, CbsNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<NbcNewsRssProvider>(services, NbcNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<FoxNewsRssProvider>(services, FoxNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<WashingtonPostRssProvider>(services, WashingtonPostRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<WsjRssProvider>(services, WsjRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<BloombergRssProvider>(services, BloombergRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TheHillRssProvider>(services, TheHillRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<NewsweekRssProvider>(services, NewsweekRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TimeMagazineRssProvider>(services, TimeMagazineRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<ForbesRssProvider>(services, ForbesRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<FortuneRssProvider>(services, FortuneRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<BusinessInsiderRssProvider>(services, BusinessInsiderRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<MarketWatchRssProvider>(services, MarketWatchRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<CnbcRssProvider>(services, CnbcRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<LaTimesRssProvider>(services, LaTimesRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<ProPublicaRssProvider>(services, ProPublicaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<PbsNewsRssProvider>(services, PbsNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<VoxRssProvider>(services, VoxRssProvider.ClientName, CrawlerUserAgent);
+
         // The Mongo-driven FeedSource pipeline (PIB first) - a generic alternative to the
         // file-configured providers above, for feeds that need no publisher-specific quirks.
         // One shared named HttpClient (rather than one per FeedSource, which would need a DI
