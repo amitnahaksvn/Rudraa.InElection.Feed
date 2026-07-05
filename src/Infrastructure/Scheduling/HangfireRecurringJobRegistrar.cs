@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Hangfire;
 using Hangfire.Storage;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,37 @@ namespace Infrastructure.Scheduling;
 /// </summary>
 public static class HangfireRecurringJobRegistrar
 {
+    /// <summary>
+    /// Cap on how many recurring-job registrations run at once across every registrar below.
+    /// Each registration is an independent Mongo upsert keyed by its own jobId with no shared
+    /// state, so - unlike the sequential loop this replaced, where 260+ providers meant 260+
+    /// one-at-a-time round trips to a remote Atlas cluster and could add double-digit seconds to
+    /// every single startup - they run concurrently instead. Kept modest rather than unbounded so
+    /// a free-tier Atlas cluster's connection/throughput limits aren't hit all at once on every
+    /// restart; Hangfire's own worker threads already hit this same storage concurrently once the
+    /// server is running, so concurrent registration isn't asking anything new of it.
+    /// </summary>
+    private const int RegistrationConcurrency = 32;
+
+    /// <summary>
+    /// <see cref="IRecurringJobManager.AddOrUpdate(string,Job,string,RecurringJobOptions)"/> is a
+    /// synchronous, blocking call (returns void, not Task) - Hangfire's scheduling API predates
+    /// widespread async adoption. Parallel.ForEach below dispatches these onto the CLR ThreadPool,
+    /// which only grows slowly under its own "hill-climbing" algorithm when starved - a burst of
+    /// 200+ blocking calls arriving faster than the pool's default minimum thread count can serve
+    /// them concurrently means most of that burst still queues up and runs close to sequentially
+    /// for the first several seconds, even though the code asked for <see cref="RegistrationConcurrency"/>-way
+    /// parallelism. Raising the minimum once, before any registrar runs, means the threads
+    /// Parallel.ForEach actually wants are already available rather than being injected on demand -
+    /// a standard fix for exactly this "blocking work inside Parallel.ForEach is slower than
+    /// expected" pattern, not specific to Hangfire.
+    /// </summary>
+    static HangfireRecurringJobRegistrar()
+    {
+        ThreadPool.GetMinThreads(out _, out var completionPortMin);
+        ThreadPool.SetMinThreads(RegistrationConcurrency * 2, completionPortMin);
+    }
+
     public static void RegisterNewsCrawlerRecurringJobs(IServiceProvider services, ILogger logger)
     {
         var options = services.GetRequiredService<IOptions<NewsCrawlerOptions>>().Value;
@@ -35,7 +67,6 @@ public static class HangfireRecurringJobRegistrar
         // on a process-wide JobStorage.Current that only gets set once the Hangfire server hosted
         // service has actually started) is required here because this runs before host.Run()/app.Run().
         var recurringJobManager = services.GetRequiredService<IRecurringJobManager>();
-        var enabledJobIds = new HashSet<string>(StringComparer.Ordinal);
 
         // Skips providers under a disabled country entirely, same as the crawl orchestrator's own
         // candidate filtering - a country-disabled provider gets no recurring job at all, not just
@@ -43,18 +74,22 @@ public static class HangfireRecurringJobRegistrar
         var enabledProviders = options.Countries
             .Where(c => c.Enabled)
             .SelectMany(c => c.Providers)
-            .Where(p => p.Enabled);
+            .Where(p => p.Enabled)
+            .ToList();
 
-        foreach (var provider in enabledProviders)
+        var enabledJobIdBag = new System.Collections.Concurrent.ConcurrentBag<string>();
+        var stopwatch = Stopwatch.StartNew();
+
+        Parallel.ForEach(enabledProviders, new ParallelOptions { MaxDegreeOfParallelism = RegistrationConcurrency }, provider =>
         {
             if (string.IsNullOrWhiteSpace(provider.Cron))
             {
                 logger.LogWarning("Provider '{Provider}' has no Cron configured - no recurring job registered", provider.Name);
-                continue;
+                return;
             }
 
             var jobId = HangfireJobIds.NewsCrawl(provider.Name);
-            enabledJobIds.Add(jobId);
+            enabledJobIdBag.Add(jobId);
 
             // AddOrUpdate is idempotent on jobId - re-registering on every startup keeps the recurring
             // job's cron expression in sync with config without ever creating duplicate jobs. Targets
@@ -66,10 +101,20 @@ public static class HangfireRecurringJobRegistrar
                 provider.Cron,
                 RecurringJobOptionsFactory.Create(TimeZoneInfo.Utc));
 
-            logger.LogInformation(
+            // Debug, not Information: at 200+ providers this was previously the dominant source of
+            // startup log noise for zero diagnostic value on a normal run - the one summary line
+            // below (with count + elapsed time) is what actually matters day to day; this is still
+            // available by bumping log verbosity when a specific provider's registration needs
+            // checking.
+            logger.LogDebug(
                 "Registered Hangfire recurring job '{JobId}' for provider '{Provider}' with cron '{Cron}'",
                 jobId, provider.Name, provider.Cron);
-        }
+        });
+
+        var enabledJobIds = new HashSet<string>(enabledJobIdBag, StringComparer.Ordinal);
+        logger.LogInformation(
+            "Registered {Count} RSS Hangfire recurring jobs in {ElapsedMs}ms ({Concurrency}-way concurrent)",
+            enabledJobIds.Count, stopwatch.ElapsedMilliseconds, RegistrationConcurrency);
 
         // Same "zombie job" concern as RegisterNewsApiRecurringJobs below: AddOrUpdate never
         // removes a job for a provider that was previously enabled and is now disabled (or
@@ -175,13 +220,16 @@ public static class HangfireRecurringJobRegistrar
         var activeFeedSources = await feedSourceRepository.GetActiveAsync(CancellationToken.None);
 
         var recurringJobManager = services.GetRequiredService<IRecurringJobManager>();
-        var enabledJobIds = new HashSet<string>(StringComparer.Ordinal);
+        var enabledJobIdBag = new System.Collections.Concurrent.ConcurrentBag<string>();
+        var stopwatch = Stopwatch.StartNew();
 
-        foreach (var feedSource in activeFeedSources)
+        // Same reasoning as RegisterNewsCrawlerRecurringJobs/RegisterNewsApiRecurringJobs above -
+        // independent per-FeedSource Mongo upserts, run concurrently rather than one at a time.
+        Parallel.ForEach(activeFeedSources, new ParallelOptions { MaxDegreeOfParallelism = RegistrationConcurrency }, feedSource =>
         {
             var cron = BuildCronForInterval(feedSource.FetchIntervalMinutes);
             var jobId = HangfireJobIds.DynamicFeed(feedSource.SourceCode);
-            enabledJobIds.Add(jobId);
+            enabledJobIdBag.Add(jobId);
 
             recurringJobManager.AddOrUpdate<HangfireDynamicFeedJobExecutor>(
                 jobId,
@@ -192,7 +240,11 @@ public static class HangfireRecurringJobRegistrar
             logger.LogInformation(
                 "Registered Hangfire recurring job '{JobId}' for FeedSource '{SourceCode}' with cron '{Cron}'",
                 jobId, feedSource.SourceCode, cron);
-        }
+        });
+
+        var enabledJobIds = new HashSet<string>(enabledJobIdBag, StringComparer.Ordinal);
+        logger.LogInformation(
+            "Registered {Count} dynamic-feed Hangfire recurring jobs in {ElapsedMs}ms", enabledJobIds.Count, stopwatch.ElapsedMilliseconds);
 
         // Same "zombie job" concern as the other two registrars: a FeedSource that's deactivated
         // or deleted from Mongo would otherwise leave its Hangfire job firing forever on its old
@@ -231,7 +283,6 @@ public static class HangfireRecurringJobRegistrar
         }
 
         var recurringJobManager = services.GetRequiredService<IRecurringJobManager>();
-        var enabledJobIds = new HashSet<string>(StringComparer.Ordinal);
 
         // Fetched once, up front, so the loop below can tell a brand-new provider (never
         // registered before) apart from one that already existed from a previous startup -
@@ -242,16 +293,27 @@ public static class HangfireRecurringJobRegistrar
             connection.GetRecurringJobs().Select(j => j.Id),
             StringComparer.Ordinal);
 
-        foreach (var provider in options.Providers.Where(p => p.Enabled))
+        // Skips providers under a disabled country entirely, same as RegisterNewsCrawlerRecurringJobs
+        // above and the orchestrator's own candidate filtering.
+        var enabledProviders = options.Countries
+            .Where(c => c.Enabled)
+            .SelectMany(c => c.Providers)
+            .Where(p => p.Enabled)
+            .ToList();
+
+        var enabledJobIdBag = new System.Collections.Concurrent.ConcurrentBag<string>();
+        var stopwatch = Stopwatch.StartNew();
+
+        Parallel.ForEach(enabledProviders, new ParallelOptions { MaxDegreeOfParallelism = RegistrationConcurrency }, provider =>
         {
             if (string.IsNullOrWhiteSpace(provider.Cron))
             {
                 logger.LogWarning("News API provider '{Provider}' has no Cron configured - no recurring job registered", provider.Name);
-                continue;
+                return;
             }
 
             var jobId = HangfireJobIds.NewsApi(provider.Name);
-            enabledJobIds.Add(jobId);
+            enabledJobIdBag.Add(jobId);
             var isNewJob = !preExistingJobIds.Contains(jobId);
 
             recurringJobManager.AddOrUpdate<HangfireNewsApiJobExecutor>(
@@ -273,7 +335,12 @@ public static class HangfireRecurringJobRegistrar
             logger.LogInformation(
                 "Registered Hangfire recurring job '{JobId}' for news API provider '{Provider}' with cron '{Cron}'{TriggeredSuffix}",
                 jobId, provider.Name, provider.Cron, isNewJob ? " (triggered immediately - new job)" : string.Empty);
-        }
+        });
+
+        var enabledJobIds = new HashSet<string>(enabledJobIdBag, StringComparer.Ordinal);
+        logger.LogInformation(
+            "Registered {Count} News API Hangfire recurring jobs in {ElapsedMs}ms ({Concurrency}-way concurrent)",
+            enabledJobIds.Count, stopwatch.ElapsedMilliseconds, RegistrationConcurrency);
 
         // AddOrUpdate only ever adds/updates - it never removes a job for a provider that was
         // previously enabled and is now disabled (or deleted from config entirely), which would

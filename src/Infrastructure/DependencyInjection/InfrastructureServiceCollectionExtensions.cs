@@ -361,6 +361,18 @@ public static class InfrastructureServiceCollectionExtensions
         AddRssProvider<TimesOfOmanRssProvider>(services, TimesOfOmanRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<RoyaNewsRssProvider>(services, RoyaNewsRssProvider.ClientName, CrawlerUserAgent);
 
+        // UN News/Snopes (new "International" pseudo-country), PolitiFact (United States), and
+        // GOV.UK (United Kingdom, Atom) - fact-check/government RSS sources verified against a
+        // user-supplied publisher list.
+        AddRssProvider<UnNewsRssProvider>(services, UnNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<SnopesRssProvider>(services, SnopesRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<PolitiFactRssProvider>(services, PolitiFactRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<GovUkNewsRssProvider>(services, GovUkNewsRssProvider.ClientName, CrawlerUserAgent);
+
+        // More India government providers, verified against a user-supplied publisher list.
+        AddRssProvider<PresidentOfIndiaRssProvider>(services, PresidentOfIndiaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<NitiAayogRssProvider>(services, NitiAayogRssProvider.ClientName, CrawlerUserAgent);
+
         // The Mongo-driven FeedSource pipeline (PIB first) - a generic alternative to the
         // file-configured providers above, for feeds that need no publisher-specific quirks.
         // One shared named HttpClient (rather than one per FeedSource, which would need a DI
@@ -418,6 +430,22 @@ public static class InfrastructureServiceCollectionExtensions
         // Custom INewsApiProvider implementation (not BaseNewsApiProvider - see its own doc
         // comments): Event Registry needs a POST+JSON body.
         services.AddSingleton<INewsApiProvider, EventRegistryProvider>();
+        // Government/legislative JSON-API providers, verified against a user-supplied publisher
+        // list - each maps a status-update record (a bill's latest stage, a candidate filing, a
+        // fact-check claim) onto NormalizedArticle rather than a written story, same "not a story
+        // but still article-shaped" reasoning as DataGovIn above.
+        services.AddSingleton<INewsApiProvider, UkParliamentBillsProvider>();
+        services.AddSingleton<INewsApiProvider, FecProvider>();
+        services.AddSingleton<INewsApiProvider, CongressGovProvider>();
+        services.AddSingleton<INewsApiProvider, GoogleFactCheckProvider>();
+        // More JSON-API providers, verified against a user-supplied publisher list.
+        services.AddSingleton<INewsApiProvider, WebzIoProvider>();
+        services.AddSingleton<INewsApiProvider, ApContentApiProvider>();
+        services.AddSingleton<INewsApiProvider, NyTimesApiProvider>();
+        services.AddSingleton<INewsApiProvider, ProPublicaCongressApiProvider>();
+        services.AddSingleton<INewsApiProvider, FinancialModelingPrepProvider>();
+        services.AddSingleton<INewsApiProvider, AlphaVantageProvider>();
+        services.AddSingleton<INewsApiProvider, FinnhubProvider>();
         services.AddTransient<HangfireNewsApiJobExecutor>();
 
         services.AddHostedService<MongoIndexInitializerHostedService>();

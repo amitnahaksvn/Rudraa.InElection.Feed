@@ -8,9 +8,13 @@ namespace Application.Options;
 /// separate section/orchestrator/lock namespace rather than folded into <see cref="NewsCrawlerOptions"/>
 /// because these providers are polled REST APIs with per-request auth and rate limits, not RSS
 /// feeds - a fundamentally different fetch shape, even though the resulting articles land in the
-/// same <c>NewsArticles</c> collection via the same dedup pipeline. Validated via
-/// <c>ValidateDataAnnotations()</c> at startup - only these top-level scalar properties, not the
-/// nested <see cref="Providers"/> list items (see <see cref="NewsCrawlerOptions"/>'s own note).
+/// same <c>NewsArticles</c> collection via the same dedup pipeline. <see cref="Countries"/>
+/// mirrors <see cref="NewsCrawlerOptions.Countries"/>'s own country-grouping shape (added once
+/// single-country institutional APIs like FEC/Congress.gov/UK Parliament Bills existed alongside
+/// the original global aggregators) for the same reason: a whole country's worth of API
+/// providers can be disabled with one flag. Validated via <c>ValidateDataAnnotations()</c> at
+/// startup - only these top-level scalar properties, not the nested <see cref="Countries"/> list
+/// items (see <see cref="NewsCrawlerOptions"/>'s own note).
 /// </summary>
 public sealed class NewsApiCrawlerOptions
 {
@@ -30,5 +34,5 @@ public sealed class NewsApiCrawlerOptions
     [Range(typeof(TimeSpan), "00:00:01", "1.00:00:00")]
     public TimeSpan LockTtl { get; set; } = TimeSpan.FromMinutes(15);
 
-    public List<NewsApiProviderOptions> Providers { get; set; } = [];
+    public List<NewsApiCountryOptions> Countries { get; set; } = [];
 }

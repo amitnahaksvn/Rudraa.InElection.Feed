@@ -136,13 +136,34 @@ var app = builder.Build();
 // Registers/refreshes every Hangfire recurring job (RSS providers, JSON news-API providers,
 // Mongo-driven dynamic feeds, raw-response cleanup) against this process's own Hangfire server
 // registered above - re-synced on every startup, same idempotent AddOrUpdate behaviour this used
-// to have when it ran in the now-retired Worker process.
+// to have when it ran in the now-retired Worker process. Fire-and-forget, not awaited: with 260+
+// providers this can take real time even with the concurrent registration inside
+// HangfireRecurringJobRegistrar (each AddOrUpdate is its own Mongo round trip), and none of it
+// needs to finish before the HTTP pipeline below can start serving - Scalar/Swagger/health checks/
+// the Hangfire dashboard itself have no dependency on recurring-job metadata already existing in
+// Mongo, and the Hangfire Server's own RecurringJobScheduler dispatcher (already running via
+// AddHangfireServer above) picks up newly-registered jobs on its own polling interval regardless
+// of when this finishes. Blocking app.Run() on this was the actual cause of "the app takes a long
+// time to become reachable at startup" - moving it off the startup path fixes that directly,
+// rather than only shaving the registration work itself down further.
 var startupLogger = app.Services.GetRequiredService<ILogger<Program>>();
-HangfireRecurringJobRegistrar.RegisterNewsCrawlerRecurringJobs(app.Services, startupLogger);
-HangfireRecurringJobRegistrar.RegisterRawResponseCleanupRecurringJob(app.Services, startupLogger);
-await HangfireRecurringJobRegistrar.SeedAndRegisterDynamicFeedRecurringJobsAsync(app.Services, startupLogger);
-HangfireRecurringJobRegistrar.RegisterNewsApiRecurringJobs(app.Services, startupLogger);
-HangfireRecurringJobRegistrar.RegisterErrorNotificationDispatchRecurringJob(app.Services, startupLogger);
+_ = Task.Run(async () =>
+{
+    try
+    {
+        HangfireRecurringJobRegistrar.RegisterNewsCrawlerRecurringJobs(app.Services, startupLogger);
+        HangfireRecurringJobRegistrar.RegisterRawResponseCleanupRecurringJob(app.Services, startupLogger);
+        await HangfireRecurringJobRegistrar.SeedAndRegisterDynamicFeedRecurringJobsAsync(app.Services, startupLogger);
+        HangfireRecurringJobRegistrar.RegisterNewsApiRecurringJobs(app.Services, startupLogger);
+        HangfireRecurringJobRegistrar.RegisterErrorNotificationDispatchRecurringJob(app.Services, startupLogger);
+    }
+    catch (Exception ex)
+    {
+        // Background task - nothing upstream would ever observe this exception otherwise, which
+        // would silently leave every recurring job unregistered until the next restart.
+        startupLogger.LogCritical(ex, "Hangfire recurring-job registration failed in the background");
+    }
+});
 
 app.UseMiddleware<RequestLoggingMiddleware>();
 app.UseExceptionHandler();

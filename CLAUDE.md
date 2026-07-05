@@ -1061,3 +1061,226 @@ at the network layer, consistent with the country's general internet inaccessibi
 providers described as dead in this entry are wired into `NewsCrawler.appsettings.json`; Saudi
 Arabia, Iraq, Chile, Ethiopia, Kuwait, and North Korea have no country block at all as a result -
 every requested outlet in each came back dead.
+
+**Government/parliament/international-org/fact-check sources from a user-supplied 58-row service
+table - scoped deliberately to just the rows that fit this app's existing architecture** (the
+user chose this scope explicitly over building brand-new Finance/Weather/Disaster/Social/Trends/
+AI subsystems, which don't map onto `NewsArticle` at all and were left out of this pass
+entirely). Of the table's 58 rows, 13 already existed in this codebase (every JSON news-API
+provider already under `NewsApiCrawler`, Google News RSS, PIB, and YouTube's Atom feeds) before
+this batch - see each provider's own file for details. **8 new providers added, split across the
+two existing pipelines depending on shape:**
+
+RSS/Atom-shaped (wired into `NewsCrawler:Countries`, same as every publisher elsewhere in this
+file): **UN News** and **Snopes** aren't tied to any one nation, so a new **"International"**
+pseudo-country was created to hold them - the same one-flag-disables-the-group benefit every real
+country already gets, rather than forcing a global fact-checker under an arbitrary nation.
+**PolitiFact**'s requested bare `/feed`/`/rss` both 404, but a `rel="alternate"` tag on the
+homepage points to the real `/rss/factchecks/` - added to the existing United States block.
+**GOV.UK**'s news feed is Atom 1.0, not RSS 2.0 (`GovUkNewsRssProvider` extends
+`BaseAtomRssProvider`, same reasoning as Naharnet/Roya News/Stuff) - it's actually GOV.UK's own
+site-search-as-a-feed endpoint (`gov.uk/search/news-and-communications.atom?keywords=`), so the
+configured feed passes `keywords=election` deliberately, to avoid pulling every unrelated
+government announcement (park opening hours, import tariffs, etc.) into an election-news app;
+added to the existing United Kingdom block.
+
+JSON-API-shaped (wired into `NewsApiCrawler:Providers` at the time this batch was added - since
+restructured into `NewsApiCrawler:Countries`, see the entry below): **UK Parliament Bills API**
+(`bills-api.parliament.uk`) is fully public with no API key at all (`AuthType: None`, same as
+GDELT) - curl-verified live, and its own most-recently-updated bill at verification time was
+literally titled "Representation of the People Bill," confirming real election-relevant content.
+**FEC** (`api.open.fec.gov`) curl-verified live and returns real candidate-filing data even
+against the public rate-limited `DEMO_KEY` - a real production key is free from
+`api.data.gov/signup`. **Congress.gov API** (`api.congress.gov`) curl-verified live: an
+unauthenticated request returns a documented `API_KEY_MISSING` JSON error (confirming the
+endpoint is real, not dead) - a free key comes from `api.congress.gov/sign-up`. **Google Fact
+Check Tools API** (`factchecktools.googleapis.com`) curl-verified live the same way - an
+unauthenticated request returns a documented `PERMISSION_DENIED` error naming the exact
+requirement - a free key comes from enabling "Fact Check Tools API" on a Google Cloud Console
+project. All four map a status-update record (a bill's latest stage, a candidate filing, a
+fact-check claim) onto `NormalizedArticle` rather than a written story - there's no natural
+title/body split for these, so each provider's doc comment explains its own stand-in shape (bill
+title + latest action; candidate name + office/party; claim text + fact-checker's rating). As
+with every other `NewsApiCrawler` provider, none of these four fetch anything until the parent
+`NewsApiCrawler:Enabled` flag is set to `true` **and** their own `NewsApiKeys:{ProviderName}` key
+is configured (`NewsApiKeys:FEC`, `NewsApiKeys:CongressGov`, `NewsApiKeys:GoogleFactCheck` -
+`UKParliamentBills` needs no key at all, same as GDELT).
+
+**`NewsApiCrawler:Providers` restructured into `NewsApiCrawler:Countries`, mirroring the exact
+`NewsCrawler:Countries` fix documented earlier in this file - done immediately after the batch
+above, once it became clear more single-country institutional APIs (an ECI-equivalent, a Canada
+elections API, etc.) would keep being added over time and would need the same "disable this
+whole country's sources with one flag" lever RSS already has.** New
+`NewsApiCountryOptions` (`Application/Options`) mirrors `CountryOptions` exactly - `Name` +
+`Enabled` + `Providers: List<NewsApiProviderOptions>`.
+`NewsApiCrawlerOrchestrator` gained the same `CountryProvider` record-struct flattening pattern
+as `NewsCrawlerOrchestrator` (`_options.Countries.Where(c => c.Enabled).SelectMany(c =>
+c.Providers.Select(p => new CountryProvider(c.Name, p))).Where(...)`), and now stamps `Country`
+onto both `NormalizedArticle` (via a `with` expression before persisting) and `ErrorNotification`
+on failure - previously the API pipeline didn't track country at all, so this is a new capability
+for it, not just a config reshuffle: API-sourced articles and crawl-failure emails now show a
+country the same way RSS-sourced ones always have. `HangfireRecurringJobRegistrar.
+RegisterNewsApiRecurringJobs` flattens the same way (`RegisterNewsCrawlerRecurringJobs`'s RSS
+counterpart was already doing this). All 18 existing `NewsApiCrawler` providers were regrouped by
+what they're actually configured to fetch, not by where the underlying service is headquartered:
+the 14 pre-existing global-aggregator providers (NewsAPI.org, GNews, TheNewsAPI, CurrentsAPI,
+Mediastack, NewsDataIo, WorldNewsAPI, EventRegistry, NewscatcherAPI, APITube, Guardian, GDELT,
+SerpApiGoogleNews, DataGovIn) were - every one of them, on inspection - already configured with
+India-specific query parameters (`country=in`, `locale=in`, `"India politics"` keywords, etc.),
+so they all moved under a new **India** country block; **FEC** and **CongressGov** (both
+inherently USA-only institutions) moved under the existing **United States** block;
+**UKParliamentBills** moved under **United Kingdom**; **GoogleFactCheck** (genuinely
+country-agnostic) moved under the existing **International** block. No provider's own
+configuration (base URL, auth, endpoints, query parameters) changed - this was purely a
+regrouping. A new `NewsApiCrawlerOrchestratorTests.cs` was added (this orchestrator had zero test
+coverage before this change) covering the same two cases `NewsCrawlerOrchestratorTests.cs`
+already covers for RSS: successful persistence stamps the right `Country`, and a
+country-disabled block skips its providers entirely without even acquiring a lock.
+
+**Everything else the user chose to defer or that was independently verified dead in this same
+pass:** **Election Commission of India (ECI)** - blocked (403), consistent with the earlier PIB
+deep-dive's finding that ECI has no working RSS either. **Parliament of India/Sansad** - no RSS,
+no discoverable API on either chamber's site; Rajya Sabha remains excluded on the standing
+`robots.txt: Disallow: /` policy documented earlier in this file, and Lok Sabha (no blanket
+disallow) still has nothing to fetch. **data.gov.in** - left exactly as already documented
+(`DataGovInProvider` stays a wired-but-disabled stub; no specific election-relevant dataset
+resource id was identified this pass either - the OGD catalog's own search UI is JS-rendered and
+not scrapeable the way every RSS/API endpoint elsewhere in this file is). **White House RSS** -
+still excluded per its existing entry above (a single stale 2024 test post, not real content).
+**World Bank API, IMF API, OECD API, and the EU Open Data Portal** - all four curl-verified as
+genuinely live and real, but deliberately not wired in: they're statistics/dataset-catalog APIs
+(GDP figures, inflation rates, dataset search results), not news sources - there's no article to
+extract, just numbers or catalog metadata, an architectural mismatch rather than a technical
+failure. (The IMF's older `dataservices.imf.org` REST endpoint is additionally unreachable
+outright at the network layer, and its newer `imf.org/external/datamapper` path returns a WAF
+403 - both moot given the mismatch above.) **Bing News Search, WorldNewsAPI's Optional-tier
+siblings, Webz.io, Common Crawl CC-News, ContextualWeb News API**, and every Finance/Weather/
+Disaster/Social/Trends/AI row - out of scope for this pass per the user's explicit choice, not
+evaluated.
+
+**26 more India government/institutional sources from a user-supplied table - only 2 genuinely
+new working feeds, the rest either already existed, were already documented dead, or are dead
+for a reason verified fresh this pass.** **President of India** (presidentofindia.gov.in/rss.xml)
+and **NITI Aayog** (niti.gov.in/rss.xml, a Drupal feed mislabeling its own Content-Type as
+text/html - harmless, same as Kathmandu Post - `BaseRssProvider` never inspects Content-Type
+before parsing) both curl-verified live with 10 recent, genuinely current items each. NITI Aayog
+specifically **corrects** an earlier finding in this file ("NITI Aayog's own website... no
+discoverable RSS") - a fresh check this pass turned up a real feed at the direct `/rss.xml` path;
+worth remembering that a "dead" finding from an earlier pass isn't necessarily permanent, since
+sites do add feeds over time.
+
+**Two rows were already wired in from earlier passes** - MyGov India and NDMA - re-requested here
+under slightly different table entries but not duplicated. **Five rows were already documented
+dead in this file and reconfirmed unchanged**: PM India (single stale test post), Rajya Sabha
+(`robots.txt: Disallow: /`), IMD (network-unreachable), and NIC (no discoverable feed - see its
+fresh re-check below).
+
+**Everything else in this batch is dead, each verified fresh this pass:** **PTI** - explicitly
+marked "Licensed" (not free) in the user's own table, and independently reconfirmed as the same
+Angular SPA HTML shell already documented for it elsewhere in this file. **DD News** and
+**Akashvani/All India Radio** - both show a genuinely new failure shape: a `HEAD` request to
+their real feed URL (`ddnews.gov.in/en/feed/`, `newsonair.gov.in/feed/`) succeeds with HTTP 200
+and a correct `application/rss+xml` Content-Type, but the actual `GET` request that would fetch
+the body consistently fails at the connection level (reproduced with multiple retries and a 30s
+timeout) - the feed is declared and technically "exists" by every header-level signal, but is not
+actually fetchable in practice. **Vice President of India** and **Supreme Court of India** - both
+WordPress sites returning an explicit `wp_die` `"No feed available!"` error (HTTP 500) - a
+deliberate feed-disable, the same category as Financial Express's stated policy elsewhere in this
+file, not a technical failure. **Lok Sabha** (`loksabha.nic.in`) and **Gazette of India**
+(`egazette.nic.in`) - both domains fail to resolve at all (confirmed via direct `curl`, not just
+the verification script), a different, more definitive network-layer failure than Rajya Sabha's
+policy-based exclusion on a working domain. **PRS Legislative Research** - no discoverable feed,
+every guessed path 404s. **India Code** - its `/feed` path 302-redirects into a plain HTML page,
+not real content. **eCourts** - blocked by a WAF bot-challenge (HTTP 405 "Security Page").
+**RBI**, **SEBI** - both 404 on every guessed path, consistent with their existing exclusion
+elsewhere in this file. **NSE** - 404. **BSE** - returns its own Angular SPA shell, not a feed,
+on every guessed path. **MCA** - blocked outright (403) even on its plain homepage. **Central
+Water Commission (CWC)** - technically valid, well-formed RSS 2.0 at `cwc.gov.in/rss.xml`, but
+contains exactly one `<item>`, and that item is a static "Welcome to Central Water Commission"
+page, not a news item - functionally the same "looks real, delivers nothing" trap as the
+genuinely-empty-feed category elsewhere in this file (Saudi Gazette, INA), just with one
+placeholder item instead of zero; not wired in. **PIB Fact Check** and **GeM** - both return
+plain homepage/HTML shells on every guessed feed path, no real content. **NIC** - reconfirmed
+dead: its homepage exposes only WordPress oEmbed alternates (no `rss+xml` link), and its `/feed/`
+path redirects away from any feed content. None of the dead entries in this paragraph are wired
+into `NewsCrawler.appsettings.json`.
+
+**Seven more JSON-API providers from a user-supplied 25-row news/finance-API table - 12 of the 25
+rows already existed (every general aggregator already under `NewsApiCrawler`, plus Guardian),
+6 more verified dead/discontinued, 7 new ones added.** All seven follow the established
+`NewsApiCrawler:Countries` structure: **WebzIo** (api.webz.io/newsApiLite, query param `token`)
+joins the other general aggregators under **India** (curl-verified live: an unauthenticated
+request returns a documented "Unknown API token" error, confirming the endpoint). **AP Content
+API** (`APContentAPI` - api.ap.org, query param `apikey`), **NYTimesAPI** (api.nytimes.com/svc/
+topstories, query param `api-key` - named `...Api`/`NYTimesAPI` specifically to disambiguate from
+the already-existing `NyTimesRssProvider`/`"NYTimes"` plain RSS feed, a completely separate
+official Developer API product), and **ProPublicaCongress** (api.propublica.org/congress/v1,
+header `X-API-Key` - named `...Congress` to disambiguate from the already-existing
+`ProPublicaRssProvider`/`"ProPublica"` RSS feed; same "a bill's latest action, not a written
+story" shape as `UkParliamentBillsProvider`/`CongressGovProvider`) all joined **United States**.
+**FinancialModelingPrep** (financialmodelingprep.com/stable/general-news), **AlphaVantage**
+(alphavantage.co, `NEWS_SENTIMENT` function - curl-verified live with real, current articles even
+against the public "demo" key, Alpha Vantage's own documented special case for the AAPL example
+ticker), and **Finnhub** (finnhub.io/api/v1/news) all joined **International** - genuinely global
+market-news services, not tied to one nation, the same reasoning Google Fact Check was placed
+there. Finnhub and Financial Modeling Prep both return a bare JSON array at the response root
+(no wrapping `articles`/`results` property, unlike every other provider here) - each provider's
+`ParseArticles` checks `JsonValueKind.Array` directly rather than looking for a named key. AP
+Content API's parser is built from AP's own documented response shape rather than a live
+response, since there's no free tier to test against (same "best-effort, confirm once enabled"
+caveat as `DataGovInProvider`). All seven need a real key via `NewsApiKeys:{ProviderName}` before
+producing anything (`NewsApiKeys:WebzIo`, `:APContentAPI`, `:NYTimesAPI`, `:ProPublicaCongress`,
+`:FinancialModelingPrep`, `:AlphaVantage`, `:Finnhub`), same as every other keyed provider.
+
+**Six rows from that same table are dead or have no viable public API, each verified rather than
+guessed-and-gave-up:** **Bing News Search API** - Microsoft's own product page for it 404s, with
+a cached "no longer available" signal - consistent with Microsoft retiring standalone Bing Search
+APIs for new Azure sign-ups in 2023 (existing subscriptions are grandfathered, but there's no
+self-serve signup path left to build against). **ContextualWeb News API** - its RapidAPI endpoint
+404s outright; the underlying service (ContextualWeb) shut down some years ago. **Reuters Connect**
+- both its marketing page (`reutersagency.com/en/reutersconnect/`) and a guessed API base
+(`api.reutersconnect.com`) return 404/403 with no self-serve developer path discoverable - the
+fifth+ independent confirmation in this file that Reuters has nothing publicly accessible from
+this environment, this time for its enterprise product specifically rather than plain RSS.
+**Bloomberg API** - there is no public developer REST API at all behind this table entry; "Bloomberg
+API" refers to their enterprise Terminal/B-PIPE data products, which require a sales contract, not
+a self-serve key - the linked marketing page itself 403s. **USA TODAY API** -
+`developer.usatoday.com` silently redirects to the plain usatoday.com homepage; there is no real
+developer portal or API product behind this domain. **ABC News Resources API** -
+`developer.abcnews.com` fails to resolve at the network layer entirely (unlike `abcnews.go.com`,
+the real public site, which is up) - the API-specific subdomain doesn't exist. None of these six
+are wired into `NewsCrawler.appsettings.json`.
+
+**Startup took 60-70+ seconds before the app became reachable at all, traced to
+`HangfireRecurringJobRegistrar` registering 260+ recurring jobs (RSS + JSON-API providers)
+synchronously, one `IRecurringJobManager.AddOrUpdate` Mongo round trip at a time, before
+`app.Run()` in `Web/Program.cs` was ever reached - fixed in two layers.** First,
+`HangfireRecurringJobRegistrar`'s three registration loops (RSS, News API, dynamic-feed) now run
+each provider's `AddOrUpdate` concurrently via `Parallel.ForEach` (`RegistrationConcurrency = 32`)
+instead of one at a time, since each is an independent Mongo upsert keyed by its own jobId with no
+shared state. A static constructor also calls `ThreadPool.SetMinThreads` once, up front:
+`IRecurringJobManager.AddOrUpdate` is synchronous (returns `void`, not `Task` - Hangfire's
+scheduling API predates async), so `Parallel.ForEach` dispatches these as blocking work onto the
+CLR ThreadPool, which only grows slowly under its own throttled "hill-climbing" algorithm when
+starved - without pre-warming, a burst of 200+ blocking calls mostly ran close to sequentially for
+the first several seconds regardless of the requested concurrency, confirmed by direct
+measurement (236 RSS jobs: 42s at 16-way before the ThreadPool fix, 24.6s after - concurrency
+alone wasn't the bottleneck). Per-provider registration log lines dropped from `LogInformation` to
+`LogDebug` (200+ lines per startup was pure noise for zero day-to-day diagnostic value); each
+registrar now logs one clear summary instead (count + elapsed ms + concurrency).
+
+Second, and the change with the actually decisive effect: **the entire registration block moved
+off the startup-blocking path in `Web/Program.cs`**, wrapped in an un-awaited `Task.Run` (with its
+own try/catch logging any failure, since an unobserved background-task exception would otherwise
+vanish silently) instead of running inline between `builder.Build()` and `app.Run()`. Nothing
+about `app.Run()`, the HTTP pipeline, Scalar/Swagger, the Hangfire dashboard, or health checks
+actually depends on recurring-job metadata already existing in Mongo - the Hangfire Server's own
+`RecurringJobScheduler` dispatcher (started via `AddHangfireServer` earlier in the same file)
+polls for and picks up newly-registered jobs on its own schedule regardless of when registration
+finishes, so there was never a real ordering requirement forcing this to block startup. Verified
+end to end: time to "Application started" dropped from ~68-70s to ~11s, and Scalar/`/hangfire`
+both returned HTTP 200 in under a second immediately once reachable, while the 236 RSS jobs
+finished registering successfully in the background roughly 26s later with no errors. This also
+matters for Render specifically: `render.yaml`'s free-tier deploy needs the container to pass a
+health check quickly after starting, and 25+ seconds of synchronous registration blocking that was
+a real risk, not just a local dev annoyance.
