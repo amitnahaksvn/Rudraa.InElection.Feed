@@ -148,6 +148,25 @@ dotnet run --project src/Web      # read/query API + Swagger UI in Development
 docker compose up --build
 ```
 
+**Error-monitor UI (`/errors`)**: its React source lives in `src/Web/ClientApp` and is not built
+automatically by `dotnet run`. For local dev with live reload against the running API:
+
+```bash
+cd src/Web/ClientApp
+npm install
+npm run dev   # http://localhost:5173, proxies /api to http://localhost:5096 (see vite.config.ts)
+```
+
+To see it served by Web itself (`Api:EnableErrorDashboard` must be true, already the default in
+`appsettings.Development.json`), build it once so `wwwroot` is populated:
+
+```bash
+cd src/Web/ClientApp && npm install && npm run build
+```
+
+The Docker/Render builds do this automatically (see `Dockerfile`'s `client-build` stage) - nothing
+extra is needed for a container deployment.
+
 ## MongoDB setup
 
 Any reachable MongoDB 6+ instance works - a local container (`docker compose up mongo` or the

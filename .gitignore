@@ -46,3 +46,8 @@ logs/
 ## Aspire
 **/.aspire/
 
+## ClientApp (React error-monitor UI) - Vite build output lands directly in Web's wwwroot
+## (see vite.config.ts's build.outDir), so wwwroot is generated, not source, same as bin/obj.
+src/Web/wwwroot/
+src/Web/ClientApp/node_modules/
+

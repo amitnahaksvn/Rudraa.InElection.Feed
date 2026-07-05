@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Application.Abstractions;
 using Domain.Entities;
@@ -37,6 +39,73 @@ public sealed class ErrorLogRepository : IErrorLogRepository
             cancellationToken: cancellationToken);
     }
 
+    public async Task<IReadOnlyList<ErrorLog>> GetPagedAsync(ErrorLogFilter filter, int skip, int limit, CancellationToken cancellationToken) =>
+        await _collection
+            .Find(BuildFilter(filter))
+            .SortBy(e => e.IsResolved)
+            .ThenByDescending(e => e.CreatedOn)
+            .Skip(skip)
+            .Limit(limit)
+            .ToListAsync(cancellationToken);
+
+    public Task<long> CountAsync(ErrorLogFilter filter, CancellationToken cancellationToken) =>
+        _collection.CountDocumentsAsync(BuildFilter(filter), cancellationToken: cancellationToken);
+
+    public async Task<ErrorLog?> GetByIdAsync(string id, CancellationToken cancellationToken) =>
+        await _collection.Find(e => e.Id == id).FirstOrDefaultAsync(cancellationToken);
+
+    public async Task<bool> SetResolvedAsync(string id, bool resolved, CancellationToken cancellationToken)
+    {
+        var update = Builders<ErrorLog>.Update
+            .Set(e => e.IsResolved, resolved)
+            .Set(e => e.ResolvedOn, resolved ? DateTimeOffset.UtcNow : null);
+
+        var result = await _collection.UpdateOneAsync(e => e.Id == id, update, cancellationToken: cancellationToken);
+        return result.MatchedCount > 0;
+    }
+
+    // Every field here is an equality match except SearchText, a case-insensitive substring match
+    // (via a Regex.Escape'd pattern, so a search term containing regex metacharacters can't turn
+    // into an unintended pattern or a ReDoS risk) across the handful of fields an admin scanning
+    // the error-monitor UI would actually type into a search box.
+    private static FilterDefinition<ErrorLog> BuildFilter(ErrorLogFilter filter)
+    {
+        var builder = Builders<ErrorLog>.Filter;
+        var clauses = new List<FilterDefinition<ErrorLog>>();
+
+        if (filter.IsResolved is { } isResolved)
+        {
+            clauses.Add(builder.Eq(e => e.IsResolved, isResolved));
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter.Provider))
+        {
+            clauses.Add(builder.Eq(e => e.Provider, filter.Provider));
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter.Country))
+        {
+            clauses.Add(builder.Eq(e => e.Country, filter.Country));
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter.Source))
+        {
+            clauses.Add(builder.Eq(e => e.Source, filter.Source));
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter.SearchText))
+        {
+            var pattern = new BsonRegularExpression(Regex.Escape(filter.SearchText), "i");
+            clauses.Add(builder.Or(
+                builder.Regex(e => e.Message, pattern),
+                builder.Regex(e => e.ExceptionType, pattern),
+                builder.Regex(e => e.Provider, pattern),
+                builder.Regex(e => e.Source, pattern)));
+        }
+
+        return clauses.Count == 0 ? builder.Empty : builder.And(clauses);
+    }
+
     public async Task EnsureIndexesAsync(CancellationToken cancellationToken)
     {
         var models = new List<CreateIndexModel<ErrorLog>>
@@ -48,7 +117,11 @@ public sealed class ErrorLogRepository : IErrorLogRepository
             new(Builders<ErrorLog>.IndexKeys.Descending(e => e.CreatedOn),
                 new CreateIndexOptions { Name = "ix_errorlog_createdon" }),
             new(Builders<ErrorLog>.IndexKeys.Ascending(e => e.Provider),
-                new CreateIndexOptions { Name = "ix_errorlog_provider" })
+                new CreateIndexOptions { Name = "ix_errorlog_provider" }),
+            // Covers the error-monitor UI's default GetPagedAsync query/sort (unresolved first,
+            // newest first within each group) directly from the index.
+            new(Builders<ErrorLog>.IndexKeys.Ascending(e => e.IsResolved).Descending(e => e.CreatedOn),
+                new CreateIndexOptions { Name = "ix_errorlog_isresolved_createdon" })
         };
 
         await _collection.Indexes.CreateManyAsync(models, cancellationToken);

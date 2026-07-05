@@ -1,0 +1,126 @@
+using Moq;
+using Application.Abstractions;
+using Application.ErrorLogs.Commands.SetErrorLogResolved;
+using Application.ErrorLogs.Queries.GetErrorLogById;
+using Application.ErrorLogs.Queries.GetErrorLogs;
+using Domain.Entities;
+
+namespace PoliticalNews.Tests.Application;
+
+public class ErrorLogsQueryHandlerTests
+{
+    private static ErrorLog BuildErrorLog(string id = "1", bool isResolved = false) => new()
+    {
+        Id = id,
+        ExceptionType = "System.Net.Http.HttpRequestException",
+        Message = "network timeout",
+        Source = "RSS Feed Fetch",
+        Provider = "AajTak",
+        Country = "India",
+        Environment = "Production",
+        ApplicationName = "Web",
+        CreatedOn = DateTimeOffset.UtcNow,
+        IsResolved = isResolved
+    };
+
+    [Fact]
+    public async Task GetErrorLogsQueryHandler_MapsRepositoryPageIntoSummaryDtos()
+    {
+        var repo = new Mock<IErrorLogRepository>();
+        var logs = new List<ErrorLog> { BuildErrorLog("1"), BuildErrorLog("2") };
+        repo
+            .Setup(r => r.GetPagedAsync(It.IsAny<ErrorLogFilter>(), 0, 20, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(logs);
+        repo
+            .Setup(r => r.CountAsync(It.IsAny<ErrorLogFilter>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(2);
+
+        var handler = new GetErrorLogsQueryHandler(repo.Object);
+        var result = await handler.Handle(new GetErrorLogsQuery(1, 20), CancellationToken.None);
+
+        Assert.Equal(2, result.Items.Count);
+        Assert.Equal(2, result.TotalCount);
+        Assert.Equal(1, result.Page);
+        Assert.Equal(20, result.PageSize);
+        Assert.False(result.HasMore);
+        Assert.Equal("1", result.Items[0].Id);
+    }
+
+    [Fact]
+    public async Task GetErrorLogsQueryHandler_Page2_ComputesCorrectSkip()
+    {
+        var repo = new Mock<IErrorLogRepository>();
+        repo
+            .Setup(r => r.GetPagedAsync(It.IsAny<ErrorLogFilter>(), 20, 20, It.IsAny<CancellationToken>()))
+            .ReturnsAsync([]);
+        repo
+            .Setup(r => r.CountAsync(It.IsAny<ErrorLogFilter>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(25);
+
+        var handler = new GetErrorLogsQueryHandler(repo.Object);
+        var result = await handler.Handle(new GetErrorLogsQuery(2, 20), CancellationToken.None);
+
+        repo.Verify(r => r.GetPagedAsync(It.IsAny<ErrorLogFilter>(), 20, 20, It.IsAny<CancellationToken>()), Times.Once);
+        Assert.True(result.HasMore is false); // page 2 * pageSize 20 = 40, not < totalCount 25
+    }
+
+    [Fact]
+    public async Task GetErrorLogsQueryHandler_PassesFiltersThrough()
+    {
+        var repo = new Mock<IErrorLogRepository>();
+        ErrorLogFilter? capturedFilter = null;
+        repo
+            .Setup(r => r.GetPagedAsync(It.IsAny<ErrorLogFilter>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .Callback<ErrorLogFilter, int, int, CancellationToken>((f, _, _, _) => capturedFilter = f)
+            .ReturnsAsync([]);
+        repo.Setup(r => r.CountAsync(It.IsAny<ErrorLogFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(0);
+
+        var handler = new GetErrorLogsQueryHandler(repo.Object);
+        await handler.Handle(new GetErrorLogsQuery(1, 20, IsResolved: false, Provider: "AajTak", Country: "India", Search: "timeout"), CancellationToken.None);
+
+        Assert.NotNull(capturedFilter);
+        Assert.Equal(false, capturedFilter!.IsResolved);
+        Assert.Equal("AajTak", capturedFilter.Provider);
+        Assert.Equal("India", capturedFilter.Country);
+        Assert.Equal("timeout", capturedFilter.SearchText);
+    }
+
+    [Fact]
+    public async Task GetErrorLogByIdQueryHandler_Found_ReturnsDetailDto()
+    {
+        var repo = new Mock<IErrorLogRepository>();
+        repo.Setup(r => r.GetByIdAsync("1", It.IsAny<CancellationToken>())).ReturnsAsync(BuildErrorLog("1"));
+
+        var handler = new GetErrorLogByIdQueryHandler(repo.Object);
+        var result = await handler.Handle(new GetErrorLogByIdQuery("1"), CancellationToken.None);
+
+        Assert.NotNull(result);
+        Assert.Equal("1", result!.Id);
+        Assert.Equal("network timeout", result.Message);
+    }
+
+    [Fact]
+    public async Task GetErrorLogByIdQueryHandler_NotFound_ReturnsNull()
+    {
+        var repo = new Mock<IErrorLogRepository>();
+        repo.Setup(r => r.GetByIdAsync("missing", It.IsAny<CancellationToken>())).ReturnsAsync((ErrorLog?)null);
+
+        var handler = new GetErrorLogByIdQueryHandler(repo.Object);
+        var result = await handler.Handle(new GetErrorLogByIdQuery("missing"), CancellationToken.None);
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task SetErrorLogResolvedCommandHandler_DelegatesToRepositoryAndReturnsItsResult()
+    {
+        var repo = new Mock<IErrorLogRepository>();
+        repo.Setup(r => r.SetResolvedAsync("1", true, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+        repo.Setup(r => r.SetResolvedAsync("missing", true, It.IsAny<CancellationToken>())).ReturnsAsync(false);
+
+        var handler = new SetErrorLogResolvedCommandHandler(repo.Object);
+
+        Assert.True(await handler.Handle(new SetErrorLogResolvedCommand("1", true), CancellationToken.None));
+        Assert.False(await handler.Handle(new SetErrorLogResolvedCommand("missing", true), CancellationToken.None));
+    }
+}

@@ -8,3 +8,9 @@ tests/
 .git/
 .gitignore
 docker-compose.yml
+
+# ClientApp is built fresh inside the Dockerfile's own client-build stage (npm ci, not a copy of
+# whatever's on the host) - excluding these keeps the build context small and avoids ever copying
+# a locally-built wwwroot/node_modules over what the container itself produces.
+src/Web/ClientApp/node_modules/
+src/Web/wwwroot/

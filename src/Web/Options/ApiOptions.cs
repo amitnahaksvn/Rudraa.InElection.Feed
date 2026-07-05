@@ -18,4 +18,13 @@ public sealed class ApiOptions
     /// trade-off, made knowingly, not a default to flip on casually.
     /// </summary>
     public bool EnableHangfireDashboard { get; set; }
+
+    /// <summary>
+    /// The error-monitor page (/errors) reads via the authenticated-nothing api/errors endpoints -
+    /// same "no built-in auth, off by default" trade-off as <see cref="EnableHangfireDashboard"/>,
+    /// since it surfaces stack traces and raw request/response bodies that may contain sensitive
+    /// data. Enabling this on a public deployment is a deliberate choice, not a default to flip on
+    /// casually.
+    /// </summary>
+    public bool EnableErrorDashboard { get; set; }
 }
