@@ -1340,3 +1340,31 @@ codebase doesn't own. (A separate, unauthenticated technique - scraping the publ
 `t.me/s/{channel}` HTML preview - exists and sidesteps this, but that is fetching/parsing HTML,
 not "the Telegram Bot API," and is a materially different, more fragile mechanism this batch does
 not implement without being asked for it specifically.)
+
+**Two new `NewsApiCrawler:Countries` entries - Canada and Australia - from a user-supplied
+39-row publisher table, config-only (no new provider classes).** Both new country blocks reuse
+the same 12 already-existing general-aggregator provider classes (NewsAPI.org, GNews, TheNewsAPI,
+CurrentsAPI, Mediastack, NewsDataIo, WorldNewsAPI, EventRegistry, NewscatcherAPI, GDELT,
+SerpApiGoogleNews, WebzIo) with country-specific query parameters (`country`/`countries`/
+`source-countries`: `ca`/`CA` for Canada, `au`/`AU` for Australia - both plain ISO-3166 alpha-2,
+no quirk exception like the UK's own `gl=uk`/GDELT `sourcecountry:UK` needed here), same
+mechanical pattern as the United Kingdom expansion above - proof this per-provider-per-country
+config shape scales to a third and fourth country with zero code changes, only
+`NewsCrawler.appsettings.json`. WorldNewsAPI stays `Enabled: false` in both new blocks, matching
+its already-disabled India/UK entries. Bing News Search API (both countries), Reuters Connect
+(both), and Bloomberg API (both) were in the source table again but not re-added - already
+verified dead/enterprise-only earlier in this file, and nothing about asking for them per-country
+changes that. AP Content API and the three global Finance providers
+(FinancialModelingPrep/AlphaVantage/Finnhub) were also in the table for both countries but
+deliberately not duplicated per-country - AP is one global newswire endpoint with no country-filter
+knob in its existing config, and the Finance APIs are already under **International** precisely
+because they're not tied to one nation, same reasoning already documented when GoogleFactCheck
+was placed there.
+
+**The Globe and Mail API (Canada) was requested but has no public self-serve developer API** -
+their site runs on Arc XP (the same CMS platform already behind IndianExpress/The Irish Times/La
+Nacion's RSS feeds elsewhere in this file) but there is no discoverable Globe and Mail developer
+portal or content-syndication API a small project can sign up for; the user's own table already
+flagged this row `Free Tier: No` / `Paid: Enterprise`, consistent with what turned up - the same
+"enterprise-only, no self-serve path" category as Bloomberg API, not a technical failure. Not
+wired in.
