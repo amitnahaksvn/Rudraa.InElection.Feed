@@ -5546,6 +5546,510 @@
             ]
           }
         ]
+      },
+      {
+        "Name": "Iran",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "IRNA",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://en.irna.ir/rss",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "TehranTimes",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.tehrantimes.com/rss",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "MehrNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://en.mehrnews.com/rss",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "UAE",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "KhaleejTimes",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.khaleejtimes.com/api/v1/collections/top-section.rss",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Hong Kong",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "SCMP",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.scmp.com/rss/91/feed",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "HongKongFreePress",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://hongkongfp.com/feed/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Argentina",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "BuenosAiresTimes",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.batimes.com.ar/feed",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "LaNacion",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.lanacion.com.ar/arc/outboundfeeds/rss/",
+                "Category": "General",
+                "Language": "es",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Clarin",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.clarin.com/rss/lo-ultimo/",
+                "Category": "General",
+                "Language": "es",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Colombia",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "ElEspectador",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.elespectador.com/arc/outboundfeeds/discover/?outputType=xml",
+                "Category": "General",
+                "Language": "es",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Semana",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.semana.com/arc/outboundfeeds/rss/",
+                "Category": "General",
+                "Language": "es",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "LaRepublicaColombia",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Business",
+                "Url": "https://www.larepublica.co/rss",
+                "Category": "Business",
+                "Language": "es",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Venezuela",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "CaracasChronicles",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.caracaschronicles.com/feed/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "ElNacional",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.elnacional.com/feed/",
+                "Category": "General",
+                "Language": "es",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Myanmar",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "MyanmarNow",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://myanmar-now.org/en/feed/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GlobalNewLightOfMyanmar",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.gnlm.com.mm/feed/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "ElevenMedia",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://elevenmyanmar.com/rss.xml",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Peru",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "Andina",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://andina.pe/Ingles/rss.aspx",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "PeruReports",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://perureports.com/feed/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Morocco",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "Hespress",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.hespress.com/feed",
+                "Category": "General",
+                "Language": "ar",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Algeria",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "TSAAlgeria",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.tsa-algerie.com/feed/",
+                "Category": "General",
+                "Language": "fr",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "ElWatan",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://elwatan-dz.com/feed",
+                "Category": "General",
+                "Language": "fr",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Ghana",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "JoyNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.myjoyonline.com/feed/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GraphicOnline",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.graphic.com.gh/?format=feed&type=rss",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Lebanon",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "LBCINews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.lbcgroup.tv/rss/news/en",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Naharnet",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.naharnet.com/tags/lebanon/en/feed.atom",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Oman",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "TimesOfOman",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://timesofoman.com/feed/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Jordan",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "RoyaNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://royanews.tv/rss",
+                "Category": "General",
+                "Language": "ar",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
       }
     ]
   },

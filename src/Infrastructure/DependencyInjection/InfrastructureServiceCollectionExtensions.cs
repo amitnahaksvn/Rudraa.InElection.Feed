@@ -330,6 +330,37 @@ public static class InfrastructureServiceCollectionExtensions
         AddRssProvider<FocusTaiwanRssProvider>(services, FocusTaiwanRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<TaipeiTimesRssProvider>(services, TaipeiTimesRssProvider.ClientName, CrawlerUserAgent);
 
+        // Iran/UAE/Hong Kong/Argentina/Colombia/Venezuela/Myanmar/Peru/Morocco/Algeria/Ghana/
+        // Lebanon/Oman/Jordan providers, verified against a user-supplied publisher list.
+        AddRssProvider<IrnaRssProvider>(services, IrnaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TehranTimesRssProvider>(services, TehranTimesRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<MehrNewsRssProvider>(services, MehrNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<KhaleejTimesRssProvider>(services, KhaleejTimesRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<ScmpRssProvider>(services, ScmpRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<HongKongFreePressRssProvider>(services, HongKongFreePressRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<BuenosAiresTimesRssProvider>(services, BuenosAiresTimesRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<LaNacionRssProvider>(services, LaNacionRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<ClarinRssProvider>(services, ClarinRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<ElEspectadorRssProvider>(services, ElEspectadorRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<SemanaRssProvider>(services, SemanaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<LaRepublicaColombiaRssProvider>(services, LaRepublicaColombiaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<CaracasChroniclesRssProvider>(services, CaracasChroniclesRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<ElNacionalRssProvider>(services, ElNacionalRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<MyanmarNowRssProvider>(services, MyanmarNowRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<GlobalNewLightOfMyanmarRssProvider>(services, GlobalNewLightOfMyanmarRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<ElevenMediaRssProvider>(services, ElevenMediaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<AndinaRssProvider>(services, AndinaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<PeruReportsRssProvider>(services, PeruReportsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<HespressRssProvider>(services, HespressRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TsaAlgeriaRssProvider>(services, TsaAlgeriaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<ElWatanRssProvider>(services, ElWatanRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<JoyNewsRssProvider>(services, JoyNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<GraphicOnlineRssProvider>(services, GraphicOnlineRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<LbciNewsRssProvider>(services, LbciNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<NaharnetRssProvider>(services, NaharnetRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TimesOfOmanRssProvider>(services, TimesOfOmanRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<RoyaNewsRssProvider>(services, RoyaNewsRssProvider.ClientName, CrawlerUserAgent);
+
         // The Mongo-driven FeedSource pipeline (PIB first) - a generic alternative to the
         // file-configured providers above, for feeds that need no publisher-specific quirks.
         // One shared named HttpClient (rather than one per FeedSource, which would need a DI

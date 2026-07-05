@@ -985,3 +985,79 @@ resolve to the same one real feed under the same real publisher, only one provid
 requested `/rss/rss.xml` 404s, but a `rel="alternate"` tag points to `/xml/index.rss` - RSS
 1.0/RDF using `dc:date`, already covered by the existing Dublin Core fallback, no code change
 needed; Taiwan News's every guessed path redirects to plain homepage HTML - dead.
+
+**Fourteen new countries - Iran, UAE, Hong Kong, Argentina, Colombia, Venezuela, Myanmar, Peru,
+Morocco, Algeria, Ghana, Lebanon, Oman, Jordan - from a twelfth user-supplied publisher table (20
+countries requested, 6 came back with zero working feeds). 28 new providers, again mostly
+resolved via a fallback URL rather than the one given.** **Iran**: IRNA, Tehran Times, Mehr News
+all worked as given; **Tasnim News**'s domain doesn't resolve at all (DNS failure) - unreachable,
+not just blocked. **Saudi Arabia**: zero providers wired in - Arab News's own `rel="alternate"`
+tag points to the exact same URL that already returns 403, confirming a real block rather than a
+wrong-guess; **Saudi Gazette**'s feed is real, valid RSS 2.0 structure but contains zero
+`<item>` elements - the same "technically-200-but-empty" trap as HuffPost/O Globo/Korea Times
+elsewhere in this file; SPA's `/rss.xml` serves the plain Arabic homepage, no discoverable feed;
+Asharq Al-Awsat's homepage has only `hreflang` alternates, no RSS. **UAE**: only **Khaleej
+Times** worked - its requested `/rss` 404s, but `rel="alternate"` tags on the homepage point to a
+`/api/v1/collections/{section}.rss` scheme, "top-section" being the general one; Gulf News, The
+National, and WAM all have no discoverable feed (The National's alternates are just `hreflang`
+tags, not RSS - a distinct dead-end shape from the other two's flat 404s). **Hong Kong**: SCMP
+and Hong Kong Free Press worked as given; RTHK and The Standard both have no discoverable feed
+(RTHK's `/rss.htm` page only self-links, no real `.xml` feed found; The Standard's every guessed
+path redirects to its own 404 page). **Argentina**: Buenos Aires Times, La Nacion, Clarin all
+worked as given; Ambito is blocked (403, confirmed even with Spanish-locale headers). **Colombia**:
+all three requested outlets resolved, two via a fallback - **El Espectador** and **Semana**'s
+requested URLs both 404, but each is built on the Arc XP CMS platform (the same one behind
+IndianExpress/The Irish Times/La Nacion above - Arc XP is licensed out to several unrelated
+publishers internationally) and each declares (or, for Semana, is reachable at) its own
+`arc/outboundfeeds/.../rss` path; La República worked as given (named `LaRepublicaColombia` in
+this codebase to disambiguate from Peru's own, unrelated "La República" below); El Tiempo's Arc
+XP outbound-feeds path 404s too - genuinely dead, not just a wrong guess. **Venezuela**: Caracas
+Chronicles and El Nacional worked as given; Últimas Noticias is blocked (403). **Myanmar**: all
+three requested outlets worked as given - Myanmar Now, Global New Light of Myanmar (the military
+government's official English paper), and Eleven Media. **Iraq**: zero providers wired in - the
+Iraqi News Agency's `eng/rss.xml` is real, valid RSS 2.0 (Arabic channel title despite the "eng"
+path) but contains zero `<item>` elements, the same empty-feed trap as Saudi Gazette above; Rudaw
+and Shafaq both have no discoverable feed, only `hreflang` alternates on their homepages. **Peru**:
+Andina and Peru Reports worked as given (Andina's feed is plain RSS 2.0 despite an
+`application/atom+xml` Content-Type mislabel, harmless since `BaseRssProvider` never inspects
+Content-Type before parsing); the requested "La República" (`larepublica.pe/feed`) 404s and has
+no discoverable alternative - not wired in, so Peru's `LaRepublicaColombia`-style naming collision
+never actually arises in code. **Chile**: zero providers wired in - BioBioChile and La Tercera
+both have no discoverable feed at all (no `rel="alternate"` tag, every guessed WordPress/Arc-XP
+path 404s), El Mercurio is blocked (401). **Morocco**: only **Hespress** worked; MAP is blocked
+(403, confirmed even with a Moroccan-locale header) and Morocco World News's homepage itself
+returns 403 - blocked outright, not just its feed. **Algeria**: TSA Algeria and El Watan worked
+as given; APS has no discoverable feed (homepage has only `hreflang` alternates, guessed
+WordPress paths 404). **Ethiopia**: zero providers wired in - ENA's homepage has only `hreflang`
+alternates, no RSS; Addis Standard and The Reporter Ethiopia are both blocked (403). **Ghana**:
+Joy News worked as given; **Graphic Online**'s requested `/feed.html` 404s, but `rel="alternate"`
+tags on the homepage point to a Joomla-style query-string feed, `/?format=feed&type=rss` (Graphic
+Online runs on Joomla, unlike every other Ghanaian/African WordPress-based outlet seen so far in
+this file); Ghana News Agency has no discoverable feed and Citi Newsroom's homepage only exposes
+oEmbed links, no real RSS alternate despite being WordPress-shaped. **Lebanon**: LBCI News worked
+as given; **Naharnet** is Atom 1.0 (`<feed>`/`<entry>`/`<published>`, no image tags - relies on
+the `og:image` fallback, same as Stuff/Roya News below), so `NaharnetRssProvider` extends
+`BaseAtomRssProvider` rather than `BaseRssProvider` - its requested homepage has no bare RSS link,
+but `rel="alternate"` tags expose per-topic Atom feeds under `/tags/{topic}/en/feed.atom`,
+"lebanon" being the general one; The Daily Star Lebanon is blocked (403). **Oman**: only **Times
+of Oman** worked - its requested `/rss` 404s, but a `rel="alternate"` tag points to the real
+`/feed/`; the Oman News Agency's homepage has only `hreflang` alternates (its `/rss.aspx` serves
+the plain Arabic homepage); Muscat Daily's homepage lists several real-looking
+`/category/{section}/feed/` links, but following any of them (confirmed on "oman") redirects
+straight back to plain homepage HTML despite an initially promising `application/rss+xml`
+Content-Type on the redirect response itself - a new variant of the "disguised block" pattern,
+where even the HTTP header on the way to the dead end looks like a real feed. **Jordan**: only
+**Roya News** worked - also Atom 1.0 (same `BaseAtomRssProvider`, no image tags, `og:image`
+fallback), Arabic-language despite the requested URL implying an English feed; Petra News
+Agency's site is in a "Website Temporarily Unavailable" maintenance state (not a bot block); The
+Jordan Times is blocked (403). **Kuwait**: zero providers wired in - KUNA's domain times out
+outright at the network layer (not an HTTP-level block, the fourth+ such network-layer-dead
+publisher documented in this file); Kuwait Times and Arab Times both redirect their guessed `/rss`
+paths to a plain "Rss" title placeholder page, not real content. **North Korea**: zero providers
+wired in - KCNA Watch's `/feed/` redirects straight into a paid-membership signup popup rather
+than serving content (a distinct new failure shape: a feed URL that resolves but gates behind a
+paywall rather than blocking or erroring); the DPRK's own `kcna.kp` domain is unreachable outright
+at the network layer, consistent with the country's general internet inaccessibility. None of the
+providers described as dead in this entry are wired into `NewsCrawler.appsettings.json`; Saudi
+Arabia, Iraq, Chile, Ethiopia, Kuwait, and North Korea have no country block at all as a result -
+every requested outlet in each came back dead.
