@@ -149,10 +149,14 @@ public abstract partial class BaseRssProvider : IRssProvider
         var author = item.Element("author")?.Value.Trim() ?? item.Element(DublinCore + "creator")?.Value.Trim();
         var tags = item.Elements("category").Select(e => e.Value.Trim()).Where(t => t.Length > 0).ToList();
 
-        // Case-insensitive lookup: Zee News emits lowercase <pubdate>, AajTak/ABP the spec's <pubDate>.
+        // Case-insensitive lookup: Zee News emits lowercase <pubdate>, AajTak/ABP the spec's
+        // <pubDate>. RSS 1.0/RDF feeds (The Asahi Shimbun) have no <pubDate> at all and use
+        // Dublin Core's <dc:date> instead - falls back to that only when no <pubDate>-named
+        // element exists, so it never overrides a real <pubDate> when both happened to be present.
         var pubDateRaw = item.Elements()
             .FirstOrDefault(e => string.Equals(e.Name.LocalName, "pubDate", StringComparison.OrdinalIgnoreCase))?
-            .Value;
+            .Value
+            ?? item.Element(DublinCore + "date")?.Value;
         var publishedAt = ParsePublishDate(pubDateRaw);
         var imageUrl = ExtractImage(item)
             ?? await TryExtractOgImageAsync(_httpClientFactory.CreateClient(HttpClientName), link, _logger, cancellationToken);

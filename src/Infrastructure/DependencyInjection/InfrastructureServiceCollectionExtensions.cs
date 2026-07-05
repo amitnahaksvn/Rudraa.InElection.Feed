@@ -204,6 +204,132 @@ public static class InfrastructureServiceCollectionExtensions
         AddRssProvider<MirrorRssProvider>(services, MirrorRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<PoliticsCoUkRssProvider>(services, PoliticsCoUkRssProvider.ClientName, CrawlerUserAgent);
 
+        // More Canada/Australia/Japan providers, verified against a user-supplied publisher list.
+        AddRssProvider<NationalPostRssProvider>(services, NationalPostRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<SevenNewsRssProvider>(services, SevenNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TheAgeRssProvider>(services, TheAgeRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<GuardianAustraliaRssProvider>(services, GuardianAustraliaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<NikkeiAsiaRssProvider>(services, NikkeiAsiaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<MainichiJapanRssProvider>(services, MainichiJapanRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<AsahiShimbunRssProvider>(services, AsahiShimbunRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<JapanTodayRssProvider>(services, JapanTodayRssProvider.ClientName, CrawlerUserAgent);
+
+        // More Germany/France providers, verified against a user-supplied publisher list.
+        AddRssProvider<FazRssProvider>(services, FazRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TagesschauRssProvider>(services, TagesschauRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<ZdfRssProvider>(services, ZdfRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<LeMondeRssProvider>(services, LeMondeRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<LeFigaroRssProvider>(services, LeFigaroRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<RfiRssProvider>(services, RfiRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<FranceInfoRssProvider>(services, FranceInfoRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<LiberationRssProvider>(services, LiberationRssProvider.ClientName, CrawlerUserAgent);
+
+        // More Singapore/South Korea/China/Qatar/Israel/South Africa/Brazil providers, verified
+        // against a user-supplied publisher list.
+        AddRssProvider<GlobalTimesRssProvider>(services, GlobalTimesRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<YnetNewsRssProvider>(services, YnetNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<GulfTimesRssProvider>(services, GulfTimesRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<SabcNewsRssProvider>(services, SabcNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<FolhaRssProvider>(services, FolhaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<BrazilReportsRssProvider>(services, BrazilReportsRssProvider.ClientName, CrawlerUserAgent);
+
+        // More Mexico/Turkey/Ukraine/Russia providers, verified against a user-supplied publisher list.
+        AddRssProvider<ReformaRssProvider>(services, ReformaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<DailySabahRssProvider>(services, DailySabahRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<KyivPostRssProvider>(services, KyivPostRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<RtRssProvider>(services, RtRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<InterfaxRussiaRssProvider>(services, InterfaxRussiaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<RbcRssProvider>(services, RbcRssProvider.ClientName, CrawlerUserAgent);
+
+        // More Italy/Spain/Netherlands/Sweden providers, verified against a user-supplied
+        // publisher list.
+        AddRssProvider<AnsaRssProvider>(services, AnsaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<CorriereDellaSeraRssProvider>(services, CorriereDellaSeraRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<IlSole24OreRssProvider>(services, IlSole24OreRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<ElPaisRssProvider>(services, ElPaisRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<ElMundoRssProvider>(services, ElMundoRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<AbcEspanaRssProvider>(services, AbcEspanaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<EuropaPressRssProvider>(services, EuropaPressRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<NlTimesRssProvider>(services, NlTimesRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<DutchNewsRssProvider>(services, DutchNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<NosRssProvider>(services, NosRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<NuNlRssProvider>(services, NuNlRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<DeTelegraafRssProvider>(services, DeTelegraafRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<SvtNewsRssProvider>(services, SvtNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<DagensNyheterRssProvider>(services, DagensNyheterRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<SydsvenskanRssProvider>(services, SydsvenskanRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<AftonbladetRssProvider>(services, AftonbladetRssProvider.ClientName, CrawlerUserAgent);
+
+        // More Norway/Finland/Belgium/Switzerland/Austria/Ireland/Denmark/New Zealand providers,
+        // verified against a user-supplied publisher list.
+        AddRssProvider<NrkRssProvider>(services, NrkRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<AftenpostenRssProvider>(services, AftenpostenRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<E24RssProvider>(services, E24RssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TheLocalNorwayRssProvider>(services, TheLocalNorwayRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<YleNewsRssProvider>(services, YleNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<HelsinginSanomatRssProvider>(services, HelsinginSanomatRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<IltaSanomatRssProvider>(services, IltaSanomatRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<RtbfRssProvider>(services, RtbfRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<NzzRssProvider>(services, NzzRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<OrfNewsRssProvider>(services, OrfNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<DerStandardRssProvider>(services, DerStandardRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<KurierRssProvider>(services, KurierRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<DiePresseRssProvider>(services, DiePresseRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<RteNewsRssProvider>(services, RteNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TheIrishTimesRssProvider>(services, TheIrishTimesRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<IrishIndependentRssProvider>(services, IrishIndependentRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TheJournalRssProvider>(services, TheJournalRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<DrNewsRssProvider>(services, DrNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TheLocalDenmarkRssProvider>(services, TheLocalDenmarkRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<RnzRssProvider>(services, RnzRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<StuffRssProvider>(services, StuffRssProvider.ClientName, CrawlerUserAgent);
+        // The Local Sweden - added retroactively once thelocal.com's shared feed-builder
+        // platform was discovered via The Local Norway/Denmark above; the original thelocal.se
+        // guess was dead, but the platform itself covers Sweden too.
+        AddRssProvider<TheLocalSwedenRssProvider>(services, TheLocalSwedenRssProvider.ClientName, CrawlerUserAgent);
+
+        // Poland/Czech Republic/Romania/Hungary/Greece/Portugal/Indonesia/Malaysia/Thailand/
+        // Vietnam/Philippines/Pakistan/Bangladesh/Nepal/Sri Lanka/Nigeria/Kenya/Egypt/Taiwan
+        // providers, verified against a user-supplied publisher list.
+        AddRssProvider<RzeczpospolitaRssProvider>(services, RzeczpospolitaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<OnetRssProvider>(services, OnetRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<CtkRssProvider>(services, CtkRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<RadioPragueInternationalRssProvider>(services, RadioPragueInternationalRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<IdnesRssProvider>(services, IdnesRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<SeznamZpravyRssProvider>(services, SeznamZpravyRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<Digi24RssProvider>(services, Digi24RssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<HotNewsRssProvider>(services, HotNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<RomaniaInsiderRssProvider>(services, RomaniaInsiderRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<HungaryTodayRssProvider>(services, HungaryTodayRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<MagyarNemzetRssProvider>(services, MagyarNemzetRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<IndexHuRssProvider>(services, IndexHuRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<HvgRssProvider>(services, HvgRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<ProtoThemaRssProvider>(services, ProtoThemaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<RtpNoticiasRssProvider>(services, RtpNoticiasRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TempoRssProvider>(services, TempoRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<MalayMailRssProvider>(services, MalayMailRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<NewStraitsTimesRssProvider>(services, NewStraitsTimesRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<VietnamNewsRssProvider>(services, VietnamNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<VietnamPlusRssProvider>(services, VietnamPlusRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<VnExpressRssProvider>(services, VnExpressRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<NhanDanRssProvider>(services, NhanDanRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<InquirerRssProvider>(services, InquirerRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<RapplerRssProvider>(services, RapplerRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<GmaNewsRssProvider>(services, GmaNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TheNewsInternationalRssProvider>(services, TheNewsInternationalRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<GeoNewsRssProvider>(services, GeoNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TheDailyStarRssProvider>(services, TheDailyStarRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<KathmanduPostRssProvider>(services, KathmanduPostRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<RepublicaRssProvider>(services, RepublicaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<AdaDeranaRssProvider>(services, AdaDeranaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<PremiumTimesRssProvider>(services, PremiumTimesRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<PunchRssProvider>(services, PunchRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<VanguardRssProvider>(services, VanguardRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TheStandardKenyaRssProvider>(services, TheStandardKenyaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<DailyNewsEgyptRssProvider>(services, DailyNewsEgyptRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<FocusTaiwanRssProvider>(services, FocusTaiwanRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<TaipeiTimesRssProvider>(services, TaipeiTimesRssProvider.ClientName, CrawlerUserAgent);
+
         // The Mongo-driven FeedSource pipeline (PIB first) - a generic alternative to the
         // file-configured providers above, for feeds that need no publisher-specific quirks.
         // One shared named HttpClient (rather than one per FeedSource, which would need a DI

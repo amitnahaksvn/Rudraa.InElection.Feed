@@ -3141,6 +3141,41 @@
                 "Category": "General",
                 "Language": "en",
                 "Enabled": true
+              },
+              {
+                "Name": "Canada",
+                "Url": "https://www.cbc.ca/webfeed/rss/rss-canada",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Politics",
+                "Url": "https://www.cbc.ca/webfeed/rss/rss-politics",
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Business",
+                "Url": "https://www.cbc.ca/webfeed/rss/rss-business",
+                "Category": "Business",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "World",
+                "Url": "https://www.cbc.ca/webfeed/rss/rss-world",
+                "Category": "World",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Technology",
+                "Url": "https://www.cbc.ca/webfeed/rss/rss-technology",
+                "Category": "Technology",
+                "Language": "en",
+                "Enabled": true
               }
             ]
           },
@@ -3153,6 +3188,42 @@
               {
                 "Name": "Latest",
                 "Url": "https://globalnews.ca/feed/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Politics",
+                "Url": "https://globalnews.ca/politics/feed/",
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "World",
+                "Url": "https://globalnews.ca/world/feed/",
+                "Category": "World",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Business",
+                "Url": "https://globalnews.ca/money/feed/",
+                "Category": "Business",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NationalPost",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Home",
+                "Url": "https://nationalpost.com/feed",
                 "Category": "General",
                 "Language": "en",
                 "Enabled": true
@@ -3209,6 +3280,51 @@
                 "Enabled": true
               }
             ]
+          },
+          {
+            "Name": "SevenNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://7news.com.au/rss",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "TheAge",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.theage.com.au/rss/feed.xml",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GuardianAustralia",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Australia",
+                "Url": "https://www.theguardian.com/australia-news/rss",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
           }
         ]
       },
@@ -3228,6 +3344,34 @@
                 "Category": "General",
                 "Language": "en",
                 "Enabled": true
+              },
+              {
+                "Name": "World",
+                "Url": "https://rss.dw.com/xml/rss-en-world",
+                "Category": "World",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Business",
+                "Url": "https://rss.dw.com/xml/rss-en-bus",
+                "Category": "Business",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Germany",
+                "Url": "https://rss.dw.com/xml/rss-en-ger",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Science",
+                "Url": "https://rss.dw.com/xml/rss-en-science",
+                "Category": "Science",
+                "Language": "en",
+                "Enabled": true
               }
             ]
           },
@@ -3242,6 +3386,93 @@
                 "Url": "https://www.spiegel.de/international/index.rss",
                 "Category": "General",
                 "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Germany",
+                "Url": "https://www.spiegel.de/politik/index.rss",
+                "Category": "General",
+                "Language": "de",
+                "Enabled": true
+              },
+              {
+                "Name": "Business",
+                "Url": "https://www.spiegel.de/wirtschaft/index.rss",
+                "Category": "Business",
+                "Language": "de",
+                "Enabled": true
+              },
+              {
+                "Name": "Technology",
+                "Url": "https://www.spiegel.de/netzwelt/index.rss",
+                "Category": "Technology",
+                "Language": "de",
+                "Enabled": true
+              },
+              {
+                "Name": "Science",
+                "Url": "https://www.spiegel.de/wissenschaft/index.rss",
+                "Category": "Science",
+                "Language": "de",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "FAZ",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "News",
+                "Url": "https://www.faz.net/rss/aktuell/",
+                "Category": "General",
+                "Language": "de",
+                "Enabled": true
+              },
+              {
+                "Name": "Politics",
+                "Url": "https://www.faz.net/rss/aktuell/politik/",
+                "Category": "Politics",
+                "Language": "de",
+                "Enabled": true
+              },
+              {
+                "Name": "Business",
+                "Url": "https://www.faz.net/rss/aktuell/wirtschaft/",
+                "Category": "Business",
+                "Language": "de",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Tagesschau",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Home",
+                "Url": "https://www.tagesschau.de/xml/rss2",
+                "Category": "General",
+                "Language": "de",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "ZDF",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Home",
+                "Url": "https://www.zdf.de/rss/zdf/nachrichten",
+                "Category": "General",
+                "Language": "de",
                 "Enabled": true
               }
             ]
@@ -3264,6 +3495,123 @@
                 "Category": "General",
                 "Language": "en",
                 "Enabled": true
+              },
+              {
+                "Name": "World",
+                "Url": "https://www.france24.com/en/world/rss",
+                "Category": "World",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Business",
+                "Url": "https://www.france24.com/en/business/rss",
+                "Category": "Business",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Europe",
+                "Url": "https://www.france24.com/en/europe/rss",
+                "Category": "World",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "LeMonde",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "International",
+                "Url": "https://www.lemonde.fr/international/rss_full.xml",
+                "Category": "World",
+                "Language": "fr",
+                "Enabled": true
+              },
+              {
+                "Name": "Economy",
+                "Url": "https://www.lemonde.fr/economie/rss_full.xml",
+                "Category": "Business",
+                "Language": "fr",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "LeFigaro",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "News",
+                "Url": "https://www.lefigaro.fr/rss/figaro_actualites.xml",
+                "Category": "General",
+                "Language": "fr",
+                "Enabled": true
+              },
+              {
+                "Name": "Politics",
+                "Url": "https://www.lefigaro.fr/rss/figaro_politique.xml",
+                "Category": "Politics",
+                "Language": "fr",
+                "Enabled": true
+              },
+              {
+                "Name": "Economy",
+                "Url": "https://www.lefigaro.fr/rss/figaro_economie.xml",
+                "Category": "Business",
+                "Language": "fr",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "RFI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Home",
+                "Url": "https://www.rfi.fr/en/rss",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "FranceInfo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Home",
+                "Url": "https://www.francetvinfo.fr/titres.rss",
+                "Category": "General",
+                "Language": "fr",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Liberation",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Home",
+                "Url": "https://www.liberation.fr/arc/outboundfeeds/rss/",
+                "Category": "General",
+                "Language": "fr",
+                "Enabled": true
               }
             ]
           }
@@ -3285,6 +3633,34 @@
                 "Category": "General",
                 "Language": "en",
                 "Enabled": true
+              },
+              {
+                "Name": "World",
+                "Url": "https://www3.nhk.or.jp/rss/news/cat3.xml",
+                "Category": "World",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Business",
+                "Url": "https://www3.nhk.or.jp/rss/news/cat5.xml",
+                "Category": "Business",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Science",
+                "Url": "https://www3.nhk.or.jp/rss/news/cat7.xml",
+                "Category": "Science",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Politics",
+                "Url": "https://www3.nhk.or.jp/rss/news/cat4.xml",
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
               }
             ]
           },
@@ -3297,6 +3673,66 @@
               {
                 "Name": "Latest",
                 "Url": "https://www.japantimes.co.jp/feed/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NikkeiAsia",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://asia.nikkei.com/rss/feed/nar",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "MainichiJapan",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://mainichi.jp/english/rss/etc/mainichi-flash.rss",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "AsahiShimbun",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.asahi.com/rss/asahi/newsheadlines.rdf",
+                "Category": "General",
+                "Language": "ja",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "JapanToday",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://japantoday.com/feed",
                 "Category": "General",
                 "Language": "en",
                 "Enabled": true
@@ -3321,6 +3757,13 @@
                 "Category": "General",
                 "Language": "en",
                 "Enabled": true
+              },
+              {
+                "Name": "National",
+                "Url": "https://en.yna.co.kr/RSS/national.xml",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
               }
             ]
           }
@@ -3339,6 +3782,34 @@
               {
                 "Name": "Latest",
                 "Url": "https://www.channelnewsasia.com/rssfeeds/8395986",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Singapore",
+                "Url": "https://www.channelnewsasia.com/rssfeeds/8395954",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "China",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "GlobalTimes",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.globaltimes.cn/rss/outbrain.xml",
                 "Category": "General",
                 "Language": "en",
                 "Enabled": true
@@ -3362,6 +3833,21 @@
                 "Url": "https://en.antaranews.com/rss/news.xml",
                 "Category": "General",
                 "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Tempo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://rss.tempo.co/nasional",
+                "Category": "General",
+                "Language": "id",
                 "Enabled": true
               }
             ]
@@ -3407,6 +3893,21 @@
                 "Enabled": true
               }
             ]
+          },
+          {
+            "Name": "GulfTimes",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Home",
+                "Url": "https://www.gulf-times.com/rssFeed/9",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
           }
         ]
       },
@@ -3443,6 +3944,21 @@
                 "Enabled": true
               }
             ]
+          },
+          {
+            "Name": "YnetNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.ynetnews.com/Integration/StoryRss2.xml",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
           }
         ]
       },
@@ -3461,6 +3977,21 @@
                 "Url": "https://mexiconewsdaily.com/feed/",
                 "Category": "General",
                 "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Reforma",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Home",
+                "Url": "https://www.reforma.com/rss/portada.xml",
+                "Category": "General",
+                "Language": "es",
                 "Enabled": true
               }
             ]
@@ -3483,6 +4014,70 @@
                 "Category": "World",
                 "Language": "en",
                 "Enabled": true
+              },
+              {
+                "Name": "Politics",
+                "Url": "https://www.aa.com.tr/en/rss/default?cat=politics",
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Economy",
+                "Url": "https://www.aa.com.tr/en/rss/default?cat=economy",
+                "Category": "Business",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "DailySabah",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Business",
+                "Url": "https://www.dailysabah.com/rss/business",
+                "Category": "Business",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Politics",
+                "Url": "https://www.dailysabah.com/rss/politics",
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "World",
+                "Url": "https://www.dailysabah.com/rss/world",
+                "Category": "World",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Ukraine",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "KyivPost",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.kyivpost.com/feed",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
               }
             ]
           }
@@ -3501,6 +4096,1449 @@
               {
                 "Name": "News",
                 "Url": "https://tass.com/rss/v2.xml",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "RT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Home",
+                "Url": "https://www.rt.com/rss/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "News",
+                "Url": "https://www.rt.com/rss/news/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "InterfaxRussia",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Home",
+                "Url": "https://www.interfax.ru/rss.asp",
+                "Category": "General",
+                "Language": "ru",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "RBC",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Home",
+                "Url": "https://rssexport.rbc.ru/rbcnews/news/30/full.rss",
+                "Category": "Business",
+                "Language": "ru",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "South Africa",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "SABCNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.sabcnews.com/sabcnews/feed/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Brazil",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "Folha",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://feeds.folha.uol.com.br/emcimadahora/rss091.xml",
+                "Category": "General",
+                "Language": "pt",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "BrazilReports",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://brazilreports.com/feed/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Italy",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "ANSA",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.ansa.it/english/english_rss.xml",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "CorriereDellaSera",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://xml2.corriereobjects.it/rss/homepage.xml",
+                "Category": "General",
+                "Language": "it",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "IlSole24Ore",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.ilsole24ore.com/rss/italia.xml",
+                "Category": "General",
+                "Language": "it",
+                "Enabled": true
+              },
+              {
+                "Name": "Politics",
+                "Url": "https://www.ilsole24ore.com/rss/italia--politica.xml",
+                "Category": "Politics",
+                "Language": "it",
+                "Enabled": true
+              },
+              {
+                "Name": "Business",
+                "Url": "https://www.ilsole24ore.com/rss/economia.xml",
+                "Category": "Business",
+                "Language": "it",
+                "Enabled": true
+              },
+              {
+                "Name": "World",
+                "Url": "https://www.ilsole24ore.com/rss/mondo.xml",
+                "Category": "World",
+                "Language": "it",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Spain",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "ElPais",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada",
+                "Category": "General",
+                "Language": "es",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "ElMundo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://e00-elmundo.uecdn.es/elmundo/rss/portada.xml",
+                "Category": "General",
+                "Language": "es",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "AbcEspana",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.abc.es/rss/feeds/abcPortada.xml",
+                "Category": "General",
+                "Language": "es",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EuropaPress",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.europapress.es/rss/rss.aspx",
+                "Category": "General",
+                "Language": "es",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Netherlands",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NLTimes",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://nltimes.nl/rss",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "DutchNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.dutchnews.nl/feed/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NOS",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://feeds.nos.nl/nosnieuwsalgemeen",
+                "Category": "General",
+                "Language": "nl",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NuNl",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.nu.nl/rss/Algemeen",
+                "Category": "General",
+                "Language": "nl",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "DeTelegraaf",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.telegraaf.nl/rss",
+                "Category": "General",
+                "Language": "nl",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Sweden",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "SVTNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.svt.se/nyheter/rss.xml",
+                "Category": "General",
+                "Language": "sv",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "DagensNyheter",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.dn.se/nyheter/m/rss/",
+                "Category": "General",
+                "Language": "sv",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Sydsvenskan",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.sydsvenskan.se/rss.xml",
+                "Category": "General",
+                "Language": "sv",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Aftonbladet",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://rss.aftonbladet.se/rss2/small/pages/sections/senastenytt/",
+                "Category": "General",
+                "Language": "sv",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "TheLocalSweden",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://feeds.thelocal.com/rss/builder/se",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Norway",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NRK",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.nrk.no/toppsaker.rss",
+                "Category": "General",
+                "Language": "no",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Aftenposten",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.aftenposten.no/rss",
+                "Category": "General",
+                "Language": "no",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "E24",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://e24.no/rss",
+                "Category": "Business",
+                "Language": "no",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "TheLocalNorway",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://feeds.thelocal.com/rss/builder/no",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Finland",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "YLENews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://feeds.yle.fi/uutiset/v1/majorHeadlines/YLE_UUTISET.rss",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "HelsinginSanomat",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.hs.fi/rss/tuoreimmat.xml",
+                "Category": "General",
+                "Language": "fi",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "IltaSanomat",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.is.fi/rss/tuoreimmat.xml",
+                "Category": "General",
+                "Language": "fi",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Belgium",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "RTBF",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://rss.rtbf.be/article/rss/highlight_rtbf_info.xml",
+                "Category": "General",
+                "Language": "fr",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Switzerland",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NZZ",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.nzz.ch/recent.rss",
+                "Category": "General",
+                "Language": "de",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Austria",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "ORFNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://rss.orf.at/news.xml",
+                "Category": "General",
+                "Language": "de",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "DerStandard",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.derstandard.at/rss",
+                "Category": "General",
+                "Language": "de",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Kurier",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://kurier.at/xml/rss",
+                "Category": "General",
+                "Language": "de",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "DiePresse",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.diepresse.com/rss",
+                "Category": "General",
+                "Language": "de",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Ireland",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "RTENews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.rte.ie/feeds/rss/?index=/news/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "TheIrishTimes",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.irishtimes.com/arc/outboundfeeds/feed-irish-news/?from=0&size=20",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "IrishIndependent",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.independent.ie/rss",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "TheJournal",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.thejournal.ie/feed/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Denmark",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "DRNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.dr.dk/nyheder/service/feeds/senestenyt",
+                "Category": "General",
+                "Language": "da",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "TheLocalDenmark",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://feeds.thelocal.com/rss/builder/dk",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "New Zealand",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "RNZ",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.rnz.co.nz/rss/news.xml",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Stuff",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.stuff.co.nz/rss",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Poland",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "Rzeczpospolita",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.rp.pl/rss_main",
+                "Category": "General",
+                "Language": "pl",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Onet",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://wiadomosci.onet.pl/.feed",
+                "Category": "General",
+                "Language": "pl",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Czech Republic",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "CTK",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.ceskenoviny.cz/sluzby/rss/zpravy.php",
+                "Category": "General",
+                "Language": "cs",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "RadioPragueInternational",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://english.radio.cz/rcz-rss/en",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "iDNES",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://servis.idnes.cz/rss.aspx",
+                "Category": "General",
+                "Language": "cs",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "SeznamZpravy",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.seznamzpravy.cz/rss",
+                "Category": "General",
+                "Language": "cs",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Romania",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "Digi24",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.digi24.ro/rss",
+                "Category": "General",
+                "Language": "ro",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "HotNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://hotnews.ro/rss",
+                "Category": "General",
+                "Language": "ro",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "RomaniaInsider",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.romania-insider.com/feed",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Hungary",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "HungaryToday",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://hungarytoday.hu/feed/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "MagyarNemzet",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://magyarnemzet.hu/feed",
+                "Category": "General",
+                "Language": "hu",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "IndexHu",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://index.hu/24ora/rss/",
+                "Category": "General",
+                "Language": "hu",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "HVG",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://hvg.hu/rss",
+                "Category": "General",
+                "Language": "hu",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Greece",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "ProtoThema",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.protothema.gr/rss",
+                "Category": "General",
+                "Language": "el",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Portugal",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "RTPNoticias",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.rtp.pt/noticias/rss",
+                "Category": "General",
+                "Language": "pt",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Malaysia",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "MalayMail",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.malaymail.com/feed/rss",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewStraitsTimes",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.nst.com.my/feed",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Vietnam",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "VietnamNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://vietnamnews.vn/rss/homepage.rss",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "VietnamPlus",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://en.vietnamplus.vn/rss/home.rss",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "VnExpress",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://vnexpress.net/rss/tin-moi-nhat.rss",
+                "Category": "General",
+                "Language": "vi",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NhanDan",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://en.nhandan.vn/rss/home.rss",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Philippines",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "Inquirer",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://newsinfo.inquirer.net/feed",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Rappler",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.rappler.com/rss/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GMANews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://data.gmanetwork.com/gno/rss/news/nation/feed.xml",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Pakistan",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "TheNewsInternational",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.thenews.com.pk/rss/1/10",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GeoNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.geo.tv/rss/1/1",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Bangladesh",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "TheDailyStar",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.thedailystar.net/frontpage/rss.xml",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Nepal",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "KathmanduPost",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://kathmandupost.com/rss",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Republica",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://myrepublica.nagariknetwork.com/feeds",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Sri Lanka",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "AdaDerana",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.adaderana.lk/rss.php",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Nigeria",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "PremiumTimes",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.premiumtimesng.com/feed",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Punch",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://punchng.com/feed/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Vanguard",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.vanguardngr.com/feed/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Kenya",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "TheStandardKenya",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Headlines",
+                "Url": "https://www.standardmedia.co.ke/rss/headlines.php",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Kenya",
+                "Url": "https://www.standardmedia.co.ke/rss/kenya.php",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Politics",
+                "Url": "https://www.standardmedia.co.ke/rss/politics.php",
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Egypt",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "DailyNewsEgypt",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://dailynewsegypt.com/feed/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Taiwan",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "FocusTaiwan",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://feeds.feedburner.com/rsscna/engnews/",
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "TaipeiTimes",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "SaveRawResponses": true,
+            "Feeds": [
+              {
+                "Name": "Latest",
+                "Url": "https://www.taipeitimes.com/xml/index.rss",
                 "Category": "General",
                 "Language": "en",
                 "Enabled": true

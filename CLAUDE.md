@@ -687,3 +687,301 @@ accessible public RSS from this environment). **Daily Mail**
 (`dailymail.co.uk/news/index.rss` - the connection itself times out outright with both a crawler
 and a browser User-Agent, a network-level block/timeout rather than an HTTP-level one). Neither
 is wired into `NewsCrawler.appsettings.json`.
+
+**Canada/Australia/Japan deepened from a fourth user-supplied publisher table.** Existing
+providers gained more feeds (config-only): CBCNews 1 -> 6 (added Canada/Politics/Business/World/
+Technology, all `cbc.ca/webfeed/rss/rss-{section}`), GlobalNews 1 -> 4 (added Politics/World/
+Business), NHKWorld 1 -> 5 (added World/Business/Science/Politics via NHK's own `cat3`/`cat5`/
+`cat7`/`cat4` numeric-category scheme). Eight new providers, all curl-verified: **NationalPost**
+(Canada, standard WordPress `/feed`). **SevenNews**/7NEWS (Australia, `/rss`). **TheAge**
+(Australia, `smh.com.au`'s sister masthead, same `/rss/feed.xml` pattern). **GuardianAustralia**
+(a separate provider from the UK `TheGuardian` one - a distinct editorial edition, not just
+another category - `theguardian.com/australia-news/rss`; the requested Politics-edition feed
+404s, and the requested World feed is the *exact same URL* already configured under `TheGuardian`
+in the UK block, so both were excluded to avoid double-fetching one URL under two provider names
+for no benefit). **NikkeiAsia** (Japan, an RSS 1.0/RDF feed whose items carry no date element at
+all - no `pubDate`, no `dc:date` - so `PublishedAt` is always null for this provider specifically;
+a genuine feed limitation, not a parsing bug). **MainichiJapan** (The Mainichi's English edition,
+standard RSS 2.0). **AsahiShimbun** (Japanese-language, `Language: "ja"` - also RSS 1.0/RDF, and
+this one *does* carry dates, just via Dublin Core's `<dc:date>` instead of `<pubDate>` - see the
+`BaseRssProvider` fix below). **JapanToday** (English-language, standard WordPress `/feed`).
+
+**`BaseRssProvider.ParseItemAsync`'s date lookup gained a Dublin Core fallback**: RSS 1.0/RDF
+feeds (The Asahi Shimbun) have no `<pubDate>` element at all and use `<dc:date>` instead (the
+`DublinCore` XML namespace was already declared and in use for the `dc:creator` author fallback,
+so this reuses it rather than adding a new one) - falls back to `dc:date` only when no
+`pubDate`-named element is found, so it can never override a real `pubDate` on a feed that has
+both. Same category of fix as the existing GMT-strip/IST-replace/EDT-offset tiers - a new,
+verified spec-tolerance gap, not a hypothetical one, covered by its own regression test
+(`AsahiShimbunRssProviderTests`) the same way CBC's EDT fix was.
+
+**Five more from that same Canada/Australia/Japan table don't work.** **CTV News** (all 5
+requested feed URLs - Top Stories/Canada/Politics/World/Business - 404, including the exact URL
+this codebase had already tried once before for CTV and found dead). **Toronto Star** (403
+Forbidden, including on guessed `/feed`/`/rss` alternates). **The Globe and Mail** (404 on the
+given URL and on guessed alternates). **The Australian** (403 Forbidden). **9News** (404, no
+working alternate found). **News.com.au** (`/content-feeds/latest-news/` returns the plain
+article-listing HTML page, not RSS, despite the URL's name suggesting a feed). **Kyodo News**
+(404, no working alternate found). **Yomiuri Shimbun** (403 Forbidden on the given URL; a guessed
+alternate domain is unreachable outright). ABC News Australia's four additional requested
+category feeds (Politics/Business/World/Science) all 404 - only the existing numbered `TopStories`
+feed (`/feed/51120/rss.xml`) works; no discoverable category-feed URL pattern was found via the
+site's own homepage either. None of these are wired into `NewsCrawler.appsettings.json`.
+
+**Germany/France deepened from a fifth user-supplied publisher table.** Existing providers gained
+more feeds (config-only): DW 1 -> 5 (added World/Business/Germany/Science) - two of the
+requested slugs (`rss-en-business`, `rss-en-sci`) return a literal `"Error: no feed by that
+name."` body despite HTTP 200, so DW's *real* slugs were found by trial (`rss-en-bus` for
+Business, `rss-en-science` for Science - both verified with real, fresh content; several other
+guessed variants, `rss-en-eco`/`rss-en-scitech`/`rss-en-business-and-innovation`/`rss-en-economy`,
+all returned that same fake-200 error body and were discarded). DerSpiegel 1 -> 5 (added
+Germany/Business/Technology/Science, all `Language: "de"` - the German-language sections, unlike
+the existing English "International" edition; deliberately mixed-language within one provider
+since that's genuinely what Spiegel publishes per section). France24 1 -> 4 (added World/
+Business/Europe; the requested Science/Technology feed - `france24.com/en/science/rss` - 404s
+and is excluded). Eight new providers, all curl-verified: **FAZ**/Frankfurter Allgemeine Zeitung
+(Germany, German-language, 3 feeds: News/Politics/Business). **Tagesschau** (Germany,
+German-language, ARD's flagship news program). **ZDF** (Germany, German-language).
+**LeMonde** (France, French-language section feeds only - the requested English-edition feed,
+`lemonde.fr/en/rss/full.xml`, 404s; International and Economy sections work). **LeFigaro**
+(France, French-language, 3 feeds: News/Politics/Economy). **RFI**/Radio France Internationale
+(France, English-language edition). **FranceInfo** (France, French-language). **Liberation**
+(France, French-language, Arc XP CMS pattern).
+
+**Four more from that same table don't work.** **Handelsblatt** (Germany, 404 on the requested
+`contentexport/feed` URL). **Reuters Germany** (`reutersagency.com/feed/?best-topics=uk` - 404,
+the fifth independent confirmation in this file that Reuters has no accessible public RSS from
+this environment). **AFP** (France, 404 on the requested `/en/rss` URL). **Les Echos** (France,
+HTTP 403 Forbidden). None of these four are wired into `NewsCrawler.appsettings.json`.
+
+**Singapore/South Korea/China/Qatar/Israel/South Africa/Brazil from a sixth user-supplied
+publisher table - the highest dead-end rate of any batch so far, including one country (UAE)
+with zero working feeds at all.** Existing providers gained one feed each (config-only): CNA
+(added the Singapore-specific `rssfeeds/8395954`; the requested Asia/World/Business feed ids all
+404 - only TopStories and Singapore have real ids), Yonhap (added National; Politics/Economy/
+World all 404). Six new providers, all curl-verified: **GlobalTimes** (China, English-language,
+state-affiliated - genuinely live and current, unlike Xinhua/China Daily covered below).
+**YnetNews** (Israel, English-language). **GulfTimes** (Qatar) - the bare `/rss` path turned out
+to be an HTML index page listing numbered feed links (`/rssFeed/{id}`, the same "index page, not
+a feed" pattern as IndianExpress/TimesOfIndia elsewhere in this file), not a feed itself;
+`/rssFeed/9` (the first one listed) is real and current. **SABCNews** (South Africa,
+English-language). **Folha** (Brazil, Portuguese - an RSS 0.91 feed with no `pubDate` at all,
+so `PublishedAt` is always null here, same situation as Nikkei Asia; also declares
+`encoding="ISO-8859-1"` in its own XML prolog while the HTTP `Content-Type` header omits a
+charset, so accented Portuguese characters in title/description could come through mangled under
+.NET's default UTF-8 decode - a known, unfixed cosmetic caveat, not a functional one; links,
+dedup, and persistence are all ASCII-safe regardless). **BrazilReports** (Brazil,
+English-language) - a genuinely low-frequency-publishing site (newest item ~5-6 weeks old at
+verification time) rather than a broken/frozen feed, kept per the same "keep it, note the low
+volume" precedent as IndiaTV/Telegraph-News-Politics/PoliticsCoUk.
+
+**Two feeds that returned HTTP 200 with real-looking RSS turned out to be genuinely empty (real
+channel metadata, zero `<item>` elements) rather than blocked or broken** - the same category as
+HuffPost covered above: **O Globo** (Brazil) and **The Korea Times**'s real feed (`koreatimes.co.kr/
+www/rss/rss.xml` redirects to `feed.koreatimes.co.kr/k/allnews.xml`, which is real and reachable
+but empty). Neither is wired in.
+
+**Everything else from this table - the large majority - is dead, each verified rather than
+guessed-and-gave-up:**
+**Xinhua**'s two new requested feeds (China/Business) are stale 2017-dated content, consistent
+with Xinhua's existing exclusion elsewhere in this file. **China Daily**'s new requested feed is
+the same 2017-era stale content (Business variant 404s outright). **CGTN** and **People's Daily**
+(China): 404. **The Straits Times** and **The Business Times** (Singapore): every feed URL
+returns a literal S3/CloudFront `<Error><Code>AccessDenied</Code>` XML body - the same
+disguised-block signature already seen elsewhere in this file (Reuters's old FeedBurner slugs),
+not real content despite HTTP 200. **TODAY** (Singapore): 403. **The Korea Herald**: an entirely
+empty HTTP response body. **JoongAng Daily**: 404. **KBS World**: a zero-byte response. **Gulf
+News**, **The National**, and **Khaleej Times** (UAE): every requested feed URL 404s for all
+three. **WAM**/Emirates News Agency (UAE): redirects to an F5 bot-protection JavaScript
+challenge page, not real content. **The Jerusalem Post**'s four new requested category feeds
+(Israel/Middle East/International/Business) and **Times of Israel**'s two new requested feeds
+(Israel & Region 404s, Politics 403s) - only each provider's existing single feed works.
+**Haaretz**: 403. **Al Jazeera**'s four "new" requested rows (News/World/Business/Politics) are
+all the exact same URL as the already-configured AllNews feed - skipped as duplicates, not
+re-added. **The Peninsula Qatar**: returns a generic homepage-shaped HTML page, not RSS.
+**News24** (South Africa): the given `feeds.news24.com` subdomain still doesn't resolve at all
+(DNS failure) - the same finding as an earlier table's News24 entry. **TimesLIVE**, **Mail &
+Guardian**, and **IOL** (South Africa): 404. **Agência Brasil**'s three requested feeds: 404,
+consistent with its existing exclusion elsewhere in this file. **G1** (Brazil): 403. **Estadão**
+(Brazil): 404. None of these are wired into `NewsCrawler.appsettings.json`.
+
+**Mexico/Turkey/Russia deepened, plus a new Ukraine country block, from a seventh user-supplied
+publisher table - another high dead-end rate.** AnadoluAgency gained Politics/Economy (config
+only, 1 -> 3 feeds). Six new providers, all curl-verified: **Reforma** (Mexico, Spanish-language).
+**DailySabah** (Turkey, English-language) - the bare `/rss` path is only an HTML index page
+listing category feed links (`/rss/{category}`), the same "index page, not a feed" pattern as
+GulfTimes/IndianExpress/TimesOfIndia elsewhere in this file; Business/Politics/World are the real
+working feeds. **KyivPost** (Ukraine, English-language - the only working Ukrainian feed found in
+this whole batch). **RT** (Russia, English-language, state-affiliated - 2 feeds, verified as
+genuinely distinct content, not duplicates of each other despite both being labeled generically).
+**InterfaxRussia** (Russia, Russian-language - a distinct provider from the already-excluded
+"Interfax-Ukraine", named `InterfaxRussia` in this codebase specifically to avoid future
+ambiguity between the two). **RBC** (Russia, Russian-language business edition). TASS's three
+requested section-specific feeds (`tass.com/world|economy|politics/rss/v2.xml`) all 404 - TASS
+still has only the one working feed already configured.
+
+**Everything else from this table is dead** - Mexico: **El Universal** (all 3 requested feeds
+404), **Milenio** (404), **La Jornada** (403), **Excélsior** (404). Turkey: **TRT World** (404),
+**Hürriyet** (403 on both requested feeds). Ukraine: **Ukrinform** (all 3 requested feeds 404,
+consistent with its exclusion in an earlier table), **The Kyiv Independent** (404), **Interfax-
+Ukraine** (404), **UNIAN** (403). None of these are wired into `NewsCrawler.appsettings.json`.
+
+**Four new countries added - Italy, Spain, Netherlands, Sweden - from an eighth user-supplied
+publisher table.** 16 new providers, each curl-verified, none needing `BaseRssProvider` changes.
+**ANSA** (Italy, English-language) - the requested per-section feeds
+(`ansa.it/english/{news,politics,economy,world}/rss.xml`) all 404; the real (and only) working
+feed is the site-wide `ansa.it/english/english_rss.xml`, discovered by testing ANSA's other known
+`_rss.xml`-suffix naming convention. **Corriere della Sera** (Italy, Italian-language) -
+`xml2.corriereobjects.it/rss/homepage.xml`. **Il Sole 24 Ore** (Italy, Italian-language business
+daily) - the requested `/rss/home.xml` 404s, but the site's own `/rss` index page lists real
+per-section feeds using a `--` subsection separator (e.g. `italia--politica.xml`); 4 feeds wired
+up (Latest/Politics/Business/World). **El País** (Spain, Spanish-language) - only the homepage
+feed (`.../elpais.com/portada`) resolves; the requested International/Economy feeds and every
+other guessed section slug under the same `mrss-s` path pattern 404, so this provider ships with
+one feed only. **El Mundo**, **ABC** (Spain; named `AbcEspana` in this codebase to disambiguate
+from the existing US ABC News / Australia ABC News providers), **Europa Press** (all Spain,
+Spanish-language) - all worked as given. **NL Times** (Netherlands, English-language), **DutchNews**
+(Netherlands, English-language, standard WordPress `/feed`), **NOS** (Netherlands, Dutch-language
+public broadcaster) - the requested second "Politics" feed (`feeds.nos.nl/nospolitiek`) 404s and
+no alternative is discoverable on nos.nl's own homepage, so only the general-news feed is wired
+up. **NU.nl**, **De Telegraaf** (both Netherlands, Dutch-language) - worked as given. **SVT News**,
+**Dagens Nyheter**, **Sydsvenskan**, **Aftonbladet** (all Sweden, Swedish-language) - worked as
+given.
+
+**Three Netherlands/Italy/Spain requests could not be added, plus RAI News, each verified
+blocked/broken:** **RAI News** (Italy) - no RSS `<link>` on the homepage; its known
+`atomatic/rainews-rss/...` legacy path returns HTTP 401 (not 404) on every guessed section,
+suggesting the feed still technically exists but is no longer publicly reachable. **La Repubblica**
+(Italy) - 403 on the requested feed even with a browser UA and Referer header. **RTVE** (Spain) -
+no RSS `<link>` or guessable URL pattern found; the requested `/rss/noticias.xml` 404s. **Sveriges
+Radio** (Sweden) - 403 at the network layer on both the requested feed and its own `/rss` index
+page. None of these four are wired into `NewsCrawler.appsettings.json`. (**The Local Sweden**, also
+in this table, was initially marked dead here too - see the correction two batches below, once
+thelocal.com's shared feed-builder platform was discovered.)
+
+**Eight new countries - Norway, Finland, Belgium, Switzerland, Austria, Ireland, Denmark, New
+Zealand - from a ninth user-supplied publisher table, most requiring a fallback URL discovered
+via the publisher's own homepage rather than the URL as given.** 21 new providers, all
+curl-verified. **Norway**: NRK, Aftenposten, E24 all worked as given; **The Local Norway**'s
+requested `thelocal.no/feed` 404s, but its homepage declares a `rel="alternate"` link to
+`feeds.thelocal.com/rss/builder/no` - thelocal.com's own shared feed-builder platform, keyed by
+country code (the same platform behind The Local Denmark below, and - once this pattern was
+spotted - retroactively behind **The Local Sweden** too: its `thelocal.se/feed` guess had been
+marked dead in an earlier batch, but `feeds.thelocal.com/rss/builder/se` works the same way and
+was added to the existing Sweden country block as a fifth provider once this pattern surfaced). **Finland**: YLE News,
+Helsingin Sanomat, Ilta-Sanomat all worked as given; **Kauppalehti**'s requested `/rss` 404s and no
+alternative is discoverable anywhere on its homepage. **Belgium**: only **RTBF** could be added -
+the requested `rtbf.be/rss` 404s and `rss.rtbf.be`'s own root 403s, but RTBF's own
+"how RSS works" help article (`rtbf.be/article/le-flux-rss-mode-d-emploi-3266`) lists real
+per-section feed URLs on that same host; `rss.rtbf.be/article/rss/highlight_rtbf_info.xml` is the
+general-news one. **Switzerland**: only **NZZ** could be added - the requested `nzz.ch/rss` returns
+the plain homepage HTML, not a feed, but `nzz.ch/recent.rss` (found via NZZ's other known
+`*.rss`-suffix convention) is real. **Austria**: all four worked, two via a fallback URL - **ORF
+News**'s requested `orf.at/stories/rss.xml` 404s, but the homepage's own `rel="alternate"` tag
+points to `rss.orf.at/news.xml` (an RSS 1.0/RDF feed using `dc:date`, not `pubDate` - already
+covered by `BaseRssProvider`'s existing Dublin Core fallback, no code change needed); **Kurier**'s
+requested `/rss` 404s, but `kurier.at/xml/rss` is real; Der Standard and Die Presse worked as
+given. **Ireland**: all four worked, one via a fallback URL - **The Irish Times**'s requested
+`/feeds/rss/` 404s, but following a working legacy `/cmlink/` redirect resolves to its real Arc XP
+CMS outbound-feeds URL, `irishtimes.com/arc/outboundfeeds/feed-irish-news/?from=0&size=20`; RTÉ
+News, Irish Independent, The Journal worked as given. **Denmark**: only **DR News** worked as
+given; **The Local Denmark**'s requested `/feed` 404s, resolved the same way as The Local Norway
+above, via `feeds.thelocal.com/rss/builder/dk`. **New Zealand**: **RNZ** worked as given; **Stuff**
+is Atom 1.0 (`<feed>`/`<entry>`/`<published>`), not RSS 2.0, so `StuffRssProvider` extends
+`BaseAtomRssProvider` rather than `BaseRssProvider` - same reasoning as The Quint/Free Press
+Journal/National Herald; unlike those three, Stuff's entries do carry their own `media:content`
+image tags, but `BaseAtomRssProvider` doesn't parse that element (none of its existing users have
+one), so images still resolve correctly via the `og:image` HTML fallback, just with one avoidable
+extra request per article - accepted as-is rather than special-cased for a single provider.
+
+**Fourteen more from that same ninth table are dead, each verified rather than
+guessed-and-gave-up.** Belgium: **VRT NWS** (every guessed path 404s or redirects back to its own
+homepage, no discoverable feed), **The Brussels Times** (`/feed` and every guessed alternate
+return plain homepage HTML - an SPA route, not real content), **Belga News Agency** (`/rss` 404s;
+`/feed` redirects straight to a 404). Switzerland: **Swissinfo** (`/eng/rss` returns HTTP 410
+Gone - a deliberate "feed retired" signal, not a technical failure - and no alternative is
+discoverable on its homepage, which only declares `hreflang` alternates, not RSS), **SRF News**
+(every guessed path 404s, no RSS `<link>` on its homepage), **RTS** (`/info/rss` 404s;
+`/rss/info.xml` returns HTTP 406 whose body, once decompressed, is itself just a French
+"Page Introuvable" 404 page - the same disguised-non-content signature already documented
+elsewhere in this file for other publishers, not a working feed). Austria: none - all four
+requested rows worked (see above). Ireland: none - all four worked. Denmark: **TV2 News**
+(`/rss` redirects to a plain 404), **Berlingske** (`/rss` 404s; no RSS `<link>` anywhere on its
+homepage despite a 670KB page body). New Zealand: **NZ Herald** (`/rss/` returns plain homepage
+HTML; guessed Arc-XP-style and legacy paths 404; `/feed` redirects straight to a 404), **1News**
+(`/rss.xml` 404s; `/feed` redirects to a 404). Finland: **Kauppalehti** (see above). None of these
+fourteen are wired into `NewsCrawler.appsettings.json`.
+
+**Seventeen new countries - Poland, Czech Republic, Romania, Hungary, Greece, Portugal, Malaysia,
+Vietnam, Philippines, Pakistan, Bangladesh, Nepal, Sri Lanka, Nigeria, Kenya, Egypt, Taiwan -
+plus Indonesia deepened, from a tenth and eleventh user-supplied publisher table (two tables
+pasted together, the largest batch so far). 38 new providers, most needing a fallback URL found
+via the publisher's own homepage rather than the URL as given** - the same "index page/
+rel=alternate discovery" pattern used throughout this file, applied at higher volume than any
+prior batch. **Poland**: **Rzeczpospolita**'s requested `/rss` 404s, but its homepage declares
+`rel="alternate"` to `/rss_main`; **Onet**'s requested `/rss` 404s too, but its news subdomain
+serves a real feed at `wiadomosci.onet.pl/.feed` (Onet's own dot-feed convention); **TVP World**
+and **PAP** have no discoverable feed at all. **Czech Republic**: all four requested rows
+resolved, three via a fallback - **CTK**'s real feed is
+`ceskenoviny.cz/sluzby/rss/zpravy.php`, **Radio Prague International**'s is
+`english.radio.cz/rcz-rss/en`, both declared via `rel="alternate"` tags the requested URLs
+lacked; iDNES and Seznam Zpravy worked as given. **Romania**: **Agerpres**'s requested feed
+redirects through a broken third-party feed-extraction proxy (`api.allorigins.win/.../
+bazqux.com/...`, itself erroring with HTTP 520) rather than serving real content - confirmed
+broken, not just guessed-and-gave-up; **Romania Insider** resolved via `/feed` once `/rss` 404d;
+Digi24 and HotNews worked as given. **Hungary**: all four requested rows resolved - **HVG**,
+**Index.hu**, **Hungary Today** worked as given; the row labeled "MTI (Hungarian News Agency)"
+resolves to a real feed at `magyarnemzet.hu/feed`, but that feed's own `<title>` and content are
+unambiguously **Magyar Nemzet** (a Hungarian conservative daily), not MTI (a different,
+unrelated state news agency with no discoverable public feed of its own) - named
+`MagyarNemzet` in this codebase for what the feed actually is, not the requested label, flagged
+explicitly rather than silently mislabeled. **Greece**: only **Proto Thema** worked; Ekathimerini
+(403), ANA-MPA (Incapsula bot-block, confirmed even with extra headers), and Kathimerini Greece
+(HTTP 410 Gone, no alternative discoverable) are all dead. **Portugal**: only **RTP Noticias**
+worked; **Publico** returns HTTP 202 with an empty body on both `/rss` and its own homepage - a
+bot-challenge/queueing response, not a working feed; SIC Noticias and The Portugal News are
+blocked outright (403 on the homepage itself for the latter). **Indonesia**: **Tempo** added as a
+new provider alongside the already-existing Antara; Jakarta Post and Kompas have no discoverable
+feed. **Malaysia**: **Malay Mail** worked as given; **New Straits Times**'s requested `/rss` 404s
+but `/feed` is real; Bernama and The Star have no discoverable feed. **Thailand**: none of the
+three requested rows (The Nation Thailand, Thai PBS, MCOT) resolved - all three redirect to
+plain homepage HTML on every guessed path - so Thailand's provider count is unchanged (still just
+the pre-existing BangkokPost). **Vietnam**: all four resolved, one via a fallback - **Vietnam
+News**'s requested `/rss.html` 404s, but per-section feeds exist at `/rss/{section}.rss` (no
+`rel="alternate"` tag to discover this from; found via the site's other known section-feed
+naming convention), `/rss/homepage.rss` is the general one; VietnamPlus, VnExpress, Nhan Dan
+worked as given (two of them served gzip-compressed bodies that an initial verification pass
+misread as garbled/broken - the same false-negative already documented for O Globo/Folha
+elsewhere in this file - re-verified with `curl --compressed` and confirmed real). **Philippines**:
+Inquirer and Rappler worked as given; **GMA News**'s requested URL 404s, but a `rel="alternate"`
+tag on its `/news/rss/` index page points to a separate legacy data subdomain,
+`data.gmanetwork.com/gno/rss/news/nation/feed.xml`; ABS-CBN News is blocked (403). **Pakistan**:
+The News International and Geo News worked as given; Dawn's connection times out outright at the
+network layer (not an HTTP-level block) and Express Tribune is blocked (403) - both confirmed
+dead across multiple retries. **Bangladesh**: only The Daily Star worked; Dhaka Tribune's
+homepage itself is blocked (403), BDNews24 is blocked (403), and BSS's `/rss` redirects to a 403
+- all three dead. **Nepal**: **Kathmandu Post** worked as given (its feed serves real,
+well-formed RSS 2.0 despite mislabeling its own Content-Type as `text/html` - a labeling quirk
+confirmed harmless since `BaseRssProvider` never inspects Content-Type before parsing);
+**Republica**'s requested `/rss` 404s but a `rel="alternate"` tag points to the real `/feeds`
+path; The Himalayan Times has no discoverable feed and RSS Nepal times out at the network layer.
+**Sri Lanka**: only **Ada Derana** worked; Daily Mirror serves a Cloudflare "Just a moment..."
+challenge page (403) and Daily News/Sunday Observer are both blocked (403) - all three dead.
+**Nigeria**: Premium Times, Punch, Vanguard all worked as given; The Nation is blocked (403).
+**Kenya**: only **The Standard** worked, via the same "index page lists real per-section feeds"
+pattern as GulfTimes/DailySabah elsewhere in this file - its `/rss` page 404s as a direct feed but
+lists real links at `/rss/{section}.php`, three wired up (Headlines/Kenya/Politics); Nation
+Africa is blocked (403), Capital FM's `/feed/` redirects to `capitalfm.africa` (a domain migration
+discovered via a `rel="alternate"` tag) which itself redirects straight back to that new domain's
+homepage - confirmed dead despite the promising-looking domain move; Citizen Digital returns
+HTTP 400 on every attempt. **Egypt**: only **Daily News Egypt** worked; Ahram Online and Egypt
+Today are both blocked (403), and the State Information Service times out at the network layer.
+**Taiwan**: **Focus Taiwan**'s requested `/rss` 404s, but a `rel="alternate"` tag points to a
+FeedBurner-hosted feed, `feeds.feedburner.com/rsscna/engnews/`, whose own `<title>` confirms it's
+CNA's (Central News Agency's) English service - the user's table listed "Focus Taiwan" and
+"Central News Agency" as two separate rows sharing the identical requested URL, and since they
+resolve to the same one real feed under the same real publisher, only one provider
+(`FocusTaiwan`) was wired up rather than two pointing at the same content; **Taipei Times**'s
+requested `/rss/rss.xml` 404s, but a `rel="alternate"` tag points to `/xml/index.rss` - RSS
+1.0/RDF using `dc:date`, already covered by the existing Dublin Core fallback, no code change
+needed; Taiwan News's every guessed path redirects to plain homepage HTML - dead.
