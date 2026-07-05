@@ -6728,6 +6728,4872 @@
                 "Enabled": true
               }
             ]
+          },
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "UK politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "gb",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "UK politics",
+                  "lang": "en",
+                  "country": "gb",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "nation",
+                  "lang": "en",
+                  "country": "gb",
+                  "max": "10"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "TheNewsAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.thenewsapi.com/v1/news",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "api_token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "All",
+                "Endpoint": "all",
+                "QueryParameters": {
+                  "search": "UK politics",
+                  "language": "en",
+                  "categories": "politics",
+                  "limit": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Top",
+                "Endpoint": "top",
+                "QueryParameters": {
+                  "locale": "gb",
+                  "language": "en",
+                  "limit": "25"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "CurrentsAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.currentsapi.services/v1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "LatestNews",
+                "Endpoint": "latest-news",
+                "QueryParameters": {
+                  "language": "en",
+                  "category": "politics",
+                  "keywords": "UK politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "language": "en",
+                  "country": "GB",
+                  "keywords": "UK politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Mediastack",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "http://api.mediastack.com/v1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "access_key",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "News",
+                "Endpoint": "news",
+                "QueryParameters": {
+                  "keywords": "UK politics",
+                  "languages": "en",
+                  "countries": "gb",
+                  "categories": "general",
+                  "limit": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "UK politics",
+                  "country": "gb",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "WorldNewsAPI",
+            "Enabled": false,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.worldnewsapi.com",
+            "AuthType": "HttpHeader",
+            "AuthParamName": "x-api-key",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "SearchNews",
+                "Endpoint": "search-news",
+                "QueryParameters": {
+                  "text": "UK politics",
+                  "language": "en",
+                  "source-countries": "gb",
+                  "number": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopNews",
+                "Endpoint": "top-news",
+                "QueryParameters": {
+                  "source-country": "gb",
+                  "language": "en"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "UK politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewscatcherAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
+            "AuthType": "HttpHeader",
+            "AuthParamName": "x-api-token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "UK politics",
+                  "lang": "en",
+                  "countries": "GB"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "LatestHeadlines",
+                "Endpoint": "latest_headlines",
+                "QueryParameters": {
+                  "countries": "GB",
+                  "lang": "en"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Guardian",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://content.guardianapis.com",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "api-key",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "UK politics",
+                  "show-fields": "thumbnail,trailText,byline"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "UK politics sourcecountry:UK",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "SerpApiGoogleNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://serpapi.com",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "api_key",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GoogleNews",
+                "Endpoint": "search.json",
+                "QueryParameters": {
+                  "engine": "google_news",
+                  "q": "UK politics",
+                  "gl": "uk",
+                  "hl": "en"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "WebzIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.webz.io",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "NewsApiLite",
+                "Endpoint": "newsApiLite",
+                "QueryParameters": {
+                  "q": "UK politics",
+                  "language": "english"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Reddit",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://oauth.reddit.com",
+            "AuthType": "HttpHeader",
+            "AuthParamName": "Authorization (ignored - RedditProvider manages its own OAuth2 bearer token internally, see its own doc comments)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "UnitedKingdomPoliticsSearch",
+                "Endpoint": "r/unitedkingdom/search",
+                "QueryParameters": {
+                  "q": "politics election",
+                  "restrict_sr": "1",
+                  "sort": "new",
+                  "limit": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "UkPoliticsNew",
+                "Endpoint": "r/ukpolitics/new",
+                "QueryParameters": {
+                  "limit": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Canada",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Canada politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "ca",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Canada politics",
+                  "lang": "en",
+                  "country": "ca",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "nation",
+                  "lang": "en",
+                  "country": "ca",
+                  "max": "10"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "TheNewsAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.thenewsapi.com/v1/news",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "api_token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "All",
+                "Endpoint": "all",
+                "QueryParameters": {
+                  "search": "Canada politics",
+                  "language": "en",
+                  "categories": "politics",
+                  "limit": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Top",
+                "Endpoint": "top",
+                "QueryParameters": {
+                  "locale": "ca",
+                  "language": "en",
+                  "limit": "25"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "CurrentsAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.currentsapi.services/v1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "LatestNews",
+                "Endpoint": "latest-news",
+                "QueryParameters": {
+                  "language": "en",
+                  "category": "politics",
+                  "keywords": "Canada politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "language": "en",
+                  "country": "CA",
+                  "keywords": "Canada politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Mediastack",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "http://api.mediastack.com/v1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "access_key",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "News",
+                "Endpoint": "news",
+                "QueryParameters": {
+                  "keywords": "Canada politics",
+                  "languages": "en",
+                  "countries": "ca",
+                  "categories": "general",
+                  "limit": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Canada politics",
+                  "country": "ca",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "WorldNewsAPI",
+            "Enabled": false,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.worldnewsapi.com",
+            "AuthType": "HttpHeader",
+            "AuthParamName": "x-api-key",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "SearchNews",
+                "Endpoint": "search-news",
+                "QueryParameters": {
+                  "text": "Canada politics",
+                  "language": "en",
+                  "source-countries": "ca",
+                  "number": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopNews",
+                "Endpoint": "top-news",
+                "QueryParameters": {
+                  "source-country": "ca",
+                  "language": "en"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Canada politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewscatcherAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
+            "AuthType": "HttpHeader",
+            "AuthParamName": "x-api-token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Canada politics",
+                  "lang": "en",
+                  "countries": "CA"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "LatestHeadlines",
+                "Endpoint": "latest_headlines",
+                "QueryParameters": {
+                  "countries": "CA",
+                  "lang": "en"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Canada politics sourcecountry:CA",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "SerpApiGoogleNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://serpapi.com",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "api_key",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GoogleNews",
+                "Endpoint": "search.json",
+                "QueryParameters": {
+                  "engine": "google_news",
+                  "q": "Canada politics",
+                  "gl": "ca",
+                  "hl": "en"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "WebzIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.webz.io",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "NewsApiLite",
+                "Endpoint": "newsApiLite",
+                "QueryParameters": {
+                  "q": "Canada politics",
+                  "language": "english"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Australia",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Australia politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "au",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Australia politics",
+                  "lang": "en",
+                  "country": "au",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "nation",
+                  "lang": "en",
+                  "country": "au",
+                  "max": "10"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "TheNewsAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.thenewsapi.com/v1/news",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "api_token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "All",
+                "Endpoint": "all",
+                "QueryParameters": {
+                  "search": "Australia politics",
+                  "language": "en",
+                  "categories": "politics",
+                  "limit": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Top",
+                "Endpoint": "top",
+                "QueryParameters": {
+                  "locale": "au",
+                  "language": "en",
+                  "limit": "25"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "CurrentsAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.currentsapi.services/v1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "LatestNews",
+                "Endpoint": "latest-news",
+                "QueryParameters": {
+                  "language": "en",
+                  "category": "politics",
+                  "keywords": "Australia politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "language": "en",
+                  "country": "AU",
+                  "keywords": "Australia politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "Mediastack",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "http://api.mediastack.com/v1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "access_key",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "News",
+                "Endpoint": "news",
+                "QueryParameters": {
+                  "keywords": "Australia politics",
+                  "languages": "en",
+                  "countries": "au",
+                  "categories": "general",
+                  "limit": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Australia politics",
+                  "country": "au",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "WorldNewsAPI",
+            "Enabled": false,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.worldnewsapi.com",
+            "AuthType": "HttpHeader",
+            "AuthParamName": "x-api-key",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "SearchNews",
+                "Endpoint": "search-news",
+                "QueryParameters": {
+                  "text": "Australia politics",
+                  "language": "en",
+                  "source-countries": "au",
+                  "number": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopNews",
+                "Endpoint": "top-news",
+                "QueryParameters": {
+                  "source-country": "au",
+                  "language": "en"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Australia politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewscatcherAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
+            "AuthType": "HttpHeader",
+            "AuthParamName": "x-api-token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Australia politics",
+                  "lang": "en",
+                  "countries": "AU"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "LatestHeadlines",
+                "Endpoint": "latest_headlines",
+                "QueryParameters": {
+                  "countries": "AU",
+                  "lang": "en"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Australia politics sourcecountry:AS",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "SerpApiGoogleNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://serpapi.com",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "api_key",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GoogleNews",
+                "Endpoint": "search.json",
+                "QueryParameters": {
+                  "engine": "google_news",
+                  "q": "Australia politics",
+                  "gl": "au",
+                  "hl": "en"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "WebzIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.webz.io",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "NewsApiLite",
+                "Endpoint": "newsApiLite",
+                "QueryParameters": {
+                  "q": "Australia politics",
+                  "language": "english"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Germany",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Germany politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "de",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Germany politics",
+                  "lang": "en",
+                  "country": "de",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Germany politics",
+                  "country": "de",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "TheNewsAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.thenewsapi.com/v1/news",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "api_token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "All",
+                "Endpoint": "all",
+                "QueryParameters": {
+                  "search": "Germany politics",
+                  "language": "en",
+                  "categories": "politics",
+                  "limit": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Top",
+                "Endpoint": "top",
+                "QueryParameters": {
+                  "locale": "de",
+                  "language": "en",
+                  "limit": "25"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewscatcherAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
+            "AuthType": "HttpHeader",
+            "AuthParamName": "x-api-token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Germany politics",
+                  "lang": "en",
+                  "countries": "DE"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Germany politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Germany politics sourcecountry:GM",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "France",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "France politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "fr",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "France politics",
+                  "lang": "en",
+                  "country": "fr",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "France politics",
+                  "country": "fr",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "TheNewsAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.thenewsapi.com/v1/news",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "api_token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "All",
+                "Endpoint": "all",
+                "QueryParameters": {
+                  "search": "France politics",
+                  "language": "en",
+                  "categories": "politics",
+                  "limit": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Top",
+                "Endpoint": "top",
+                "QueryParameters": {
+                  "locale": "fr",
+                  "language": "en",
+                  "limit": "25"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewscatcherAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
+            "AuthType": "HttpHeader",
+            "AuthParamName": "x-api-token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "France politics",
+                  "lang": "en",
+                  "countries": "FR"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "France politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "France politics sourcecountry:FR",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Japan",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Japan politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "jp",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Japan politics",
+                  "lang": "en",
+                  "country": "jp",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Japan politics",
+                  "country": "jp",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "TheNewsAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.thenewsapi.com/v1/news",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "api_token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "All",
+                "Endpoint": "all",
+                "QueryParameters": {
+                  "search": "Japan politics",
+                  "language": "en",
+                  "categories": "politics",
+                  "limit": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Top",
+                "Endpoint": "top",
+                "QueryParameters": {
+                  "locale": "jp",
+                  "language": "en",
+                  "limit": "25"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewscatcherAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
+            "AuthType": "HttpHeader",
+            "AuthParamName": "x-api-token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Japan politics",
+                  "lang": "en",
+                  "countries": "JP"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Japan politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Japan politics sourcecountry:JA",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "South Korea",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "South Korea politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "kr",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "South Korea politics",
+                  "lang": "en",
+                  "country": "kr",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "South Korea politics",
+                  "country": "kr",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "TheNewsAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.thenewsapi.com/v1/news",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "api_token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "All",
+                "Endpoint": "all",
+                "QueryParameters": {
+                  "search": "South Korea politics",
+                  "language": "en",
+                  "categories": "politics",
+                  "limit": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Top",
+                "Endpoint": "top",
+                "QueryParameters": {
+                  "locale": "kr",
+                  "language": "en",
+                  "limit": "25"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewscatcherAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
+            "AuthType": "HttpHeader",
+            "AuthParamName": "x-api-token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "South Korea politics",
+                  "lang": "en",
+                  "countries": "KR"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "South Korea politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "South Korea politics sourcecountry:KS",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Singapore",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Singapore politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "sg",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Singapore politics",
+                  "lang": "en",
+                  "country": "sg",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Singapore politics",
+                  "country": "sg",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "TheNewsAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.thenewsapi.com/v1/news",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "api_token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "All",
+                "Endpoint": "all",
+                "QueryParameters": {
+                  "search": "Singapore politics",
+                  "language": "en",
+                  "categories": "politics",
+                  "limit": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Top",
+                "Endpoint": "top",
+                "QueryParameters": {
+                  "locale": "sg",
+                  "language": "en",
+                  "limit": "25"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewscatcherAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
+            "AuthType": "HttpHeader",
+            "AuthParamName": "x-api-token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Singapore politics",
+                  "lang": "en",
+                  "countries": "SG"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Singapore politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Singapore politics sourcecountry:SN",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "China",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "China politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "cn",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "China politics",
+                  "lang": "en",
+                  "country": "cn",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "China politics",
+                  "country": "cn",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "TheNewsAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.thenewsapi.com/v1/news",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "api_token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "All",
+                "Endpoint": "all",
+                "QueryParameters": {
+                  "search": "China politics",
+                  "language": "en",
+                  "categories": "politics",
+                  "limit": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Top",
+                "Endpoint": "top",
+                "QueryParameters": {
+                  "locale": "cn",
+                  "language": "en",
+                  "limit": "25"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewscatcherAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
+            "AuthType": "HttpHeader",
+            "AuthParamName": "x-api-token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "China politics",
+                  "lang": "en",
+                  "countries": "CN"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "China politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "China politics sourcecountry:CH",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Indonesia",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Indonesia politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "id",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Indonesia politics",
+                  "lang": "en",
+                  "country": "id",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Indonesia politics",
+                  "country": "id",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "TheNewsAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.thenewsapi.com/v1/news",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "api_token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "All",
+                "Endpoint": "all",
+                "QueryParameters": {
+                  "search": "Indonesia politics",
+                  "language": "en",
+                  "categories": "politics",
+                  "limit": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Top",
+                "Endpoint": "top",
+                "QueryParameters": {
+                  "locale": "id",
+                  "language": "en",
+                  "limit": "25"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewscatcherAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
+            "AuthType": "HttpHeader",
+            "AuthParamName": "x-api-token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Indonesia politics",
+                  "lang": "en",
+                  "countries": "ID"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Indonesia politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Indonesia politics sourcecountry:ID",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Thailand",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Thailand politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "th",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Thailand politics",
+                  "lang": "en",
+                  "country": "th",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Thailand politics",
+                  "country": "th",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "TheNewsAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.thenewsapi.com/v1/news",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "api_token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "All",
+                "Endpoint": "all",
+                "QueryParameters": {
+                  "search": "Thailand politics",
+                  "language": "en",
+                  "categories": "politics",
+                  "limit": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "Top",
+                "Endpoint": "top",
+                "QueryParameters": {
+                  "locale": "th",
+                  "language": "en",
+                  "limit": "25"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewscatcherAPI",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
+            "AuthType": "HttpHeader",
+            "AuthParamName": "x-api-token",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Thailand politics",
+                  "lang": "en",
+                  "countries": "TH"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Thailand politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Thailand politics sourcecountry:TH",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Czech Republic",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Czech Republic politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "cz",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Czech Republic politics",
+                  "lang": "en",
+                  "country": "cz",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Czech Republic politics",
+                  "country": "cz",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Czech Republic politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Czech Republic politics sourcecountry:EZ",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Romania",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Romania politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "ro",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Romania politics",
+                  "lang": "en",
+                  "country": "ro",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Romania politics",
+                  "country": "ro",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Romania politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Romania politics sourcecountry:RO",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Hungary",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Hungary politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "hu",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Hungary politics",
+                  "lang": "en",
+                  "country": "hu",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Hungary politics",
+                  "country": "hu",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Hungary politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Hungary politics sourcecountry:HU",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Greece",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Greece politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "gr",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Greece politics",
+                  "lang": "en",
+                  "country": "gr",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Greece politics",
+                  "country": "gr",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Greece politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Greece politics sourcecountry:GR",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Portugal",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Portugal politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "pt",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Portugal politics",
+                  "lang": "en",
+                  "country": "pt",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Portugal politics",
+                  "country": "pt",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Portugal politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Portugal politics sourcecountry:PO",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Malaysia",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Malaysia politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "my",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Malaysia politics",
+                  "lang": "en",
+                  "country": "my",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Malaysia politics",
+                  "country": "my",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Malaysia politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Malaysia politics sourcecountry:MY",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Vietnam",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Vietnam politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "vn",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Vietnam politics",
+                  "lang": "en",
+                  "country": "vn",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Vietnam politics",
+                  "country": "vn",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Vietnam politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Vietnam politics sourcecountry:VM",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Philippines",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Philippines politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "ph",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Philippines politics",
+                  "lang": "en",
+                  "country": "ph",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Philippines politics",
+                  "country": "ph",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Philippines politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Philippines politics sourcecountry:RP",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Pakistan",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Pakistan politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "pk",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Pakistan politics",
+                  "lang": "en",
+                  "country": "pk",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Pakistan politics",
+                  "country": "pk",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Pakistan politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Pakistan politics sourcecountry:PK",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Bangladesh",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Bangladesh politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "bd",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Bangladesh politics",
+                  "lang": "en",
+                  "country": "bd",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Bangladesh politics",
+                  "country": "bd",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Bangladesh politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Bangladesh politics sourcecountry:BG",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Nepal",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Nepal politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "np",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Nepal politics",
+                  "lang": "en",
+                  "country": "np",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Nepal politics",
+                  "country": "np",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Nepal politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Nepal politics sourcecountry:NP",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Sri Lanka",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Sri Lanka politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "lk",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Sri Lanka politics",
+                  "lang": "en",
+                  "country": "lk",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Sri Lanka politics",
+                  "country": "lk",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Sri Lanka politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Sri Lanka politics sourcecountry:CE",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Nigeria",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Nigeria politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "ng",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Nigeria politics",
+                  "lang": "en",
+                  "country": "ng",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Nigeria politics",
+                  "country": "ng",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Nigeria politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Nigeria politics sourcecountry:NI",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Kenya",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Kenya politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "ke",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Kenya politics",
+                  "lang": "en",
+                  "country": "ke",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Kenya politics",
+                  "country": "ke",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Kenya politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Kenya politics sourcecountry:KE",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Egypt",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Egypt politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "eg",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Egypt politics",
+                  "lang": "en",
+                  "country": "eg",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Egypt politics",
+                  "country": "eg",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Egypt politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Egypt politics sourcecountry:EG",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Taiwan",
+        "Enabled": true,
+        "Providers": [
+          {
+            "Name": "NewsApiOrg",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsapi.org/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Everything",
+                "Endpoint": "everything",
+                "QueryParameters": {
+                  "q": "Taiwan politics",
+                  "language": "en",
+                  "sortBy": "publishedAt",
+                  "pageSize": "50"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopHeadlines",
+                "Endpoint": "top-headlines",
+                "QueryParameters": {
+                  "category": "general",
+                  "country": "tw",
+                  "pageSize": "50"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GNews",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://gnews.io/api/v4",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "q": "Taiwan politics",
+                  "lang": "en",
+                  "country": "tw",
+                  "max": "10"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "NewsDataIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://newsdata.io/api/1",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apikey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Latest",
+                "Endpoint": "latest",
+                "QueryParameters": {
+                  "q": "Taiwan politics",
+                  "country": "tw",
+                  "language": "en",
+                  "category": "politics"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "EventRegistry",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GetArticles",
+                "Endpoint": "",
+                "QueryParameters": {
+                  "keyword": "Taiwan politics",
+                  "lang": "eng"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "GDELT",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
+            "AuthType": "None",
+            "AuthParamName": "",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "DocSearch",
+                "Endpoint": "doc",
+                "QueryParameters": {
+                  "query": "Taiwan politics sourcecountry:TW",
+                  "mode": "artlist",
+                  "format": "json",
+                  "maxrecords": "75"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
           }
         ]
       },
@@ -6816,6 +11682,53 @@
                   "category": "general"
                 },
                 "Category": "Business",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "PolygonIo",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.polygon.io/v2",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "apiKey",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "GeneralNews",
+                "Endpoint": "reference/news",
+                "QueryParameters": {
+                  "limit": "20",
+                  "order": "desc"
+                },
+                "Category": "Business",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
+            "Name": "YouTubeDataApi",
+            "Enabled": true,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://www.googleapis.com/youtube/v3",
+            "AuthType": "QueryParameter",
+            "AuthParamName": "key",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "Search",
+                "Endpoint": "search",
+                "QueryParameters": {
+                  "part": "snippet",
+                  "q": "election politics",
+                  "type": "video",
+                  "order": "date",
+                  "maxResults": "25"
+                },
+                "Category": "Politics",
                 "Language": "en",
                 "Enabled": true
               }

@@ -1284,3 +1284,169 @@ finished registering successfully in the background roughly 26s later with no er
 matters for Render specifically: `render.yaml`'s free-tier deploy needs the container to pass a
 health check quickly after starting, and 25+ seconds of synchronous registration blocking that was
 a real risk, not just a local dev annoyance.
+
+**A 27-row publisher table deepened United Kingdom coverage and added three new providers - the
+first pass in this codebase's history built entirely without curl-verification, because this
+session's own sandbox network policy blocks every external host outright (`api.twelvedata.com`,
+`api.polygon.io`, `reddit.com`, `t.me`, and every other domain tried all returned a 403 from the
+session's own egress proxy, not from the destination) - every claim below is best-effort from
+each API's own published documentation, the same "confirm once enabled" caveat already carried by
+`ApContentApiProvider`/`DataGovInProvider`, not the usual live-verified standard.** Thirteen
+already-existing India-configured aggregators/APIs (NewsAPI.org, GNews, TheNewsAPI, CurrentsAPI,
+Mediastack, NewsDataIo, WorldNewsAPI, EventRegistry, NewscatcherAPI, Guardian, GDELT,
+SerpApiGoogleNews, WebzIo) each gained a second `NewsApiProviderOptions` block under the existing
+**United Kingdom** country entry - same provider class/singleton instance, just a second
+config block with UK-flavored query parameters (`country`/`countries`/`source-countries`: `gb`
+per each API's own ISO-3166 convention, except GDELT's own `sourcecountry:UK` FIPS-style code and
+Google/SerpApi's own `gl=uk` exception to ISO), proving out the `NewsApiCrawlerOrchestrator`'s
+existing `providerOptions.Name`-keyed lookup (documented when `Countries` was introduced) actually
+supports the same provider fetching for two different countries with two independent configs.
+WorldNewsAPI's UK block stays `Enabled: false`, mirroring its already-disabled India entry.
+
+Two new **Finance**-category JSON-API providers joined **International**: **PolygonIo**
+(`api.polygon.io/v2/reference/news`, query param `apiKey`, free tier 5 req/min) - a genuine
+article-shaped news endpoint (title/description/article_url/published_utc/publisher), unlike
+Twelve Data below. **Twelve Data** (also requested) was **not** wired in: its public API surface
+is time-series/quote/fundamentals market data with no news-article endpoint at all - the same
+architectural mismatch already documented for World Bank/IMF/OECD (numbers, not stories), not a
+technical failure.
+
+One new **Social**-category provider, **YouTubeDataApi** (`www.googleapis.com/youtube/v3/search`,
+query param `key`), joined **International** - a genuinely different capability from the existing
+`YouTubeRssProvider`: that one reads one already-known channel's own keyless Atom feed, while this
+one keyword-searches across all of YouTube (`type=video`), so it lives in the JSON-API pipeline
+instead of the RSS one, tagging results `"video"` the same way `YouTubeRssProvider` does so both
+produce the same shape.
+
+**Reddit** joined **United Kingdom** (`r/unitedkingdom`/`r/ukpolitics`) as the one provider in
+this pipeline needing genuine two-legged OAuth2 (`client_credentials` grant against
+`www.reddit.com/api/v1/access_token`, HTTP Basic auth of a client id/secret, yielding a
+short-lived bearer token for `oauth.reddit.com`) - Reddit killed its unauthenticated `.json`
+endpoints in 2026, so the old no-key workaround other providers like GDELT rely on
+(`AuthType.None`) no longer exists for Reddit. This doesn't fit
+`NewsApiProviderOptions.AuthType`'s single-static-key model at all, so `RedditProvider` implements
+`INewsApiProvider` directly (same reasoning `EventRegistryProvider` bypasses
+`BaseNewsApiProvider` for a POST body) and manages its own in-memory token cache with expiry.
+Because two credentials are needed instead of one, `NewsApiKeys:Reddit` deliberately holds
+`"{clientId}:{clientSecret}"` (split on the first colon) rather than a plain key - a Reddit app is
+created free at reddit.com/prefs/apps.
+
+**Telegram Bot API was requested but not implemented - a genuine authorization mismatch, not a
+missing feature.** The Bot API's `getUpdates` only ever receives messages from chats/channels the
+bot has already been added to as a member/admin; there is no method for a bot to passively read an
+arbitrary public channel's (PMO India's, the Election Commission's, ...) content without that
+channel's own admins first adding the bot - which can't be done unilaterally for channels this
+codebase doesn't own. (A separate, unauthenticated technique - scraping the public
+`t.me/s/{channel}` HTML preview - exists and sidesteps this, but that is fetching/parsing HTML,
+not "the Telegram Bot API," and is a materially different, more fragile mechanism this batch does
+not implement without being asked for it specifically.)
+
+**Two new `NewsApiCrawler:Countries` entries - Canada and Australia - from a user-supplied
+39-row publisher table, config-only (no new provider classes).** Both new country blocks reuse
+the same 12 already-existing general-aggregator provider classes (NewsAPI.org, GNews, TheNewsAPI,
+CurrentsAPI, Mediastack, NewsDataIo, WorldNewsAPI, EventRegistry, NewscatcherAPI, GDELT,
+SerpApiGoogleNews, WebzIo) with country-specific query parameters (`country`/`countries`/
+`source-countries`: `ca`/`CA` for Canada, `au`/`AU` for Australia - both plain ISO-3166 alpha-2,
+no quirk exception like the UK's own `gl=uk`/GDELT `sourcecountry:UK` needed here), same
+mechanical pattern as the United Kingdom expansion above - proof this per-provider-per-country
+config shape scales to a third and fourth country with zero code changes, only
+`NewsCrawler.appsettings.json`. WorldNewsAPI stays `Enabled: false` in both new blocks, matching
+its already-disabled India/UK entries. Bing News Search API (both countries), Reuters Connect
+(both), and Bloomberg API (both) were in the source table again but not re-added - already
+verified dead/enterprise-only earlier in this file, and nothing about asking for them per-country
+changes that. AP Content API and the three global Finance providers
+(FinancialModelingPrep/AlphaVantage/Finnhub) were also in the table for both countries but
+deliberately not duplicated per-country - AP is one global newswire endpoint with no country-filter
+knob in its existing config, and the Finance APIs are already under **International** precisely
+because they're not tied to one nation, same reasoning already documented when GoogleFactCheck
+was placed there.
+
+**The Globe and Mail API (Canada) was requested but has no public self-serve developer API** -
+their site runs on Arc XP (the same CMS platform already behind IndianExpress/The Irish Times/La
+Nacion's RSS feeds elsewhere in this file) but there is no discoverable Globe and Mail developer
+portal or content-syndication API a small project can sign up for; the user's own table already
+flagged this row `Free Tier: No` / `Paid: Enterprise`, consistent with what turned up - the same
+"enterprise-only, no self-serve path" category as Bloomberg API, not a technical failure. Not
+wired in.
+
+**Eight more `NewsApiCrawler:Countries` entries - Germany, France, Japan, South Korea, Singapore,
+China, Indonesia, Thailand - from a 74-row user-supplied table, config-only again**: each new
+block carries the 7 provider rows the table actually asked for this time (a smaller subset than
+prior batches - no Mediastack/Currents/WorldNewsAPI/SerpApi/WebzIo here): NewsAPI.org, GNews,
+NewsData.io, TheNewsAPI, NewscatcherAPI, EventRegistry, GDELT, all reusing the same already-registered
+provider singletons with country-specific query parameters. **This batch caught and fixed a real
+bug from the Canada/Australia batch just above**: GDELT's `sourcecountry` filter uses **FIPS 10-4**
+codes, not ISO-3166 - they're identical for most countries (Canada's FIPS code is coincidentally
+`CA`, same as ISO), which is why the mistake wasn't obvious earlier, but Australia's FIPS code is
+`AS`, not the ISO `AU` that was configured - silently querying the wrong/nonexistent country code
+rather than erroring, so it would have just returned fewer or zero matching articles forever
+without ever surfacing as a failure. Corrected to `sourcecountry:AS`. The eight new countries'
+own GDELT queries use their correct FIPS codes throughout: Germany `GM`, Japan `JA`, South Korea
+`KS`, Singapore `SN`, China `CH` (all genuinely different from their ISO codes `DE`/`JP`/`KR`/
+`SG`/`CN`), while France/Indonesia/Thailand's FIPS codes happen to match ISO (`FR`/`ID`/`TH`).
+Every other provider in this batch (NewsAPI.org/GNews/NewsData.io/TheNewsAPI/NewscatcherAPI) keeps
+using plain ISO-3166 alpha-2 for its own `country`/`countries`/`locale` parameter, since none of
+those APIs use FIPS - only GDELT does.
+
+Reuters Connect and Bloomberg API (requested again for every one of these eight countries) stay
+excluded, already documented dead/enterprise-only. AP Content API (Germany) was not duplicated,
+same reasoning as every prior batch (one global newswire, no per-country config knob, already
+under United States).
+
+**Four country-specific newswire rows were requested and investigated, none wired in - for four
+different reasons, not just "blocked" for all of them.** **AFP API / AFP NewsML** (France) is a
+real, live public API - confirmed via its own OAuth2 token endpoint
+(`afp-apicore-prod.afp.com/oauth/token?grant_type=anonymous` for a no-credential test mode, or a
+username/password grant for permanent access) and a documented `v1/api/latest` article-listing
+endpoint - genuinely closer to Reddit's shape (real OAuth2 token exchange) than to
+Bloomberg/Reuters's "no public product at all." It was still **not implemented**: this session's
+network policy blocks every external host, so unlike Polygon.io/YouTube Data API (whose JSON
+response *field names* are clearly documented and could be built with reasonable confidence), no
+source could confirm AFP's actual response schema (their full API reference lives behind
+`v1/docs`, itself unreachable) - implementing blind here risks a provider that authenticates
+successfully and returns HTTP 200 forever while silently parsing zero articles because every
+guessed field name is wrong, which is worse than not shipping it. Revisit once a real account's
+live response is available to build the parser from. **Kyodo News API** (Japan) - `corp.kyodo-d.jp`
+is Kyodo News Digital's corporate/B2B site; no discoverable public self-serve developer portal,
+appears to be enterprise content distribution only (same category as Bloomberg). **Yonhap News
+API** (South Korea) - no distinct public developer API found beyond the Yonhap English RSS feed
+already wired in elsewhere in this file; the table's "API" row most likely refers to the same
+newswire product this codebase already ingests via RSS, not a separate JSON product. **Xinhua
+API** (China) - no official self-serve developer portal found; consistent with Xinhua's own RSS
+feed being independently documented elsewhere in this file as frozen since 2017-2018.
+
+**Sixteen more `NewsApiCrawler:Countries` entries - Czech Republic, Romania, Hungary, Greece,
+Portugal, Malaysia, Vietnam, Philippines, Pakistan, Bangladesh, Nepal, Sri Lanka, Nigeria, Kenya,
+Egypt, Taiwan - from a 91-row user-supplied table, config-only, an even smaller 5-provider subset
+than the Germany/France/... batch just above:** NewsAPI.org, GNews, NewsData.io, EventRegistry,
+GDELT (no TheNewsAPI/NewscatcherAPI this time). Continuing the FIPS-vs-ISO
+discipline the Australia bug (above) forced into practice, each country's GDELT `sourcecountry`
+value was looked up individually against an authoritative FIPS-10-4-to-ISO mapping (the
+`mysociety/gaze` reference table) rather than assumed equal to its ISO code - seven of these
+sixteen genuinely differ: **Czech Republic** `EZ` (not `CZ`), **Portugal** `PO` (not `PT`),
+**Vietnam** `VM` (not `VN`, a holdover from the pre-1976 "Democratic Republic of Vietnam" naming),
+**Philippines** `RP` (not `PH`, "Republic of the Philippines"), **Bangladesh** `BG` (not `BD` -
+coincidentally the same two letters as Bulgaria's unrelated *ISO* code, but FIPS and ISO are
+separate namespaces so this isn't a collision in practice), **Sri Lanka** `CE` (not `LK`, a
+holdover from "Ceylon"), and **Nigeria** `NI` (not `NG`). The other nine (Romania, Hungary,
+Greece, Malaysia, Pakistan, Nepal, Kenya, Egypt, Taiwan) happen to share the same two letters in
+both schemes. Every other provider here keeps using plain ISO-3166 for its own country parameter,
+same as always - only GDELT needs FIPS.
+
+**Ten country-specific national-newswire "API" rows were requested (Lusa/Portugal,
+BERNAMA/Malaysia, VNA/Vietnam, PNA/Philippines, APP/Pakistan, BSS/Bangladesh, Rastriya Samachar
+Samiti/Nepal, NAN/Nigeria, KNA/Kenya, MENA/Egypt) plus an eleventh implied by the table
+(CNA/Taiwan) - none wired in, all individually checked rather than assumed dead from the pattern
+alone.** Every one of the user's own table rows already pre-labeled these `Free Tier: No` /
+`Paid: Enterprise`, and individual searches for each confirmed no discoverable public self-serve
+developer portal or API documentation - each is a national/state wire agency selling subscription
+access directly (phone/email contact, not a signup page), the same category as Bloomberg/Kyodo/
+Xinhua above. One partial exception worth recording precisely: Taiwan's **CNA** does have a
+`developer.cna.com` portal, but its own contact page reads "Thank you for your interest in CNA's
+API..." - a request-a-quote form, not self-serve signup - and separately, CNA's own website
+happens to call undocumented endpoints (`cna.com.tw/cna2018api/api/WTopic`,
+`.../WNewsList`) to render itself; those aren't a public product either (no confirmed auth
+scheme, no stated terms for third-party use, most likely intended only for CNA's own frontend) -
+using them would be scraping an internal endpoint, not integrating "the CNA API," so neither path
+was wired in. (Taiwan is still covered via the existing English-language `FocusTaiwan`/CNA RSS
+feed documented earlier in this file - this only affects the JSON-API pipeline.)
