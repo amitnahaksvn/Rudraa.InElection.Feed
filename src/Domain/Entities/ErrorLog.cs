@@ -91,4 +91,9 @@ public sealed class ErrorLog
     public bool IsSent { get; set; }
 
     public DateTimeOffset? SentOn { get; set; }
+
+    /// <summary>Manually acknowledged via the error-monitor UI/API - independent of <see cref="IsSent"/>, which only tracks whether the batch-email pipeline has picked this row up.</summary>
+    public bool IsResolved { get; set; }
+
+    public DateTimeOffset? ResolvedOn { get; set; }
 }

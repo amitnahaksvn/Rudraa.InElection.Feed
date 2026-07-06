@@ -30,3 +30,7 @@ services:
         value: http://+:8080
       - key: Api__EnableHangfireDashboard
         value: "false"
+      # Same "no built-in auth" reasoning as EnableHangfireDashboard above - the error-monitor
+      # page surfaces stack traces and raw request/response bodies.
+      - key: Api__EnableErrorDashboard
+        value: "false"

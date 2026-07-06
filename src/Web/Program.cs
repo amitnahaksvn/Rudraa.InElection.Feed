@@ -156,6 +156,7 @@ _ = Task.Run(async () =>
         await HangfireRecurringJobRegistrar.SeedAndRegisterDynamicFeedRecurringJobsAsync(app.Services, startupLogger);
         HangfireRecurringJobRegistrar.RegisterNewsApiRecurringJobs(app.Services, startupLogger);
         HangfireRecurringJobRegistrar.RegisterErrorNotificationDispatchRecurringJob(app.Services, startupLogger);
+        await HangfireRecurringJobRegistrar.SeedAndRegisterSocialMediaRecurringJobsAsync(app.Services, startupLogger);
     }
     catch (Exception ex)
     {
@@ -167,6 +168,11 @@ _ = Task.Run(async () =>
 
 app.UseMiddleware<RequestLoggingMiddleware>();
 app.UseExceptionHandler();
+
+// Serves the error-monitor React app's built assets (see src/Web/ClientApp) - harmless to leave
+// on unconditionally, since it only serves files that already exist under wwwroot; the page
+// itself (the SPA fallback routes below) is gated separately via EnableErrorDashboard.
+app.UseStaticFiles();
 
 if (!app.Environment.IsDevelopment())
 {
@@ -203,6 +209,17 @@ if (builder.Configuration.GetValue($"{ApiOptions.SectionName}:EnableHangfireDash
     // them (Hangfire's dashboard has no built-in auth of its own). Weigh that against the
     // convenience before re-enabling EnableHangfireDashboard on a public deployment.
     app.UseHangfireDashboard("/hangfire");
+}
+
+if (builder.Configuration.GetValue($"{ApiOptions.SectionName}:EnableErrorDashboard", false))
+{
+    // Same "no built-in auth, off by default" trade-off as EnableHangfireDashboard above - the
+    // error-monitor page surfaces stack traces and raw request/response bodies. The underlying
+    // api/errors/* JSON endpoints stay mapped regardless (same always-on trust model as every
+    // other endpoint in this app); only the SPA page itself is gated here. Two fallback routes
+    // because a catch-all route parameter doesn't match the bare "/errors" path with zero segments.
+    app.MapFallbackToFile("/errors", "index.html");
+    app.MapFallbackToFile("/errors/{**slug}", "index.html");
 }
 
 app.Run();

@@ -2,6 +2,14 @@ using Domain.Entities;
 
 namespace Application.Abstractions;
 
+/// <summary>Optional filters for <see cref="IErrorLogRepository.GetPagedAsync"/>/<see cref="IErrorLogRepository.CountAsync"/> - a null field means "don't filter on this".</summary>
+public sealed record ErrorLogFilter(
+    bool? IsResolved = null,
+    string? Provider = null,
+    string? Country = null,
+    string? Source = null,
+    string? SearchText = null);
+
 /// <summary>Persistence for <see cref="ErrorLog"/> - the general app-wide exception log.</summary>
 public interface IErrorLogRepository
 {
@@ -12,6 +20,16 @@ public interface IErrorLogRepository
 
     /// <summary>Flips <see cref="ErrorLog.IsSent"/> to true and stamps <see cref="ErrorLog.SentOn"/> for exactly these ids - called only after a dispatch email has actually been sent successfully.</summary>
     Task MarkAsSentAsync(IReadOnlyList<string> ids, DateTimeOffset sentOn, CancellationToken cancellationToken);
+
+    /// <summary>Unresolved rows first, then newest first within each group - matches the error-monitor UI's default sort so a fresh unresolved failure always surfaces at the top.</summary>
+    Task<IReadOnlyList<ErrorLog>> GetPagedAsync(ErrorLogFilter filter, int skip, int limit, CancellationToken cancellationToken);
+
+    Task<long> CountAsync(ErrorLogFilter filter, CancellationToken cancellationToken);
+
+    Task<ErrorLog?> GetByIdAsync(string id, CancellationToken cancellationToken);
+
+    /// <summary>Sets <see cref="ErrorLog.IsResolved"/> (and <see cref="ErrorLog.ResolvedOn"/> when resolving, clearing it when un-resolving). Returns false when no row with that id exists.</summary>
+    Task<bool> SetResolvedAsync(string id, bool resolved, CancellationToken cancellationToken);
 
     Task EnsureIndexesAsync(CancellationToken cancellationToken);
 }
