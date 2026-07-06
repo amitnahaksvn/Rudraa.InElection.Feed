@@ -8,6 +8,8 @@ import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
 import { useRssProviders } from './useRssProviders';
 import { RssProviderCard } from './RssProviderCard';
+import { CountryGroupHeader } from './CountryGroupHeader';
+import type { RssProviderSummary } from '../../api/providerTypes';
 
 export function RssProvidersTab() {
   const { data, isLoading, isError } = useRssProviders();
@@ -19,6 +21,19 @@ export function RssProvidersTab() {
     if (!term) return data;
     return data.filter((p) => p.name.toLowerCase().includes(term) || p.country.toLowerCase().includes(term));
   }, [data, search]);
+
+  const groupedByCountry = useMemo(() => {
+    const groups = new Map<string, RssProviderSummary[]>();
+    for (const provider of filtered) {
+      const list = groups.get(provider.country);
+      if (list) {
+        list.push(provider);
+      } else {
+        groups.set(provider.country, [provider]);
+      }
+    }
+    return [...groups.entries()].sort(([a], [b]) => a.localeCompare(b));
+  }, [filtered]);
 
   if (isLoading) {
     return (
@@ -33,7 +48,7 @@ export function RssProvidersTab() {
   }
 
   return (
-    <Stack gap={2}>
+    <Stack gap={0.5}>
       <Stack direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={1}>
         <TextField
           size="small"
@@ -62,11 +77,14 @@ export function RssProvidersTab() {
         </Typography>
       )}
 
-      <Stack gap={1}>
-        {filtered.map((provider) => (
-          <RssProviderCard key={`${provider.country}-${provider.name}`} provider={provider} />
-        ))}
-      </Stack>
+      {groupedByCountry.map(([country, providers]) => (
+        <Stack key={country} gap={1}>
+          <CountryGroupHeader country={country} count={providers.length} />
+          {providers.map((provider) => (
+            <RssProviderCard key={`${provider.country}-${provider.name}`} provider={provider} />
+          ))}
+        </Stack>
+      ))}
     </Stack>
   );
 }
