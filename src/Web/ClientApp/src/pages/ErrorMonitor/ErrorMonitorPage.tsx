@@ -29,6 +29,7 @@ const DEFAULT_FILTERS: ErrorLogFilters = {
 
 const SIDEBAR_WIDTH = 220;
 const LIST_WIDTH = 380;
+const TABLET_LIST_WIDTH = 300;
 
 // useErrorLogRealtime needs PendingTransitionContext (to animate a remotely-changed row out of a
 // now-mismatched status filter the same way a local resolve does), so it has to run inside
@@ -50,7 +51,15 @@ function ErrorMonitorPageContent() {
   const counts = useErrorLogCounts(filters);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  // Three tiers, not two: a phone (<600px) can't show more than one pane at a time, but a tablet
+  // (600-900px) has room for list+detail side by side even though it can't also fit the sidebar
+  // column - collapsing tablets all the way down to the phone's single-pane toggle wasted the
+  // extra width they actually have.
+  const isPhone = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+  const showSidebarColumn = !isPhone && !isTablet;
+  const showTopStatusBar = isPhone || isTablet;
+  const singlePane = isPhone;
 
   // Infinite scroll: load the next 20 once the sentinel div at the bottom of the list scrolls
   // into view, instead of a "load more" button - matches "as scroll down it shows more record".
@@ -142,11 +151,11 @@ function ErrorMonitorPageContent() {
   );
 
   return (
-    <Box sx={{ height: 'calc(100vh - 96px)', display: 'flex', flexDirection: 'column' }}>
-      {isMobile && <StatusSidebar direction="row" filters={filters} counts={counts.data} onChange={handleSidebarChange} />}
+    <Box sx={{ height: { xs: 'calc(100vh - 88px)', sm: 'calc(100vh - 96px)' }, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      {showTopStatusBar && <StatusSidebar direction="row" filters={filters} counts={counts.data} onChange={handleSidebarChange} />}
 
-      <Box sx={{ flex: 1, display: 'flex', minHeight: 0, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
-        {!isMobile && (
+      <Box sx={{ flex: 1, display: 'flex', minHeight: 0, minWidth: 0, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
+        {showSidebarColumn && (
           <>
             <Box sx={{ width: SIDEBAR_WIDTH, flexShrink: 0, overflow: 'auto' }}>
               <StatusSidebar filters={filters} counts={counts.data} onChange={handleSidebarChange} />
@@ -155,13 +164,21 @@ function ErrorMonitorPageContent() {
           </>
         )}
 
-        {(!isMobile || selectedId === null) && (
-          <Box sx={{ width: isMobile ? '100%' : LIST_WIDTH, flexShrink: 0, overflow: 'hidden' }}>{listPane}</Box>
+        {(!singlePane || selectedId === null) && (
+          <Box
+            sx={{
+              width: singlePane ? '100%' : isTablet ? TABLET_LIST_WIDTH : LIST_WIDTH,
+              flexShrink: 0,
+              overflow: 'hidden',
+            }}
+          >
+            {listPane}
+          </Box>
         )}
 
-        {!isMobile && <Divider orientation="vertical" flexItem />}
+        {!singlePane && <Divider orientation="vertical" flexItem />}
 
-        {!isMobile && (
+        {!singlePane && (
           <Box sx={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
             {selectedId ? (
               <ErrorDetailPane errorId={selectedId} />
@@ -173,7 +190,7 @@ function ErrorMonitorPageContent() {
           </Box>
         )}
 
-        {isMobile && selectedId !== null && (
+        {singlePane && selectedId !== null && (
           <Box sx={{ width: '100%', overflow: 'hidden' }}>
             <ErrorDetailPane errorId={selectedId} onBack={() => setSelectedId(null)} />
           </Box>

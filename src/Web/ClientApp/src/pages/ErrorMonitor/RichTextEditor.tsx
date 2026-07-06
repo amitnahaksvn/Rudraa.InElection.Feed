@@ -43,7 +43,10 @@ export function RichTextEditor({
       readonly: !!disabled,
       placeholder: placeholder ?? '',
       minHeight,
-      toolbarAdaptive: false,
+      // Adaptive (Jodit's default): collapses overflowing buttons into a "..." menu once the
+      // toolbar is narrower than its buttons need - matters on a phone-width dialog, where all 18
+      // buttons + separators can't fit; a wide desktop dialog has room to show every button anyway.
+      toolbarAdaptive: true,
       showXPathInStatusbar: false,
       showCharsCounter: false,
       showWordsCounter: false,

@@ -17,8 +17,8 @@ export function PendingTransitionToasts() {
         >
           <Box
             sx={{
-              minWidth: 320,
-              maxWidth: 420,
+              minWidth: { xs: 0, sm: 320 },
+              maxWidth: { xs: 'calc(100vw - 32px)', sm: 420 },
               borderRadius: 1.5,
               overflow: 'hidden',
               bgcolor: 'grey.900',

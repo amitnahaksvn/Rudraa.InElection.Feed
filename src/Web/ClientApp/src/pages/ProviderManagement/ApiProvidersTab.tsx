@@ -5,7 +5,11 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
+import Button from '@mui/material/Button';
+import Collapse from '@mui/material/Collapse';
 import SearchIcon from '@mui/icons-material/Search';
+import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import { useApiProviders } from './useApiProviders';
 import { ApiProviderCard } from './ApiProviderCard';
 import { CountryGroupHeader } from './CountryGroupHeader';
@@ -14,6 +18,7 @@ import type { ApiProviderSummary } from '../../api/providerTypes';
 export function ApiProvidersTab() {
   const { data, isLoading, isError } = useApiProviders();
   const [search, setSearch] = useState('');
+  const [collapsedCountries, setCollapsedCountries] = useState<Set<string>>(new Set());
 
   const filtered = useMemo(() => {
     if (!data) return [];
@@ -34,6 +39,24 @@ export function ApiProvidersTab() {
     }
     return [...groups.entries()].sort(([a], [b]) => a.localeCompare(b));
   }, [filtered]);
+
+  const toggleCountry = (country: string) => {
+    setCollapsedCountries((prev) => {
+      const next = new Set(prev);
+      if (next.has(country)) {
+        next.delete(country);
+      } else {
+        next.add(country);
+      }
+      return next;
+    });
+  };
+
+  const allCollapsed = groupedByCountry.length > 0 && groupedByCountry.every(([country]) => collapsedCountries.has(country));
+
+  const toggleAll = () => {
+    setCollapsedCountries(allCollapsed ? new Set() : new Set(groupedByCountry.map(([country]) => country)));
+  };
 
   if (isLoading) {
     return (
@@ -66,9 +89,20 @@ export function ApiProvidersTab() {
             },
           }}
         />
-        <Typography variant="caption" color="text.secondary">
-          {filtered.length} of {data?.length ?? 0} providers
-        </Typography>
+        <Stack direction="row" alignItems="center" gap={1.5}>
+          {groupedByCountry.length > 0 && (
+            <Button
+              size="small"
+              startIcon={allCollapsed ? <UnfoldMoreIcon fontSize="small" /> : <UnfoldLessIcon fontSize="small" />}
+              onClick={toggleAll}
+            >
+              {allCollapsed ? 'Expand all' : 'Collapse all'}
+            </Button>
+          )}
+          <Typography variant="caption" color="text.secondary">
+            {filtered.length} of {data?.length ?? 0} providers
+          </Typography>
+        </Stack>
       </Stack>
 
       {filtered.length === 0 && (
@@ -77,14 +111,26 @@ export function ApiProvidersTab() {
         </Typography>
       )}
 
-      {groupedByCountry.map(([country, providers]) => (
-        <Stack key={country} gap={1}>
-          <CountryGroupHeader country={country} count={providers.length} />
-          {providers.map((provider) => (
-            <ApiProviderCard key={`${provider.country}-${provider.name}`} provider={provider} />
-          ))}
-        </Stack>
-      ))}
+      {groupedByCountry.map(([country, providers]) => {
+        const expanded = !collapsedCountries.has(country);
+        return (
+          <Stack key={country} gap={1}>
+            <CountryGroupHeader
+              country={country}
+              count={providers.length}
+              expanded={expanded}
+              onToggle={() => toggleCountry(country)}
+            />
+            <Collapse in={expanded}>
+              <Stack gap={1}>
+                {providers.map((provider) => (
+                  <ApiProviderCard key={`${provider.country}-${provider.name}`} provider={provider} />
+                ))}
+              </Stack>
+            </Collapse>
+          </Stack>
+        );
+      })}
     </Stack>
   );
 }
