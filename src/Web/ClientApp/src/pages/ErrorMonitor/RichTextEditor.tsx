@@ -5,7 +5,39 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import ToggleButton from '@mui/material/ToggleButton';
+import { useColorScheme } from '@mui/material/styles';
 import { sanitizeRichText } from './sanitizeRichText';
+
+// Jodit's own toolbar swaps to a *different, larger* default button list below its internal
+// "large" breakpoint (buttonsMD/buttonsSM/buttonsXS) rather than just collapsing the same list -
+// leaving those unset meant every dialog wide enough to still count as "medium" showed Jodit's
+// full ~32-button stock toolbar (image/video/table/AI commands/spellcheck/...) instead of this
+// curated one, however narrow this editor actually renders. Setting all four to the same array
+// keeps the toolbar consistent - and its own overflow ("...") menu, from toolbarAdaptive, is what
+// handles genuinely narrow (phone-width) dialogs, not a smaller button set.
+const BUTTONS = [
+  'bold',
+  'italic',
+  'underline',
+  'strikethrough',
+  '|',
+  'ul',
+  'ol',
+  '|',
+  'paragraph',
+  'align',
+  'outdent',
+  'indent',
+  '|',
+  'font',
+  'fontsize',
+  'brush',
+  '|',
+  'link',
+  '|',
+  'undo',
+  'redo',
+];
 
 interface RichTextEditorProps {
   label: string;
@@ -38,44 +70,37 @@ export function RichTextEditor({
   const [mode, setMode] = useState<'write' | 'preview'>('write');
   const [html, setHtml] = useState(defaultValue);
 
+  // Jodit ships its own light-mode-only default styling, unaware of this app's dark/light
+  // theme - the editing surface and toolbar stayed light even when the rest of the app (and the
+  // text color it inherited) switched to dark, so typed text could end up white-on-white or
+  // black-on-black. Jodit does bundle a real `dark` theme (a `jodit_theme_dark` class with its
+  // own contrast-correct CSS), so this just needs to be kept in sync with MUI's resolved mode
+  // rather than left on Jodit's own default.
+  const { mode: colorMode, systemMode } = useColorScheme();
+  const resolvedColorMode = colorMode === 'system' ? systemMode : colorMode;
+  const isDarkMode = resolvedColorMode === 'dark';
+
   const config = useMemo(
     () => ({
       readonly: !!disabled,
       placeholder: placeholder ?? '',
       minHeight,
+      theme: isDarkMode ? 'dark' : 'default',
       // Adaptive (Jodit's default): collapses overflowing buttons into a "..." menu once the
-      // toolbar is narrower than its buttons need - matters on a phone-width dialog, where all 18
-      // buttons + separators can't fit; a wide desktop dialog has room to show every button anyway.
+      // toolbar is narrower than its buttons need - matters on a phone-width dialog, where all of
+      // BUTTONS can't fit; a wide desktop dialog has room to show every button anyway.
       toolbarAdaptive: true,
       showXPathInStatusbar: false,
       showCharsCounter: false,
       showWordsCounter: false,
       showPoweredByJodit: false,
       statusbar: false,
-      buttons: [
-        'bold',
-        'italic',
-        'underline',
-        'strikethrough',
-        '|',
-        'ul',
-        'ol',
-        '|',
-        'align',
-        'outdent',
-        'indent',
-        '|',
-        'font',
-        'fontsize',
-        'brush',
-        '|',
-        'link',
-        '|',
-        'undo',
-        'redo',
-      ],
+      buttons: BUTTONS,
+      buttonsMD: BUTTONS,
+      buttonsSM: BUTTONS,
+      buttonsXS: BUTTONS,
     }),
-    [disabled, placeholder, minHeight],
+    [disabled, placeholder, minHeight, isDarkMode],
   );
 
   const isEmpty = !html.replace(/<[^>]*>/g, '').trim();
