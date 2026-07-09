@@ -11,7 +11,7 @@ else changes.
 Clean Architecture, dependencies point inward only:
 
 ```
-Rudraa.InElection.RSSFeed.slnx
+Rudraa.InElection.Feed.slnx
 
 src/
  ├── Domain              entities/enums only, zero dependencies

@@ -35,7 +35,7 @@ public sealed class RedditProvider : INewsApiProvider
 {
     public const string ProviderName = "Reddit";
     private const string TokenUrl = "https://www.reddit.com/api/v1/access_token";
-    private const string UserAgent = "web:rudraa-inelection-rssfeed:v1.0 (by /u/rudraa-inelection-rssfeed)";
+    private const string UserAgent = "web:rudraa-inelection-feed:v1.0 (by /u/rudraa-inelection-feed)";
 
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IConfiguration _configuration;

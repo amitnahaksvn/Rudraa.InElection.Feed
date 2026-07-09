@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Build everything
-dotnet build Rudraa.InElection.RSSFeed.slnx      # note: .slnx, not .sln
+dotnet build Rudraa.InElection.Feed.slnx      # note: .slnx, not .sln
 
 # Run all tests
 dotnet test tests/PoliticalNews.Tests/PoliticalNews.Tests.csproj
@@ -1549,3 +1549,18 @@ YouTube") rather than a live feed fetch/title check, since this environment's ne
 blocks youtube.com outright - the first entry in this Mongo-driven pipeline that couldn't be
 curl/fetch-verified the way almost everything else in this file was; worth re-confirming once
 network access to youtube.com is available.
+
+**ANI (Asian News International, `aninews.in`) was investigated and not wired in - frozen content,
+not a technical block.** Its `/rss-feed/` index page lists 24 category feeds (National, National/
+Politics, World + 5 sub-regions, Business, Sports + 5 sub-sports, Entertainment + 4 sub-genres,
+Tech + 4 sub-topics, Health), every one individually curl-verified as HTTP 200 with well-formed
+RSS 2.0 XML and a real 20-item body - but every single feed's items are frozen: dates embedded in
+each article's own URL (`.../{slug}20241022150636/`, a `YYYYMMDDHHMMSS` suffix) span only
+July-October 2024 across all 10 feeds sampled, over 20 months stale as of this check
+(2026-07-07), including on `National/Politics` specifically (its newest item is an Oct 28, 2024
+Jharkhand-election piece). This is the same "technically 200 and well-formed but dead" trap
+already documented for CNN/Xinhua/China Daily/Forbes'-most-popular-feed elsewhere in this file,
+with one new wrinkle: the channel-level `<lastBuildDate>` header is dynamically regenerated to the
+current request time on every fetch even though the actual `<item>` list behind it never changes -
+so that header alone is not a reliable liveness signal and shouldn't be trusted without checking
+item dates too. Not wired into `NewsCrawler.appsettings.json`.
