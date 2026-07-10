@@ -1,6 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Application.Abstractions;
+using Application.Models;
 using Domain.Entities;
 using Infrastructure.Mongo;
 
@@ -29,21 +30,59 @@ public sealed class CrawlHistoryRepository : ICrawlHistoryRepository
     public Task UpdateAsync(CrawlHistory history, CancellationToken cancellationToken) =>
         _collection.ReplaceOneAsync(h => h.Id == history.Id, history, cancellationToken: cancellationToken);
 
-    public async Task<IReadOnlyList<CrawlHistory>> GetRecentAsync(int count, CancellationToken cancellationToken) =>
-        await _collection.Find(FilterDefinition<CrawlHistory>.Empty)
+    public async Task<IReadOnlyList<CrawlHistory>> GetFilteredAsync(CrawlHistoryFilter filter, CancellationToken cancellationToken)
+    {
+        var builder = Builders<CrawlHistory>.Filter;
+        var clauses = new List<FilterDefinition<CrawlHistory>>();
+
+        if (filter.Pipeline is { } pipeline)
+        {
+            clauses.Add(builder.Eq(h => h.Pipeline, pipeline));
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter.Provider))
+        {
+            clauses.Add(builder.AnyEq(h => h.Providers, filter.Provider));
+        }
+
+        if (filter.From is { } from)
+        {
+            clauses.Add(builder.Gte(h => h.StartTime, from));
+        }
+
+        if (filter.To is { } to)
+        {
+            clauses.Add(builder.Lte(h => h.StartTime, to));
+        }
+
+        var combined = clauses.Count == 0 ? FilterDefinition<CrawlHistory>.Empty : builder.And(clauses);
+
+        return await _collection.Find(combined)
             .SortByDescending(h => h.StartTime)
-            .Limit(count)
+            .Skip(filter.Skip)
+            .Limit(filter.Take)
             .ToListAsync(cancellationToken);
+    }
 
     public async Task<CrawlHistory?> GetByIdAsync(string id, CancellationToken cancellationToken) =>
         await _collection.Find(h => h.Id == id).FirstOrDefaultAsync(cancellationToken);
 
     public async Task EnsureIndexesAsync(CancellationToken cancellationToken)
     {
-        var model = new CreateIndexModel<CrawlHistory>(
-            Builders<CrawlHistory>.IndexKeys.Descending(h => h.StartTime),
-            new CreateIndexOptions { Name = "ix_crawlhistory_starttime" });
+        var models = new[]
+        {
+            new CreateIndexModel<CrawlHistory>(
+                Builders<CrawlHistory>.IndexKeys.Descending(h => h.StartTime),
+                new CreateIndexOptions { Name = "ix_crawlhistory_starttime" }),
 
-        await _collection.Indexes.CreateOneAsync(model, cancellationToken: cancellationToken);
+            // Backs the crawl-report page's primary access pattern: "every Rss/Api run in a date
+            // range" - filtering on Pipeline first, then sorting/ranging on StartTime, matches this
+            // compound index's key order.
+            new CreateIndexModel<CrawlHistory>(
+                Builders<CrawlHistory>.IndexKeys.Ascending(h => h.Pipeline).Descending(h => h.StartTime),
+                new CreateIndexOptions { Name = "ix_crawlhistory_pipeline_starttime" })
+        };
+
+        await _collection.Indexes.CreateManyAsync(models, cancellationToken: cancellationToken);
     }
 }

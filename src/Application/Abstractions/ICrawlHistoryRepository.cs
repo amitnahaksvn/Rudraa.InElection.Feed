@@ -1,3 +1,4 @@
+using Application.Models;
 using Domain.Entities;
 
 namespace Application.Abstractions;
@@ -9,7 +10,8 @@ public interface ICrawlHistoryRepository
 
     Task UpdateAsync(CrawlHistory history, CancellationToken cancellationToken);
 
-    Task<IReadOnlyList<CrawlHistory>> GetRecentAsync(int count, CancellationToken cancellationToken);
+    /// <summary>Newest-first, matching every non-null field of <paramref name="filter"/>.</summary>
+    Task<IReadOnlyList<CrawlHistory>> GetFilteredAsync(CrawlHistoryFilter filter, CancellationToken cancellationToken);
 
     /// <returns>Null if no crawl history record with that id exists.</returns>
     Task<CrawlHistory?> GetByIdAsync(string id, CancellationToken cancellationToken);

@@ -474,6 +474,10 @@ public static class InfrastructureServiceCollectionExtensions
         // a running server, so they work from Web (read/trigger-only) as much as from Worker
         // (which executes).
         services.AddSingleton<ICrawlJobTrigger, HangfireCrawlJobTrigger>();
+        // Backs HangfireCrawlJobStatusReader's short-lived per-provider status cache - see its own
+        // doc comment for why that cache exists (Hangfire/Mongo round trips, not CPU, dominate a
+        // from-scratch lookup across this app's 236+ RSS providers).
+        services.AddMemoryCache();
         services.AddSingleton<ICrawlJobStatusReader, HangfireCrawlJobStatusReader>();
         services.AddTransient<HangfireCrawlJobExecutor>();
         services.AddTransient<HangfireRawResponseCleanupExecutor>();

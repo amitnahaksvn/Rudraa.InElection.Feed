@@ -1,5 +1,4 @@
 using Domain.Entities;
-using Domain.Enums;
 
 namespace Application.News.Dtos;
 
@@ -7,7 +6,7 @@ namespace Application.News.Dtos;
 public sealed record NewsArticleDto(
     string Id,
     string Provider,
-    ArticleSourceType SourceType,
+    string SourceType,
     string FeedName,
     string Category,
     string Title,
@@ -16,6 +15,7 @@ public sealed record NewsArticleDto(
     string Url,
     string? Author,
     string Language,
+    string Country,
     string? ImageUrl,
     DateTimeOffset? PublishedAt,
     DateTimeOffset CrawledAt,
@@ -25,7 +25,7 @@ public sealed record NewsArticleDto(
     public static NewsArticleDto FromDomain(NewsArticle article) => new(
         article.Id,
         article.Provider,
-        article.SourceType,
+        article.SourceType.ToString(),
         article.FeedName,
         article.Category,
         article.Title,
@@ -34,6 +34,7 @@ public sealed record NewsArticleDto(
         article.Url,
         article.Author,
         article.Language,
+        article.Country,
         article.ImageUrl,
         article.PublishedAt,
         article.CrawledAt,

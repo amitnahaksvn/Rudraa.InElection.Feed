@@ -1,6 +1,8 @@
 using MongoDB.Driver;
 using Application.Abstractions;
+using Application.Models;
 using Domain.Entities;
+using Domain.Enums;
 using Infrastructure.Mongo;
 
 namespace Infrastructure.Persistence;
@@ -122,6 +124,51 @@ public sealed class NewsArticleRepository : INewsArticleRepository
             .SortByDescending(a => a.CrawledAt)
             .Limit(count)
             .ToListAsync(cancellationToken);
+    }
+
+    // Deliberately reuses the existing ix_news_active_crawledat index (IsActive + CrawledAt desc)
+    // rather than adding new SourceType/Country-specific compound indexes the way
+    // GetByProviderAsync/GetByCategoryAsync's own indexes do - this database is currently at its
+    // Atlas free-tier storage cap with writes blocked, so adding index storage right now would
+    // make that worse, not better. Mongo still uses ix_news_active_crawledat for the IsActive
+    // equality + CrawledAt sort here and filters SourceType/Country per-document from there; add
+    // dedicated compound indexes once there's headroom again if this needs to scale further.
+    public async Task<IReadOnlyList<NewsArticle>> GetFeedAsync(NewsArticleFeedFilter filter, CancellationToken cancellationToken)
+    {
+        var builder = Builders<NewsArticle>.Filter;
+        var clauses = new List<FilterDefinition<NewsArticle>> { builder.Eq(a => a.IsActive, true) };
+
+        if (filter.SourceType is { } sourceType)
+        {
+            clauses.Add(builder.Eq(a => a.SourceType, sourceType));
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter.Country))
+        {
+            clauses.Add(builder.Eq(a => a.Country, filter.Country));
+        }
+
+        return await _collection.Find(builder.And(clauses))
+            .SortByDescending(a => a.CrawledAt)
+            .Skip(filter.Skip)
+            .Limit(filter.Take)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<string>> GetDistinctCountriesAsync(ArticleSourceType? sourceType, CancellationToken cancellationToken)
+    {
+        var builder = Builders<NewsArticle>.Filter;
+        var filter = sourceType is { } st
+            ? builder.And(builder.Eq(a => a.IsActive, true), builder.Eq(a => a.SourceType, st))
+            : builder.Eq(a => a.IsActive, true);
+
+        var cursor = await _collection.DistinctAsync<string>("Country", filter, cancellationToken: cancellationToken);
+        var countries = await cursor.ToListAsync(cancellationToken);
+
+        return countries
+            .Where(c => !string.IsNullOrWhiteSpace(c))
+            .OrderBy(c => c, StringComparer.OrdinalIgnoreCase)
+            .ToList();
     }
 
     public async Task EnsureIndexesAsync(CancellationToken cancellationToken)

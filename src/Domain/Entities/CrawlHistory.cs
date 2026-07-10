@@ -9,6 +9,17 @@ public sealed class CrawlHistory
 {
     public string Id { get; set; } = string.Empty;
 
+    /// <summary>Which fetch pipeline produced this run - lets a report/history query tell RSS, API, and Social runs apart.</summary>
+    public CrawlPipeline Pipeline { get; set; }
+
+    /// <summary>
+    /// Distinct provider names actually processed by this run. In the common case (a provider's
+    /// own scheduled Hangfire job) this has exactly one entry; a manual "trigger everything"
+    /// call (no provider filter) can span many, since <c>RunLockedAsync</c> loops every locked
+    /// provider into one record rather than one record per provider in that case.
+    /// </summary>
+    public List<string> Providers { get; set; } = [];
+
     public DateTimeOffset StartTime { get; set; }
 
     public DateTimeOffset? EndTime { get; set; }

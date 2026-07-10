@@ -66,7 +66,14 @@ public sealed class SocialMediaIngestionService : ISocialMediaIngestionService
             return;
         }
 
-        var history = new CrawlHistory { StartTime = DateTimeOffset.UtcNow, FeedCount = 1, Status = CrawlStatus.Running };
+        var history = new CrawlHistory
+        {
+            Pipeline = CrawlPipeline.Social,
+            Providers = [source.Name],
+            StartTime = DateTimeOffset.UtcNow,
+            FeedCount = 1,
+            Status = CrawlStatus.Running
+        };
         history.Id = await _historyRepository.InsertAsync(history, cancellationToken);
 
         _logger.LogInformation("[{RunId}] Started: {Platform}/{Name}", history.Id, source.Platform, source.Name);

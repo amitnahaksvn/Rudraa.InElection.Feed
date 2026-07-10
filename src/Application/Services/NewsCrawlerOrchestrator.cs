@@ -112,6 +112,8 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
     {
         var history = new CrawlHistory
         {
+            Pipeline = CrawlPipeline.Rss,
+            Providers = lockedProviders.Select(cp => cp.Provider.Name).Distinct(StringComparer.OrdinalIgnoreCase).ToList(),
             StartTime = DateTimeOffset.UtcNow,
             Status = CrawlStatus.Running
         };

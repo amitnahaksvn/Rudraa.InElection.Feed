@@ -138,6 +138,8 @@ public class NewsCrawlerOrchestratorTests
         Assert.Equal(0, history.UpdatedArticles);
         Assert.Equal(0, history.DuplicateArticles);
         Assert.Empty(history.FailedFeeds);
+        Assert.Equal(CrawlPipeline.Rss, history.Pipeline);
+        Assert.Equal(["AajTak"], history.Providers);
         articleRepo.Verify(r => r.UpsertAsync(It.IsAny<NewsArticle>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
         historyRepo.Verify(r => r.UpdateAsync(It.Is<CrawlHistory>(h => h.Status == CrawlStatus.Completed), It.IsAny<CancellationToken>()), Times.Once);
         rawResponseRepo.Verify(r => r.InsertAsync(It.Is<RssRawResponse>(x => x.ParseSucceeded), It.IsAny<CancellationToken>()), Times.Once);
@@ -367,6 +369,9 @@ public class NewsCrawlerOrchestratorTests
 
         Assert.Equal(CrawlStatus.Completed, history.Status);
         Assert.Equal(1, history.NewArticles);
+        // Providers reflects who actually got locked/crawled, not every enabled candidate -
+        // ABPNews's lock was held elsewhere, so only AajTak shows up here.
+        Assert.Equal(["AajTak"], history.Providers);
         aajTak.Verify(p => p.FetchAllFeedsAsync(It.IsAny<IReadOnlyList<RssFeedOptions>>(), It.IsAny<CancellationToken>()), Times.Once);
         abpNews.Verify(p => p.FetchAllFeedsAsync(It.IsAny<IReadOnlyList<RssFeedOptions>>(), It.IsAny<CancellationToken>()), Times.Never);
         lockRepo.Verify(l => l.ReleaseAsync("news-crawler:AajTak", It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);

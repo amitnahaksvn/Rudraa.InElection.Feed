@@ -39,4 +39,14 @@ public sealed class ApiOptions
     /// choice, not a default to flip on casually.
     /// </summary>
     public bool EnableProviderDashboard { get; set; }
+
+    /// <summary>
+    /// The Crawl Report page (/reports) reads via the authenticated-nothing api/crawl/report and
+    /// api/crawl/history endpoints - same "no built-in auth, off by default" trade-off as
+    /// <see cref="EnableProviderDashboard"/>. Read-only (no test/trigger action), so lower-risk than
+    /// that one, but still off by default for consistency with every other admin dashboard in this
+    /// app; enabling it on a public deployment is a deliberate choice, not a default to flip on
+    /// casually.
+    /// </summary>
+    public bool EnableCrawlReportDashboard { get; set; }
 }

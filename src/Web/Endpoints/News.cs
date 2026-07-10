@@ -5,7 +5,10 @@ using Application.News.Dtos;
 using Application.News.Queries.GetLatestNews;
 using Application.News.Queries.GetNewsByCategory;
 using Application.News.Queries.GetNewsByProvider;
+using Application.News.Queries.GetNewsCountries;
+using Application.News.Queries.GetNewsFeed;
 using Application.News.Queries.SearchNews;
+using Domain.Enums;
 using Web.Infrastructure;
 using Web.Options;
 
@@ -22,6 +25,8 @@ public sealed class News : IEndpointGroup
         group.MapGet("provider/{provider}", GetByProvider);
         group.MapGet("category/{category}", GetByCategory);
         group.MapGet("search", Search);
+        group.MapGet("feed", GetFeed);
+        group.MapGet("countries", GetCountries);
     }
 
     [EndpointSummary("Latest articles")]
@@ -59,6 +64,30 @@ public sealed class News : IEndpointGroup
         ISender sender, IOptions<ApiOptions> apiOptions, string q, int count, CancellationToken cancellationToken)
     {
         var result = await sender.Send(new SearchNewsQuery(q, ResolvePageSize(count, apiOptions.Value)), cancellationToken);
+        return TypedResults.Ok(result);
+    }
+
+    [EndpointSummary("News feed, paged")]
+    [EndpointDescription(
+        "Newest-first articles for the News Feed page's infinite scroll - 'sourceType' (Rss/Api) " +
+        "picks the tab, 'country' optionally narrows to one publisher country, and 'skip'/'count' " +
+        "page through the results as the reader scrolls.")]
+    public static async Task<Ok<IReadOnlyList<NewsArticleDto>>> GetFeed(
+        ISender sender, IOptions<ApiOptions> apiOptions, ArticleSourceType? sourceType, string? country, int skip, int count,
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new GetNewsFeedQuery(sourceType, country, Math.Max(0, skip), ResolvePageSize(count, apiOptions.Value)),
+            cancellationToken);
+        return TypedResults.Ok(result);
+    }
+
+    [EndpointSummary("Countries with active articles")]
+    [EndpointDescription("Every distinct publisher country currently represented, optionally narrowed to one pipeline (Rss/Api) - backs the News Feed page's country filter.")]
+    public static async Task<Ok<IReadOnlyList<string>>> GetCountries(
+        ISender sender, ArticleSourceType? sourceType, CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(new GetNewsCountriesQuery(sourceType), cancellationToken);
         return TypedResults.Ok(result);
     }
 

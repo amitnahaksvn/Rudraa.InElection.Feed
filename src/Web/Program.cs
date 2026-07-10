@@ -210,6 +210,13 @@ app.MapDefaultEndpoints();
 app.MapEndpoints(Assembly.GetExecutingAssembly());
 app.MapHub<ErrorLogHub>("/hubs/errorlogs");
 
+// Unlike the admin dashboards below (errors/providers/reports - each gated behind its own
+// EnableXDashboard flag since they surface sensitive internals or trigger real outbound calls),
+// the News Feed page just reads already-crawled, already-public news articles - the actual output
+// this app produces - so it's mapped unconditionally rather than behind a flag.
+app.MapFallbackToFile("/feed", "index.html");
+app.MapFallbackToFile("/feed/{**slug}", "index.html");
+
 if (builder.Configuration.GetValue($"{ApiOptions.SectionName}:EnableHangfireDashboard", false))
 {
     // No authorization filter - deliberately open, by request, after being warned this means
@@ -239,6 +246,16 @@ if (builder.Configuration.GetValue($"{ApiOptions.SectionName}:EnableProviderDash
     // in this app); only the SPA page itself is gated here.
     app.MapFallbackToFile("/providers", "index.html");
     app.MapFallbackToFile("/providers/{**slug}", "index.html");
+}
+
+if (builder.Configuration.GetValue($"{ApiOptions.SectionName}:EnableCrawlReportDashboard", false))
+{
+    // Same "no built-in auth, off by default" trade-off as EnableProviderDashboard above - see
+    // ApiOptions.EnableCrawlReportDashboard's own doc comment. The underlying api/crawl/report and
+    // api/crawl/history JSON endpoints stay mapped regardless (same always-on trust model as every
+    // other endpoint in this app); only the SPA page itself is gated here.
+    app.MapFallbackToFile("/reports", "index.html");
+    app.MapFallbackToFile("/reports/{**slug}", "index.html");
 }
 
 app.Run();

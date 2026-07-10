@@ -1,3 +1,4 @@
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Application.Abstractions;
 using Domain.Entities;
@@ -63,12 +64,34 @@ public sealed class CrawlLockRepository : ICrawlLockRepository
         await _collection.FindOneAndDeleteAsync(filter, cancellationToken: cancellationToken);
     }
 
+    private const string TtlIndexName = "ttl_crawllock_expiresat";
+
+    // The TTL index's key path depends on how CrawlLock.ExpiresAt happens to get BSON-serialized -
+    // an older driver/serialization convention wrote DateTimeOffset as a nested {DateTime, Ticks}
+    // document (key path "expiresAt.DateTime"), while the driver in use today writes it as a plain
+    // top-level date ("expiresAt"). MongoDB's createIndexes rejects an index that already exists
+    // under the same name with a different key spec rather than updating it in place (the same
+    // "options never update via plain createIndexes" gap RssRawResponseRepository already works
+    // around for its own TTL index's expireAfterSeconds) - so drop and recreate whenever the
+    // existing index's key path doesn't match what gets written today.
     public async Task EnsureIndexesAsync(CancellationToken cancellationToken)
     {
-        var model = new CreateIndexModel<CrawlLock>(
-            Builders<CrawlLock>.IndexKeys.Ascending(l => l.ExpiresAt),
-            new CreateIndexOptions { Name = "ttl_crawllock_expiresat", ExpireAfter = TimeSpan.Zero });
+        var existingIndexes = await (await _collection.Indexes.ListAsync(cancellationToken)).ToListAsync(cancellationToken);
+        var existing = existingIndexes.FirstOrDefault(i => i["name"].AsString == TtlIndexName);
 
-        await _collection.Indexes.CreateOneAsync(model, cancellationToken: cancellationToken);
+        if (existing is not null && !existing["key"].AsBsonDocument.Contains("expiresAt"))
+        {
+            await _collection.Indexes.DropOneAsync(TtlIndexName, cancellationToken);
+            existing = null;
+        }
+
+        if (existing is null)
+        {
+            var model = new CreateIndexModel<CrawlLock>(
+                Builders<CrawlLock>.IndexKeys.Ascending(l => l.ExpiresAt),
+                new CreateIndexOptions { Name = TtlIndexName, ExpireAfter = TimeSpan.Zero });
+
+            await _collection.Indexes.CreateOneAsync(model, cancellationToken: cancellationToken);
+        }
     }
 }

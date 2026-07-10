@@ -106,6 +106,8 @@ public class NewsApiCrawlerOrchestratorTests
 
         Assert.Equal(CrawlStatus.Completed, history.Status);
         Assert.Equal(2, history.NewArticles);
+        Assert.Equal(CrawlPipeline.Api, history.Pipeline);
+        Assert.Equal(["FEC"], history.Providers);
         articleRepo.Verify(r => r.UpsertAsync(It.Is<NewsArticle>(a => a.Country == "United States"), It.IsAny<CancellationToken>()), Times.Exactly(2));
     }
 

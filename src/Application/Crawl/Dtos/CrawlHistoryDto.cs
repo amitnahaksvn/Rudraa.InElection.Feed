@@ -6,6 +6,8 @@ namespace Application.Crawl.Dtos;
 /// <summary>Read projection of a <see cref="CrawlHistory"/> record.</summary>
 public sealed record CrawlHistoryDto(
     string Id,
+    string Pipeline,
+    IReadOnlyList<string> Providers,
     DateTimeOffset StartTime,
     DateTimeOffset? EndTime,
     TimeSpan? Duration,
@@ -22,6 +24,8 @@ public sealed record CrawlHistoryDto(
 
     public static CrawlHistoryDto FromDomain(CrawlHistory history) => new(
         history.Id,
+        history.Pipeline.ToString(),
+        history.Providers,
         history.StartTime,
         history.EndTime,
         history.Duration,

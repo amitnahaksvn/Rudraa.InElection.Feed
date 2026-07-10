@@ -104,6 +104,8 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
     {
         var history = new CrawlHistory
         {
+            Pipeline = CrawlPipeline.Api,
+            Providers = lockedProviders.Select(cp => cp.Provider.Name).Distinct(StringComparer.OrdinalIgnoreCase).ToList(),
             StartTime = DateTimeOffset.UtcNow,
             Status = CrawlStatus.Running
         };

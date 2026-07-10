@@ -1,4 +1,6 @@
+using Application.Models;
 using Domain.Entities;
+using Domain.Enums;
 
 namespace Application.Abstractions;
 
@@ -32,6 +34,12 @@ public interface INewsArticleRepository
     Task<IReadOnlyList<NewsArticle>> GetByCategoryAsync(string category, int count, CancellationToken cancellationToken);
 
     Task<IReadOnlyList<NewsArticle>> SearchAsync(string query, int count, CancellationToken cancellationToken);
+
+    /// <summary>Newest-first, optionally narrowed to one pipeline (RSS/API) and/or one country - backs the News Feed page's infinite scroll.</summary>
+    Task<IReadOnlyList<NewsArticle>> GetFeedAsync(NewsArticleFeedFilter filter, CancellationToken cancellationToken);
+
+    /// <summary>Every distinct, non-empty country currently represented among active articles (optionally narrowed to one pipeline) - backs the News Feed page's country filter.</summary>
+    Task<IReadOnlyList<string>> GetDistinctCountriesAsync(ArticleSourceType? sourceType, CancellationToken cancellationToken);
 
     /// <summary>Ensures the Url (unique), OriginalGuid, Hash, PublishedAt, Provider and Category indexes exist.</summary>
     Task EnsureIndexesAsync(CancellationToken cancellationToken);
