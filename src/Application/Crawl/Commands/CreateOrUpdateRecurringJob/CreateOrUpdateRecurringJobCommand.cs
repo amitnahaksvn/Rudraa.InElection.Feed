@@ -1,6 +1,7 @@
 using Mediator;
 using Application.Abstractions;
 using Application.Crawl.Dtos;
+using Domain.Enums;
 
 namespace Application.Crawl.Commands.CreateOrUpdateRecurringJob;
 
@@ -26,7 +27,7 @@ public sealed class CreateOrUpdateRecurringJobCommandHandler
 
     public ValueTask<CrawlRecurringJobDto> Handle(CreateOrUpdateRecurringJobCommand request, CancellationToken cancellationToken)
     {
-        var jobId = _crawlJobTrigger.CreateOrUpdate(request.JobName, request.Cron, request.TimeZone);
+        var jobId = _crawlJobTrigger.CreateOrUpdate(CrawlPipeline.Rss, request.JobName, request.Cron, request.TimeZone);
         return ValueTask.FromResult(new CrawlRecurringJobDto(jobId, request.JobName, request.Cron, request.TimeZone));
     }
 }

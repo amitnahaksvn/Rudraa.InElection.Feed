@@ -89,7 +89,8 @@ public sealed class HangfireCrawlJobStatusReader : ICrawlJobStatusReader
         return result;
     }
 
-    private static string CacheKey(CrawlPipeline pipeline, string providerName) => $"crawl-job-status:{pipeline}:{providerName}";
+    /// <summary>Internal (not private) so <see cref="HangfireCrawlJobTrigger"/> can evict a provider's entry the moment it changes that job - otherwise a status read shortly after an enable/disable could serve this cache's stale pre-change answer for up to <see cref="CacheDuration"/>.</summary>
+    internal static string CacheKey(CrawlPipeline pipeline, string providerName) => $"crawl-job-status:{pipeline}:{providerName}";
 
     private readonly record struct CacheEntry(CrawlJobStatus? Status);
 

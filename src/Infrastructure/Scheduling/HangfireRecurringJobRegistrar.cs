@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Application.Abstractions;
 using Application.Options;
+using Domain.Enums;
 using Infrastructure.Seed;
 
 namespace Infrastructure.Scheduling;
@@ -51,7 +52,22 @@ public static class HangfireRecurringJobRegistrar
         ThreadPool.SetMinThreads(RegistrationConcurrency * 2, completionPortMin);
     }
 
-    public static void RegisterNewsCrawlerRecurringJobs(IServiceProvider services, ILogger logger)
+    /// <summary>
+    /// Seeds <see cref="Domain.Entities.ProviderSchedule"/> documents (RSS and API providers alike,
+    /// one bootstrap pass covers both) from whatever <c>NewsCrawler.appsettings.json</c>/
+    /// <c>NewsApiCrawler</c> currently say, if a document doesn't already exist for a given
+    /// provider - a no-op for every provider already seeded (including one whose schedule a user
+    /// has since edited). Must run before both <see cref="RegisterNewsCrawlerRecurringJobsAsync"/>
+    /// and <see cref="RegisterNewsApiRecurringJobsAsync"/> so their own DB reads see every
+    /// currently-configured provider represented.
+    /// </summary>
+    public static Task SeedProviderSchedulesAsync(IServiceProvider services, ILogger logger)
+    {
+        var seeder = services.GetRequiredService<ProviderScheduleSeeder>();
+        return seeder.SeedAsync(CancellationToken.None);
+    }
+
+    public static async Task RegisterNewsCrawlerRecurringJobsAsync(IServiceProvider services, ILogger logger)
     {
         var options = services.GetRequiredService<IOptions<NewsCrawlerOptions>>().Value;
 
@@ -67,14 +83,23 @@ public static class HangfireRecurringJobRegistrar
         // on a process-wide JobStorage.Current that only gets set once the Hangfire server hosted
         // service has actually started) is required here because this runs before host.Run()/app.Run().
         var recurringJobManager = services.GetRequiredService<IRecurringJobManager>();
+        var scheduleRepository = services.GetRequiredService<IProviderScheduleRepository>();
 
-        // Skips providers under a disabled country entirely, same as the crawl orchestrator's own
-        // candidate filtering - a country-disabled provider gets no recurring job at all, not just
-        // a skipped run.
-        var enabledProviders = options.Countries
+        // ProviderSchedule (database) is the live source of truth for Enabled/Cron/TimeZone - see
+        // its own doc comment for why this replaced NewsCrawler.appsettings.json's fields.
+        // Country-level Enabled still only lives in the file (out of scope for this move): a
+        // country-disabled provider is skipped entirely here too, same as the crawl orchestrator's
+        // own candidate filtering - it gets no recurring job at all, not just a skipped run.
+        var configuredProviders = options.Countries
             .Where(c => c.Enabled)
             .SelectMany(c => c.Providers)
-            .Where(p => p.Enabled)
+            .ToList();
+
+        var schedules = await scheduleRepository.GetAllAsync(CrawlPipeline.Rss, CancellationToken.None);
+        var scheduleByProvider = schedules.ToDictionary(s => s.Provider, StringComparer.OrdinalIgnoreCase);
+
+        var enabledProviders = configuredProviders
+            .Where(provider => scheduleByProvider.TryGetValue(provider.Name, out var s) ? s.Enabled : provider.Enabled)
             .ToList();
 
         var enabledJobIdBag = new System.Collections.Concurrent.ConcurrentBag<string>();
@@ -82,7 +107,10 @@ public static class HangfireRecurringJobRegistrar
 
         Parallel.ForEach(enabledProviders, new ParallelOptions { MaxDegreeOfParallelism = RegistrationConcurrency }, provider =>
         {
-            if (string.IsNullOrWhiteSpace(provider.Cron))
+            scheduleByProvider.TryGetValue(provider.Name, out var schedule);
+            var cron = schedule?.Cron ?? provider.Cron;
+
+            if (string.IsNullOrWhiteSpace(cron))
             {
                 logger.LogWarning("Provider '{Provider}' has no Cron configured - no recurring job registered", provider.Name);
                 return;
@@ -90,16 +118,18 @@ public static class HangfireRecurringJobRegistrar
 
             var jobId = HangfireJobIds.NewsCrawl(provider.Name);
             enabledJobIdBag.Add(jobId);
+            var timeZone = ResolveTimeZone(schedule?.TimeZone, provider.Name, logger);
 
             // AddOrUpdate is idempotent on jobId - re-registering on every startup keeps the recurring
-            // job's cron expression in sync with config without ever creating duplicate jobs. Targets
-            // HangfireCrawlJobExecutor (not INewsCrawlerService directly) so the dashboard shows a
-            // friendly "Crawl AajTak" name and every log line from the run carries this job's own id.
+            // job's cron expression in sync with its schedule without ever creating duplicate jobs.
+            // Targets HangfireCrawlJobExecutor (not INewsCrawlerService directly) so the dashboard
+            // shows a friendly "Crawl AajTak" name and every log line from the run carries this
+            // job's own id.
             recurringJobManager.AddOrUpdate<HangfireCrawlJobExecutor>(
                 jobId,
                 executor => executor.RunAsync(provider.Name, null!, CancellationToken.None),
-                provider.Cron,
-                RecurringJobOptionsFactory.Create(TimeZoneInfo.Utc));
+                cron,
+                RecurringJobOptionsFactory.Create(timeZone));
 
             // Debug, not Information: at 200+ providers this was previously the dominant source of
             // startup log noise for zero diagnostic value on a normal run - the one summary line
@@ -108,7 +138,7 @@ public static class HangfireRecurringJobRegistrar
             // checking.
             logger.LogDebug(
                 "Registered Hangfire recurring job '{JobId}' for provider '{Provider}' with cron '{Cron}'",
-                jobId, provider.Name, provider.Cron);
+                jobId, provider.Name, cron);
         });
 
         var enabledJobIds = new HashSet<string>(enabledJobIdBag, StringComparer.Ordinal);
@@ -116,7 +146,7 @@ public static class HangfireRecurringJobRegistrar
             "Registered {Count} RSS Hangfire recurring jobs in {ElapsedMs}ms ({Concurrency}-way concurrent)",
             enabledJobIds.Count, stopwatch.ElapsedMilliseconds, RegistrationConcurrency);
 
-        // Same "zombie job" concern as RegisterNewsApiRecurringJobs below: AddOrUpdate never
+        // Same "zombie job" concern as RegisterNewsApiRecurringJobsAsync below: AddOrUpdate never
         // removes a job for a provider that was previously enabled and is now disabled (or
         // deleted from config entirely), which would otherwise leave it firing forever on its old
         // schedule after a redeploy. Sweep every "news-crawl-*" job actually registered in
@@ -132,6 +162,25 @@ public static class HangfireRecurringJobRegistrar
         {
             recurringJobManager.RemoveIfExists(staleJobId);
             logger.LogInformation("Removed stale Hangfire recurring job '{JobId}' - provider is disabled or no longer configured", staleJobId);
+        }
+    }
+
+    /// <summary>Falls back to UTC (never throws, never crashes the whole registration pass) if a schedule's own TimeZone id isn't recognized on this host.</summary>
+    private static TimeZoneInfo ResolveTimeZone(string? timeZoneId, string providerName, ILogger logger)
+    {
+        if (string.IsNullOrWhiteSpace(timeZoneId))
+        {
+            return TimeZoneInfo.Utc;
+        }
+
+        try
+        {
+            return TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+        }
+        catch (Exception ex) when (ex is TimeZoneNotFoundException or InvalidTimeZoneException)
+        {
+            logger.LogWarning(ex, "Provider '{Provider}' has an unrecognized TimeZone '{TimeZone}' - falling back to UTC", providerName, timeZoneId);
+            return TimeZoneInfo.Utc;
         }
     }
 
@@ -205,7 +254,7 @@ public static class HangfireRecurringJobRegistrar
     /// <summary>
     /// Bootstraps the Mongo-driven <c>FeedSource</c> pipeline: seeds the Phase 1 PIB feed if missing,
     /// then registers one Hangfire recurring job per currently-active <c>FeedSource</c> document.
-    /// Unlike <see cref="RegisterNewsCrawlerRecurringJobs"/> (whose provider list is fixed at compile
+    /// Unlike <see cref="RegisterNewsCrawlerRecurringJobsAsync"/> (whose provider list is fixed at compile
     /// time - a new provider needs a new C# class), this list comes from Mongo, so it can grow purely
     /// via document inserts. Re-synced on every startup, same as every other recurring-job
     /// registration here - a brand-new FeedSource document takes effect on the next restart,
@@ -223,7 +272,7 @@ public static class HangfireRecurringJobRegistrar
         var enabledJobIdBag = new System.Collections.Concurrent.ConcurrentBag<string>();
         var stopwatch = Stopwatch.StartNew();
 
-        // Same reasoning as RegisterNewsCrawlerRecurringJobs/RegisterNewsApiRecurringJobs above -
+        // Same reasoning as RegisterNewsCrawlerRecurringJobsAsync/RegisterNewsApiRecurringJobsAsync above -
         // independent per-FeedSource Mongo upserts, run concurrently rather than one at a time.
         Parallel.ForEach(activeFeedSources, new ParallelOptions { MaxDegreeOfParallelism = RegistrationConcurrency }, feedSource =>
         {
@@ -319,12 +368,12 @@ public static class HangfireRecurringJobRegistrar
 
     /// <summary>
     /// Registers one Hangfire recurring job per enabled <see cref="NewsApiCrawlerOptions"/> provider -
-    /// the <see cref="RegisterNewsCrawlerRecurringJobs"/> counterpart for JSON news-API providers.
+    /// the <see cref="RegisterNewsCrawlerRecurringJobsAsync"/> counterpart for JSON news-API providers.
     /// Targets <see cref="HangfireNewsApiJobExecutor"/> (tagged <c>[Queue("api")]</c>), never
     /// <see cref="INewsApiCrawlerService"/> directly, same reasoning as every other job registration
     /// here.
     /// </summary>
-    public static void RegisterNewsApiRecurringJobs(IServiceProvider services, ILogger logger)
+    public static async Task RegisterNewsApiRecurringJobsAsync(IServiceProvider services, ILogger logger)
     {
         var options = services.GetRequiredService<IOptions<NewsApiCrawlerOptions>>().Value;
 
@@ -337,6 +386,7 @@ public static class HangfireRecurringJobRegistrar
         }
 
         var recurringJobManager = services.GetRequiredService<IRecurringJobManager>();
+        var scheduleRepository = services.GetRequiredService<IProviderScheduleRepository>();
 
         // Fetched once, up front, so the loop below can tell a brand-new provider (never
         // registered before) apart from one that already existed from a previous startup -
@@ -347,12 +397,19 @@ public static class HangfireRecurringJobRegistrar
             connection.GetRecurringJobs().Select(j => j.Id),
             StringComparer.Ordinal);
 
-        // Skips providers under a disabled country entirely, same as RegisterNewsCrawlerRecurringJobs
-        // above and the orchestrator's own candidate filtering.
-        var enabledProviders = options.Countries
+        // ProviderSchedule (database) is the live source of truth for Enabled/Cron/TimeZone - see
+        // RegisterNewsCrawlerRecurringJobsAsync's own comment for why. Country-disabled providers
+        // are still skipped entirely, same as before and the orchestrator's own candidate filtering.
+        var configuredProviders = options.Countries
             .Where(c => c.Enabled)
             .SelectMany(c => c.Providers)
-            .Where(p => p.Enabled)
+            .ToList();
+
+        var schedules = await scheduleRepository.GetAllAsync(CrawlPipeline.Api, CancellationToken.None);
+        var scheduleByProvider = schedules.ToDictionary(s => s.Provider, StringComparer.OrdinalIgnoreCase);
+
+        var enabledProviders = configuredProviders
+            .Where(provider => scheduleByProvider.TryGetValue(provider.Name, out var s) ? s.Enabled : provider.Enabled)
             .ToList();
 
         var enabledJobIdBag = new System.Collections.Concurrent.ConcurrentBag<string>();
@@ -360,7 +417,10 @@ public static class HangfireRecurringJobRegistrar
 
         Parallel.ForEach(enabledProviders, new ParallelOptions { MaxDegreeOfParallelism = RegistrationConcurrency }, provider =>
         {
-            if (string.IsNullOrWhiteSpace(provider.Cron))
+            scheduleByProvider.TryGetValue(provider.Name, out var schedule);
+            var cron = schedule?.Cron ?? provider.Cron;
+
+            if (string.IsNullOrWhiteSpace(cron))
             {
                 logger.LogWarning("News API provider '{Provider}' has no Cron configured - no recurring job registered", provider.Name);
                 return;
@@ -369,12 +429,13 @@ public static class HangfireRecurringJobRegistrar
             var jobId = HangfireJobIds.NewsApi(provider.Name);
             enabledJobIdBag.Add(jobId);
             var isNewJob = !preExistingJobIds.Contains(jobId);
+            var timeZone = ResolveTimeZone(schedule?.TimeZone, provider.Name, logger);
 
             recurringJobManager.AddOrUpdate<HangfireNewsApiJobExecutor>(
                 jobId,
                 executor => executor.RunAsync(provider.Name, null!, CancellationToken.None),
-                provider.Cron,
-                RecurringJobOptionsFactory.Create(TimeZoneInfo.Utc));
+                cron,
+                RecurringJobOptionsFactory.Create(timeZone));
 
             if (isNewJob)
             {
@@ -388,7 +449,7 @@ public static class HangfireRecurringJobRegistrar
 
             logger.LogInformation(
                 "Registered Hangfire recurring job '{JobId}' for news API provider '{Provider}' with cron '{Cron}'{TriggeredSuffix}",
-                jobId, provider.Name, provider.Cron, isNewJob ? " (triggered immediately - new job)" : string.Empty);
+                jobId, provider.Name, cron, isNewJob ? " (triggered immediately - new job)" : string.Empty);
         });
 
         var enabledJobIds = new HashSet<string>(enabledJobIdBag, StringComparer.Ordinal);

@@ -24,6 +24,7 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
     private readonly IRssRawResponseRepository _rawResponseRepository;
     private readonly IErrorLogRepository _errorLogRepository;
     private readonly IHostEnvironment _hostEnvironment;
+    private readonly IProviderScheduleRepository _scheduleRepository;
     private readonly NewsCrawlerOptions _options;
     private readonly ILogger<NewsCrawlerOrchestrator> _logger;
     private readonly string _ownerId = $"{Environment.MachineName}:{Environment.ProcessId}:{Guid.NewGuid():N}";
@@ -36,6 +37,7 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
         IRssRawResponseRepository rawResponseRepository,
         IErrorLogRepository errorLogRepository,
         IHostEnvironment hostEnvironment,
+        IProviderScheduleRepository scheduleRepository,
         IOptions<NewsCrawlerOptions> options,
         ILogger<NewsCrawlerOrchestrator> logger)
     {
@@ -46,6 +48,7 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
         _rawResponseRepository = rawResponseRepository;
         _errorLogRepository = errorLogRepository;
         _hostEnvironment = hostEnvironment;
+        _scheduleRepository = scheduleRepository;
         _options = options.Value;
         _logger = logger;
     }
@@ -72,10 +75,18 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
 
     private async Task<CrawlHistory> RunCrawlAsync(Func<RssProviderOptions, bool>? providerFilter, CancellationToken cancellationToken)
     {
+        // ProviderSchedule (database) is the live source of truth for whether a provider is
+        // enabled - NewsCrawler.appsettings.json's own Enabled is only the fallback for a provider
+        // ProviderScheduleSeeder hasn't bootstrapped a schedule document for yet (a brief window
+        // right after a brand-new provider is added to the file, before the next startup's seed
+        // pass reaches it).
+        var schedules = await _scheduleRepository.GetAllAsync(CrawlPipeline.Rss, cancellationToken);
+        var scheduleByProvider = schedules.ToDictionary(s => s.Provider, StringComparer.OrdinalIgnoreCase);
+
         var candidates = _options.Countries
             .Where(c => c.Enabled)
             .SelectMany(c => c.Providers.Select(p => new CountryProvider(c.Name, p)))
-            .Where(cp => cp.Provider.Enabled && (providerFilter is null || providerFilter(cp.Provider)))
+            .Where(cp => IsEnabled(cp.Provider, scheduleByProvider) && (providerFilter is null || providerFilter(cp.Provider)))
             .ToList();
 
         var lockedProviders = await ProviderLockCoordinator.AcquireAsync(
@@ -107,6 +118,9 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
     }
 
     private string ProviderLockName(string providerName) => $"{_options.LockName}:{providerName}";
+
+    private static bool IsEnabled(RssProviderOptions provider, IReadOnlyDictionary<string, ProviderSchedule> schedules) =>
+        schedules.TryGetValue(provider.Name, out var schedule) ? schedule.Enabled : provider.Enabled;
 
     private async Task<CrawlHistory> RunLockedAsync(IReadOnlyList<CountryProvider> lockedProviders, CancellationToken cancellationToken)
     {

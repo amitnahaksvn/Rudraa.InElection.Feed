@@ -158,10 +158,13 @@ _ = Task.Run(async () =>
 {
     try
     {
-        HangfireRecurringJobRegistrar.RegisterNewsCrawlerRecurringJobs(app.Services, startupLogger);
+        // Seeds ProviderSchedule (RSS + API) from appsettings before either registrar below reads
+        // it, so a brand-new provider is represented in the database from its very first startup.
+        await HangfireRecurringJobRegistrar.SeedProviderSchedulesAsync(app.Services, startupLogger);
+        await HangfireRecurringJobRegistrar.RegisterNewsCrawlerRecurringJobsAsync(app.Services, startupLogger);
         HangfireRecurringJobRegistrar.RegisterRawResponseCleanupRecurringJob(app.Services, startupLogger);
         await HangfireRecurringJobRegistrar.SeedAndRegisterDynamicFeedRecurringJobsAsync(app.Services, startupLogger);
-        HangfireRecurringJobRegistrar.RegisterNewsApiRecurringJobs(app.Services, startupLogger);
+        await HangfireRecurringJobRegistrar.RegisterNewsApiRecurringJobsAsync(app.Services, startupLogger);
         HangfireRecurringJobRegistrar.RegisterErrorNotificationDispatchRecurringJob(app.Services, startupLogger);
         await HangfireRecurringJobRegistrar.SeedAndRegisterSocialMediaRecurringJobsAsync(app.Services, startupLogger);
     }

@@ -41,4 +41,8 @@ public sealed class MongoDbOptions
     /// <summary>Mongo-driven channel list for the Social pipeline (YouTube today; Facebook/Telegram/Website/Rss recognized but not yet fetched) - see <c>Domain.Entities.SocialMediaSource</c>/<c>SocialMediaIngestionService</c>.</summary>
     [Required]
     public string SocialMediaSourcesCollection { get; set; } = "SocialMediaSources";
+
+    /// <summary>Database-backed Enabled/Cron/TimeZone per RSS/API provider - see <c>Domain.Entities.ProviderSchedule</c> for why this replaced <c>NewsCrawler.appsettings.json</c>'s own Enabled/Cron fields as the source of truth.</summary>
+    [Required]
+    public string ProviderSchedulesCollection { get; set; } = "ProviderSchedules";
 }

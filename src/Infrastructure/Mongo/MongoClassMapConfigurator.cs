@@ -44,6 +44,12 @@ public static class MongoClassMapConfigurator
         BsonSerializer.RegisterSerializer(typeof(SocialPlatform), new EnumSerializer<SocialPlatform>(BsonType.String));
         BsonSerializer.RegisterSerializer(typeof(SourceEntityType), new EnumSerializer<SourceEntityType>(BsonType.String));
 
+        // Same reasoning again - "Rss"/"Api"/"Social" readable directly in Mongo. Backward
+        // compatible with CrawlHistory documents already persisted as the old default int32
+        // (0/1/2): the driver's EnumSerializer deserializes either representation regardless of
+        // which BsonType it's configured to *write* going forward.
+        BsonSerializer.RegisterSerializer(typeof(CrawlPipeline), new EnumSerializer<CrawlPipeline>(BsonType.String));
+
         BsonClassMap.RegisterClassMap<NewsArticle>(cm =>
         {
             cm.AutoMap();
@@ -87,6 +93,12 @@ public static class MongoClassMapConfigurator
         });
 
         BsonClassMap.RegisterClassMap<SocialMediaSource>(cm =>
+        {
+            cm.AutoMap();
+            cm.MapIdMember(x => x.Id).SetIdGenerator(StringObjectIdGenerator.Instance);
+        });
+
+        BsonClassMap.RegisterClassMap<ProviderSchedule>(cm =>
         {
             cm.AutoMap();
             cm.MapIdMember(x => x.Id).SetIdGenerator(StringObjectIdGenerator.Instance);

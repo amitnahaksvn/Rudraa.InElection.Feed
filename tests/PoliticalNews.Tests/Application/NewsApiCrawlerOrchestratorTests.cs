@@ -74,6 +74,17 @@ public class NewsApiCrawlerOrchestratorTests
         return lockRepo;
     }
 
+    // Empty by default - falls back to the NewsApiProviderOptions.Enabled each test already sets
+    // up, exercising the "no ProviderSchedule document yet" path.
+    private static Mock<IProviderScheduleRepository> BuildScheduleRepo()
+    {
+        var scheduleRepo = new Mock<IProviderScheduleRepository>();
+        scheduleRepo
+            .Setup(s => s.GetAllAsync(It.IsAny<CrawlPipeline>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync([]);
+        return scheduleRepo;
+    }
+
     [Fact]
     public async Task RunCrawlAsync_PersistsArticlesAndRecordsSuccess()
     {
@@ -99,6 +110,7 @@ public class NewsApiCrawlerOrchestratorTests
             BuildAcquiredLockRepo().Object,
             Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
+            BuildScheduleRepo().Object,
             Options.Create(BuildOptions()),
             NullLogger<NewsApiCrawlerOrchestrator>.Instance);
 
@@ -130,6 +142,7 @@ public class NewsApiCrawlerOrchestratorTests
             BuildAcquiredLockRepo().Object,
             Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
+            BuildScheduleRepo().Object,
             Options.Create(options),
             NullLogger<NewsApiCrawlerOrchestrator>.Instance);
 

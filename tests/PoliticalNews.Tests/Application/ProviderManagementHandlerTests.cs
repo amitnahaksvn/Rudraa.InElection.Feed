@@ -7,11 +7,23 @@ using Application.Providers.Commands.TestApiEndpoint;
 using Application.Providers.Commands.TestRssFeed;
 using Application.Providers.Queries.GetApiProviders;
 using Application.Providers.Queries.GetRssProviders;
+using Domain.Enums;
 
 namespace PoliticalNews.Tests.Application;
 
 public class ProviderManagementHandlerTests
 {
+    // Empty by default - both handlers fall back to each provider's own file-configured
+    // Enabled/Cron when no ProviderSchedule document exists yet.
+    private static Mock<IProviderScheduleRepository> BuildScheduleRepo()
+    {
+        var scheduleRepo = new Mock<IProviderScheduleRepository>();
+        scheduleRepo
+            .Setup(s => s.GetAllAsync(It.IsAny<CrawlPipeline>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync([]);
+        return scheduleRepo;
+    }
+
     private static NewsCrawlerOptions BuildRssOptions() => new()
     {
         Countries =
@@ -80,7 +92,7 @@ public class ProviderManagementHandlerTests
     [Fact]
     public async Task GetRssProvidersQueryHandler_FlattensCountriesAndFoldsInCountryEnabled()
     {
-        var handler = new GetRssProvidersQueryHandler(Options.Create(BuildRssOptions()));
+        var handler = new GetRssProvidersQueryHandler(Options.Create(BuildRssOptions()), BuildScheduleRepo().Object);
 
         var result = await handler.Handle(new GetRssProvidersQuery(), CancellationToken.None);
 
@@ -101,7 +113,7 @@ public class ProviderManagementHandlerTests
     [Fact]
     public async Task GetApiProvidersQueryHandler_FlattensCountriesAndFoldsInCountryEnabled()
     {
-        var handler = new GetApiProvidersQueryHandler(Options.Create(BuildApiOptions()));
+        var handler = new GetApiProvidersQueryHandler(Options.Create(BuildApiOptions()), BuildScheduleRepo().Object);
 
         var result = await handler.Handle(new GetApiProvidersQuery(), CancellationToken.None);
 

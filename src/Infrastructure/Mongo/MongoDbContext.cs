@@ -25,6 +25,7 @@ public sealed class MongoDbContext
         FeedErrorLogs = Database.GetCollection<FeedErrorLog>(settings.FeedErrorLogsCollection);
         ErrorLogs = Database.GetCollection<ErrorLog>(settings.ErrorLogsCollection);
         SocialMediaSources = Database.GetCollection<SocialMediaSource>(settings.SocialMediaSourcesCollection);
+        ProviderSchedules = Database.GetCollection<ProviderSchedule>(settings.ProviderSchedulesCollection);
     }
 
     public IMongoClient Client { get; }
@@ -48,4 +49,7 @@ public sealed class MongoDbContext
 
     /// <summary>Mongo-driven channel list for the Social pipeline - see <see cref="Application.Options.MongoDbOptions.SocialMediaSourcesCollection"/>.</summary>
     public IMongoCollection<SocialMediaSource> SocialMediaSources { get; }
+
+    /// <summary>Database-backed provider Enabled/Cron/TimeZone - see <see cref="Application.Options.MongoDbOptions.ProviderSchedulesCollection"/>.</summary>
+    public IMongoCollection<ProviderSchedule> ProviderSchedules { get; }
 }

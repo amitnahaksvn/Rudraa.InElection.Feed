@@ -21,6 +21,7 @@ public sealed class MongoIndexInitializerHostedService : IHostedService
     private readonly IFeedErrorLogRepository _feedErrorLogs;
     private readonly IErrorLogRepository _errorLogs;
     private readonly ISocialMediaSourceRepository _socialMediaSources;
+    private readonly IProviderScheduleRepository _providerSchedules;
     private readonly NewsCrawlerOptions _options;
     private readonly ILogger<MongoIndexInitializerHostedService> _logger;
 
@@ -33,6 +34,7 @@ public sealed class MongoIndexInitializerHostedService : IHostedService
         IFeedErrorLogRepository feedErrorLogs,
         IErrorLogRepository errorLogs,
         ISocialMediaSourceRepository socialMediaSources,
+        IProviderScheduleRepository providerSchedules,
         IOptions<NewsCrawlerOptions> options,
         ILogger<MongoIndexInitializerHostedService> logger)
     {
@@ -44,6 +46,7 @@ public sealed class MongoIndexInitializerHostedService : IHostedService
         _feedErrorLogs = feedErrorLogs;
         _errorLogs = errorLogs;
         _socialMediaSources = socialMediaSources;
+        _providerSchedules = providerSchedules;
         _options = options.Value;
         _logger = logger;
     }
@@ -59,6 +62,7 @@ public sealed class MongoIndexInitializerHostedService : IHostedService
         await _feedErrorLogs.EnsureIndexesAsync(cancellationToken);
         await _errorLogs.EnsureIndexesAsync(cancellationToken);
         await _socialMediaSources.EnsureIndexesAsync(cancellationToken);
+        await _providerSchedules.EnsureIndexesAsync(cancellationToken);
         _logger.LogInformation("MongoDB indexes ready");
     }
 

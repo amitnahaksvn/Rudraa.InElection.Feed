@@ -100,6 +100,18 @@ public class NewsCrawlerOrchestratorTests
 
     private static Mock<IRssRawResponseRepository> BuildRawResponseRepo() => new();
 
+    // Empty by default - every test falls back to the RssProviderOptions.Enabled it already sets
+    // up, exercising the "no ProviderSchedule document yet" path (the seeder hasn't reached this
+    // provider yet, e.g. right after a fresh appsettings.json addition).
+    private static Mock<IProviderScheduleRepository> BuildScheduleRepo()
+    {
+        var scheduleRepo = new Mock<IProviderScheduleRepository>();
+        scheduleRepo
+            .Setup(s => s.GetAllAsync(It.IsAny<CrawlPipeline>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync([]);
+        return scheduleRepo;
+    }
+
     [Fact]
     public async Task RunCrawlAsync_PersistsArticlesAndRecordsSuccess()
     {
@@ -128,6 +140,7 @@ public class NewsCrawlerOrchestratorTests
             rawResponseRepo.Object,
             Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
+            BuildScheduleRepo().Object,
             Options.Create(BuildOptions("Home")),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 
@@ -170,6 +183,7 @@ public class NewsCrawlerOrchestratorTests
             rawResponseRepo.Object,
             errorLogRepo.Object,
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
+            BuildScheduleRepo().Object,
             Options.Create(BuildOptions("Home")),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 
@@ -214,6 +228,7 @@ public class NewsCrawlerOrchestratorTests
             BuildRawResponseRepo().Object,
             Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
+            BuildScheduleRepo().Object,
             Options.Create(BuildOptions("Home")),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 
@@ -245,6 +260,7 @@ public class NewsCrawlerOrchestratorTests
             BuildRawResponseRepo().Object,
             Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
+            BuildScheduleRepo().Object,
             Options.Create(BuildOptions("Home")),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 
@@ -275,6 +291,7 @@ public class NewsCrawlerOrchestratorTests
             BuildRawResponseRepo().Object,
             Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
+            BuildScheduleRepo().Object,
             Options.Create(options),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 
@@ -315,6 +332,7 @@ public class NewsCrawlerOrchestratorTests
             BuildRawResponseRepo().Object,
             Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
+            BuildScheduleRepo().Object,
             Options.Create(BuildTwoProviderOptions()),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 
@@ -362,6 +380,7 @@ public class NewsCrawlerOrchestratorTests
             BuildRawResponseRepo().Object,
             Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
+            BuildScheduleRepo().Object,
             Options.Create(BuildTwoProviderOptions()),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 
@@ -414,6 +433,7 @@ public class NewsCrawlerOrchestratorTests
             rawResponseRepo.Object,
             Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
+            BuildScheduleRepo().Object,
             Options.Create(options),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 

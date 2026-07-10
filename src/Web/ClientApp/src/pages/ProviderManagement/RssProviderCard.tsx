@@ -7,9 +7,9 @@ import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { ProviderStatusChip } from './ProviderStatusChip';
 import { ProviderLogo } from './ProviderLogo';
 import { RssFeedRow } from './RssFeedRow';
+import { ScheduleEditor } from './ScheduleEditor';
 import { getDomainFromUrl } from '../../utils/providerVisuals';
 import type { RssProviderSummary } from '../../api/providerTypes';
 
@@ -45,8 +45,6 @@ export function RssProviderCard({ provider }: { provider: RssProviderSummary }) 
               <Typography variant="subtitle1" fontWeight={700}>
                 {provider.name}
               </Typography>
-              <ProviderStatusChip enabled={provider.enabled} />
-              {provider.cron && <Chip size="small" variant="outlined" label={provider.cron} />}
               <Chip
                 size="small"
                 variant="outlined"
@@ -56,6 +54,14 @@ export function RssProviderCard({ provider }: { provider: RssProviderSummary }) 
             <Typography variant="body2" color="text.secondary">
               {provider.description}
             </Typography>
+            <ScheduleEditor
+              key={`${provider.enabled}-${provider.cron}-${provider.timeZone}`}
+              pipeline="Rss"
+              provider={provider.name}
+              enabled={provider.enabled}
+              cron={provider.cron}
+              timeZone={provider.timeZone}
+            />
           </Stack>
         </Stack>
       </AccordionSummary>

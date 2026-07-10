@@ -3,6 +3,7 @@ using Moq;
 using Application.Abstractions;
 using Application.Crawl.Commands.TriggerProviderJob;
 using Application.Options;
+using Domain.Enums;
 
 namespace PoliticalNews.Tests.Application;
 
@@ -31,7 +32,7 @@ public class TriggerProviderJobCommandTests
     public async Task Handle_TriggersJobAndReturnsProviderAndJobId()
     {
         var trigger = new Mock<ICrawlJobTrigger>();
-        trigger.Setup(t => t.TriggerNow("AajTak")).Returns("news-crawl-AajTak");
+        trigger.Setup(t => t.TriggerNow(CrawlPipeline.Rss, "AajTak")).Returns("news-crawl-AajTak");
 
         var handler = new TriggerProviderJobCommandHandler(trigger.Object);
 
@@ -39,7 +40,7 @@ public class TriggerProviderJobCommandTests
 
         Assert.Equal("AajTak", result.Provider);
         Assert.Equal("news-crawl-AajTak", result.JobId);
-        trigger.Verify(t => t.TriggerNow("AajTak"), Times.Once);
+        trigger.Verify(t => t.TriggerNow(CrawlPipeline.Rss, "AajTak"), Times.Once);
     }
 
     [Theory]

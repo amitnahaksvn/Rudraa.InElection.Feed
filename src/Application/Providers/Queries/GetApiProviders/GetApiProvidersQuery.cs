@@ -1,37 +1,47 @@
 using Mediator;
 using Microsoft.Extensions.Options;
+using Application.Abstractions;
 using Application.Options;
 using Application.Providers.Dtos;
+using Domain.Enums;
 
 namespace Application.Providers.Queries.GetApiProviders;
 
-/// <summary>Every configured JSON news-API provider (across every country), flattened for the Provider Management page's "APIs" tab. Pure configuration reflection - no I/O.</summary>
+/// <summary>Every configured JSON news-API provider (across every country), flattened for the Provider Management page's "APIs" tab. Enabled/Cron/TimeZone come from the live, database-backed <c>ProviderSchedule</c> when one exists, falling back to <c>NewsApiCrawler</c> config otherwise.</summary>
 public sealed record GetApiProvidersQuery : IRequest<IReadOnlyList<ApiProviderSummaryDto>>;
 
 public sealed class GetApiProvidersQueryHandler : IRequestHandler<GetApiProvidersQuery, IReadOnlyList<ApiProviderSummaryDto>>
 {
     private readonly IOptions<NewsApiCrawlerOptions> _options;
+    private readonly IProviderScheduleRepository _schedules;
 
-    public GetApiProvidersQueryHandler(IOptions<NewsApiCrawlerOptions> options)
+    public GetApiProvidersQueryHandler(IOptions<NewsApiCrawlerOptions> options, IProviderScheduleRepository schedules)
     {
         _options = options;
+        _schedules = schedules;
     }
 
-    public ValueTask<IReadOnlyList<ApiProviderSummaryDto>> Handle(GetApiProvidersQuery request, CancellationToken cancellationToken)
+    public async ValueTask<IReadOnlyList<ApiProviderSummaryDto>> Handle(GetApiProvidersQuery request, CancellationToken cancellationToken)
     {
-        IReadOnlyList<ApiProviderSummaryDto> result = _options.Value.Countries
-            .SelectMany(country => country.Providers.Select(provider => new ApiProviderSummaryDto(
-                country.Name,
-                provider.Name,
-                country.Enabled && provider.Enabled,
-                provider.Cron,
-                provider.BaseUrl,
-                provider.AuthType.ToString(),
-                BuildDescription(provider),
-                provider.Endpoints.Select(e => new ApiEndpointSummaryDto(e.Name, e.Endpoint, e.Category, e.Language, e.Enabled)).ToList())))
-            .ToList();
+        var schedules = await _schedules.GetAllAsync(CrawlPipeline.Api, cancellationToken);
+        var scheduleByProvider = schedules.ToDictionary(s => s.Provider, StringComparer.OrdinalIgnoreCase);
 
-        return ValueTask.FromResult(result);
+        return _options.Value.Countries
+            .SelectMany(country => country.Providers.Select(provider =>
+            {
+                scheduleByProvider.TryGetValue(provider.Name, out var schedule);
+                return new ApiProviderSummaryDto(
+                    country.Name,
+                    provider.Name,
+                    country.Enabled && (schedule?.Enabled ?? provider.Enabled),
+                    schedule?.Cron ?? provider.Cron,
+                    schedule?.TimeZone ?? "UTC",
+                    provider.BaseUrl,
+                    provider.AuthType.ToString(),
+                    BuildDescription(provider),
+                    provider.Endpoints.Select(e => new ApiEndpointSummaryDto(e.Name, e.Endpoint, e.Category, e.Language, e.Enabled)).ToList());
+            }))
+            .ToList();
     }
 
     // Same reasoning as GetRssProvidersQueryHandler's own BuildDescription - computed from the

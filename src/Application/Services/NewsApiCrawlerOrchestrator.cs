@@ -27,6 +27,7 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
     private readonly ICrawlLockRepository _lockRepository;
     private readonly IErrorLogRepository _errorLogRepository;
     private readonly IHostEnvironment _hostEnvironment;
+    private readonly IProviderScheduleRepository _scheduleRepository;
     private readonly NewsApiCrawlerOptions _options;
     private readonly ILogger<NewsApiCrawlerOrchestrator> _logger;
     private readonly string _ownerId = $"{Environment.MachineName}:{Environment.ProcessId}:{Guid.NewGuid():N}";
@@ -38,6 +39,7 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
         ICrawlLockRepository lockRepository,
         IErrorLogRepository errorLogRepository,
         IHostEnvironment hostEnvironment,
+        IProviderScheduleRepository scheduleRepository,
         IOptions<NewsApiCrawlerOptions> options,
         ILogger<NewsApiCrawlerOrchestrator> logger)
     {
@@ -47,6 +49,7 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
         _lockRepository = lockRepository;
         _errorLogRepository = errorLogRepository;
         _hostEnvironment = hostEnvironment;
+        _scheduleRepository = scheduleRepository;
         _options = options.Value;
         _logger = logger;
     }
@@ -64,10 +67,16 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
 
     private async Task<CrawlHistory> RunCrawlAsync(Func<NewsApiProviderOptions, bool>? providerFilter, CancellationToken cancellationToken)
     {
+        // ProviderSchedule (database) is the live source of truth for whether a provider is
+        // enabled - see NewsCrawlerOrchestrator's own identical comment for why the file's Enabled
+        // is only a fallback now, not the source of truth.
+        var schedules = await _scheduleRepository.GetAllAsync(CrawlPipeline.Api, cancellationToken);
+        var scheduleByProvider = schedules.ToDictionary(s => s.Provider, StringComparer.OrdinalIgnoreCase);
+
         var candidates = _options.Countries
             .Where(c => c.Enabled)
             .SelectMany(c => c.Providers.Select(p => new CountryProvider(c.Name, p)))
-            .Where(cp => cp.Provider.Enabled && (providerFilter is null || providerFilter(cp.Provider)))
+            .Where(cp => IsEnabled(cp.Provider, scheduleByProvider) && (providerFilter is null || providerFilter(cp.Provider)))
             .ToList();
 
         var lockedProviders = await ProviderLockCoordinator.AcquireAsync(
@@ -99,6 +108,9 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
     }
 
     private string ProviderLockName(string providerName) => $"{_options.LockName}:{providerName}";
+
+    private static bool IsEnabled(NewsApiProviderOptions provider, IReadOnlyDictionary<string, ProviderSchedule> schedules) =>
+        schedules.TryGetValue(provider.Name, out var schedule) ? schedule.Enabled : provider.Enabled;
 
     private async Task<CrawlHistory> RunLockedAsync(IReadOnlyList<CountryProvider> lockedProviders, CancellationToken cancellationToken)
     {

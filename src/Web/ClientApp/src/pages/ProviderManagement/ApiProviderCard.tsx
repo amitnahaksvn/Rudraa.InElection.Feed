@@ -7,9 +7,9 @@ import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { ProviderStatusChip } from './ProviderStatusChip';
 import { ProviderLogo } from './ProviderLogo';
 import { ApiEndpointRow } from './ApiEndpointRow';
+import { ScheduleEditor } from './ScheduleEditor';
 import { getDomainFromUrl } from '../../utils/providerVisuals';
 import type { ApiProviderSummary } from '../../api/providerTypes';
 
@@ -41,8 +41,6 @@ export function ApiProviderCard({ provider }: { provider: ApiProviderSummary }) 
               <Typography variant="subtitle1" fontWeight={700}>
                 {provider.name}
               </Typography>
-              <ProviderStatusChip enabled={provider.enabled} />
-              {provider.cron && <Chip size="small" variant="outlined" label={provider.cron} />}
               {provider.authType && <Chip size="small" variant="outlined" label={provider.authType} />}
               <Chip
                 size="small"
@@ -58,6 +56,14 @@ export function ApiProviderCard({ provider }: { provider: ApiProviderSummary }) 
                 {provider.baseUrl}
               </Typography>
             )}
+            <ScheduleEditor
+              key={`${provider.enabled}-${provider.cron}-${provider.timeZone}`}
+              pipeline="Api"
+              provider={provider.name}
+              enabled={provider.enabled}
+              cron={provider.cron}
+              timeZone={provider.timeZone}
+            />
           </Stack>
         </Stack>
       </AccordionSummary>

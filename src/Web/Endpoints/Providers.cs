@@ -2,14 +2,16 @@ using Mediator;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Application.Providers.Commands.TestApiEndpoint;
 using Application.Providers.Commands.TestRssFeed;
+using Application.Providers.Commands.UpdateProviderSchedule;
 using Application.Providers.Dtos;
 using Application.Providers.Queries.GetApiProviders;
 using Application.Providers.Queries.GetRssProviders;
+using Domain.Enums;
 using Web.Infrastructure;
 
 namespace Web.Endpoints;
 
-/// <summary>Backs the Provider Management page: every configured RSS feed/JSON-API endpoint (name, enabled status, cron, description) plus an on-demand connectivity/content test for any single one of them.</summary>
+/// <summary>Backs the Provider Management page: every configured RSS feed/JSON-API endpoint (name, enabled status, cron, description), an on-demand connectivity/content test for any single one of them, and live schedule editing (enable/disable, change cron).</summary>
 public sealed class Providers : IEndpointGroup
 {
     public static void Map(RouteGroupBuilder groupBuilder)
@@ -20,6 +22,7 @@ public sealed class Providers : IEndpointGroup
         group.MapGet("api", GetApiProviders);
         group.MapPost("rss/test", TestRssFeed);
         group.MapPost("api/test", TestApiEndpoint);
+        group.MapPut("schedule", UpdateSchedule);
     }
 
     [EndpointSummary("List every configured RSS provider")]
@@ -55,8 +58,34 @@ public sealed class Providers : IEndpointGroup
         var result = await sender.Send(new TestApiEndpointCommand(request.Country, request.Provider, request.EndpointName), cancellationToken);
         return TypedResults.Ok(result);
     }
+
+    [EndpointSummary("Enable/disable a provider or change its cron")]
+    [EndpointDescription(
+        "Creates or overwrites one RSS/API provider's schedule - persists to the database (survives " +
+        "restarts, no NewsCrawler.appsettings.json/NewsApiCrawler edit needed) and immediately updates " +
+        "the live Hangfire recurring job: enabling registers/reschedules it, disabling removes it. " +
+        "'provider' must already be configured under an enabled country for the given 'pipeline'.")]
+    public static async Task<Ok<ProviderScheduleDto>> UpdateSchedule(
+        ISender sender, UpdateProviderScheduleRequest request, CancellationToken cancellationToken)
+    {
+        // System.Text.Json's default enum handling only accepts numbers in a request body (unlike
+        // query-string/route enum binding, which already parses "Rss"/"Api" as text elsewhere in
+        // this app) - Pipeline arrives as a plain string here and is parsed by hand instead of
+        // registering a global JsonStringEnumConverter for one field. An unparseable value becomes
+        // an out-of-range enum rather than silently defaulting to Rss, so
+        // UpdateProviderScheduleCommandValidator's own "Pipeline must be 'Rss' or 'Api'" check
+        // still catches it as a normal 400, not a raw model-binding failure.
+        var pipeline = Enum.TryParse<CrawlPipeline>(request.Pipeline, ignoreCase: true, out var parsed) ? parsed : (CrawlPipeline)(-1);
+
+        var result = await sender.Send(
+            new UpdateProviderScheduleCommand(pipeline, request.Provider, request.Enabled, request.Cron, request.TimeZone ?? "UTC"),
+            cancellationToken);
+        return TypedResults.Ok(result);
+    }
 }
 
 public sealed record TestRssFeedRequest(string Country, string Provider, string FeedUrl);
 
 public sealed record TestApiEndpointRequest(string Country, string Provider, string EndpointName);
+
+public sealed record UpdateProviderScheduleRequest(string Pipeline, string Provider, bool Enabled, string Cron, string? TimeZone);

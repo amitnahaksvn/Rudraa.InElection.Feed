@@ -1,6 +1,7 @@
 using Mediator;
 using Application.Abstractions;
 using Application.Crawl.Dtos;
+using Domain.Enums;
 
 namespace Application.Crawl.Commands.TriggerProviderJob;
 
@@ -24,7 +25,7 @@ public sealed class TriggerProviderJobCommandHandler : IRequestHandler<TriggerPr
 
     public ValueTask<ProviderJobTriggeredDto> Handle(TriggerProviderJobCommand request, CancellationToken cancellationToken)
     {
-        var jobId = _crawlJobTrigger.TriggerNow(request.Provider);
+        var jobId = _crawlJobTrigger.TriggerNow(CrawlPipeline.Rss, request.Provider);
         return ValueTask.FromResult(new ProviderJobTriggeredDto(request.Provider, jobId));
     }
 }

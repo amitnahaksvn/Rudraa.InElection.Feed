@@ -14,6 +14,7 @@ export interface RssProviderSummary {
   name: string;
   enabled: boolean;
   cron: string;
+  timeZone: string;
   description: string;
   feeds: RssFeedSummary[];
 }
@@ -31,6 +32,7 @@ export interface ApiProviderSummary {
   name: string;
   enabled: boolean;
   cron: string;
+  timeZone: string;
   baseUrl: string;
   authType: string;
   description: string;
@@ -45,4 +47,14 @@ export interface ProviderTestResult {
   fetchedAt: string;
   error: string | null;
   exceptionType: string | null;
+}
+
+export type CrawlPipelineName = 'Rss' | 'Api';
+
+export interface ProviderSchedule {
+  pipeline: CrawlPipelineName;
+  provider: string;
+  enabled: boolean;
+  cron: string;
+  timeZone: string;
 }
