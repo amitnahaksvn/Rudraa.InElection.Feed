@@ -18,7 +18,17 @@ namespace Infrastructure.Scheduling;
 /// No-ops outside Render (local dev, docker-compose, the Aspire AppHost) where neither
 /// <see cref="KeepAliveOptions.PingUrl"/> nor Render's own <c>RENDER_EXTERNAL_URL</c> environment
 /// variable is set - there's nothing meaningful to ping.
+///
+/// Tagged onto its own dedicated "keepalive" queue - listed first in
+/// <see cref="Application.Options.HangfireOptions.Queues"/>'s priority order, ahead of every
+/// content-crawling queue - rather than sharing "default" with the raw-response-cleanup/error-
+/// notification jobs. Confirmed in production: a burst of 100+ freshly-due rss/api crawl jobs
+/// (the normal shape right after any wake-up) can occupy this app's small WorkerCount for
+/// minutes; sharing a lower-priority queue let this job's own once-a-minute deadline get missed
+/// under that load, letting the free-tier host spin back down anyway despite the self-ping
+/// itself working correctly every time it did get a turn.
 /// </summary>
+[Queue("keepalive")]
 public sealed class HangfireKeepAliveExecutor
 {
     private readonly IHttpClientFactory _httpClientFactory;
