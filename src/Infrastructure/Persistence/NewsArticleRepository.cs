@@ -72,11 +72,15 @@ public sealed class NewsArticleRepository : INewsArticleRepository
     {
         var fingerprint = new ArticleFingerprint
         {
+            Provider = article.Provider,
+            SourceType = article.SourceType,
             Url = article.Url,
             OriginalGuid = article.OriginalGuid,
             Hash = article.Hash,
             ContentHash = contentHash,
-            CrawledAt = article.CrawledAt
+            PublishedAt = article.PublishedAt,
+            CrawledAt = article.CrawledAt,
+            UpdatedAt = article.UpdatedAt
         };
 
         try
@@ -112,11 +116,15 @@ public sealed class NewsArticleRepository : INewsArticleRepository
         var updatedFingerprint = new ArticleFingerprint
         {
             Id = existing.Id,
+            Provider = article.Provider,
+            SourceType = article.SourceType,
             Url = article.Url,
             OriginalGuid = article.OriginalGuid,
             Hash = article.Hash,
             ContentHash = contentHash,
-            CrawledAt = existing.CrawledAt
+            PublishedAt = article.PublishedAt,
+            CrawledAt = existing.CrawledAt,
+            UpdatedAt = article.UpdatedAt
         };
 
         try

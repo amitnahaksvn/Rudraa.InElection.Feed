@@ -54,12 +54,24 @@ public class GetCrawlReportQueryHandlerTests
         ]
     };
 
-    private GetCrawlReportQueryHandler BuildHandler(IReadOnlyList<CrawlHistory> runs, out Mock<ICrawlHistoryRepository> historyRepo)
+    private GetCrawlReportQueryHandler BuildHandler(
+        IReadOnlyList<CrawlHistory> runs,
+        out Mock<ICrawlHistoryRepository> historyRepo,
+        IReadOnlyList<ArticleCrawlCount>? articleCounts = null,
+        IReadOnlyList<ArticleCrawlCount>? updatedArticleCounts = null)
     {
         historyRepo = new Mock<ICrawlHistoryRepository>();
         historyRepo
             .Setup(r => r.GetFilteredAsync(It.IsAny<CrawlHistoryFilter>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(runs);
+
+        var fingerprintRepo = new Mock<IArticleFingerprintRepository>();
+        fingerprintRepo
+            .Setup(f => f.GetDailyProviderCountsAsync(It.IsAny<ArticleSourceType>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(articleCounts ?? []);
+        fingerprintRepo
+            .Setup(f => f.GetDailyProviderUpdatedCountsAsync(It.IsAny<ArticleSourceType>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(updatedArticleCounts ?? []);
 
         var statusReader = new Mock<ICrawlJobStatusReader>();
         statusReader
@@ -68,6 +80,7 @@ public class GetCrawlReportQueryHandlerTests
 
         return new GetCrawlReportQueryHandler(
             historyRepo.Object,
+            fingerprintRepo.Object,
             statusReader.Object,
             Options.Create(BuildRssOptions()),
             Options.Create(new NewsApiCrawlerOptions()));
@@ -78,12 +91,21 @@ public class GetCrawlReportQueryHandlerTests
     {
         var runs = new[]
         {
-            BuildRun(CrawlPipeline.Rss, Day1, ["AajTak"], CrawlStatus.Completed, newArticles: 3, updatedArticles: 1, duplicateArticles: 2),
-            BuildRun(CrawlPipeline.Rss, Day2, ["AajTak"], CrawlStatus.CompletedWithErrors, newArticles: 1, failedFeeds: ["AajTak/Home"]),
+            BuildRun(CrawlPipeline.Rss, Day1, ["AajTak"], CrawlStatus.Completed, duplicateArticles: 2),
+            BuildRun(CrawlPipeline.Rss, Day2, ["AajTak"], CrawlStatus.CompletedWithErrors, failedFeeds: ["AajTak/Home"]),
             BuildRun(CrawlPipeline.Rss, Day2, ["ABPNews"], CrawlStatus.Failed),
         };
+        var articleCounts = new[]
+        {
+            new ArticleCrawlCount(DateOnly.FromDateTime(Day1.UtcDateTime), "AajTak", 3),
+            new ArticleCrawlCount(DateOnly.FromDateTime(Day2.UtcDateTime), "AajTak", 1),
+        };
+        var updatedArticleCounts = new[]
+        {
+            new ArticleCrawlCount(DateOnly.FromDateTime(Day1.UtcDateTime), "AajTak", 1),
+        };
 
-        var handler = BuildHandler(runs, out _);
+        var handler = BuildHandler(runs, out _, articleCounts, updatedArticleCounts);
         var result = await handler.Handle(new GetCrawlReportQuery(CrawlPipeline.Rss, Day1, Day2), CancellationToken.None);
 
         Assert.Equal(3, result.Summary.TotalRuns);
@@ -105,11 +127,16 @@ public class GetCrawlReportQueryHandlerTests
     {
         var runs = new[]
         {
-            BuildRun(CrawlPipeline.Rss, Day1, ["AajTak"], CrawlStatus.Completed, newArticles: 5),
-            BuildRun(CrawlPipeline.Rss, Day2, ["AajTak"], CrawlStatus.Completed, newArticles: 2),
+            BuildRun(CrawlPipeline.Rss, Day1, ["AajTak"], CrawlStatus.Completed),
+            BuildRun(CrawlPipeline.Rss, Day2, ["AajTak"], CrawlStatus.Completed),
+        };
+        var articleCounts = new[]
+        {
+            new ArticleCrawlCount(DateOnly.FromDateTime(Day1.UtcDateTime), "AajTak", 5),
+            new ArticleCrawlCount(DateOnly.FromDateTime(Day2.UtcDateTime), "AajTak", 2),
         };
 
-        var handler = BuildHandler(runs, out _);
+        var handler = BuildHandler(runs, out _, articleCounts);
         var result = await handler.Handle(new GetCrawlReportQuery(CrawlPipeline.Rss, Day1, Day2), CancellationToken.None);
 
         Assert.Equal(2, result.TimeSeries.Count);
@@ -123,7 +150,7 @@ public class GetCrawlReportQueryHandlerTests
     [Fact]
     public async Task Handle_ProviderBreakdown_IncludesConfiguredProviderWithNoRunsAtAll()
     {
-        var runs = new[] { BuildRun(CrawlPipeline.Rss, Day1, ["AajTak"], CrawlStatus.Completed, newArticles: 1) };
+        var runs = new[] { BuildRun(CrawlPipeline.Rss, Day1, ["AajTak"], CrawlStatus.Completed) };
 
         var handler = BuildHandler(runs, out _);
         var result = await handler.Handle(new GetCrawlReportQuery(CrawlPipeline.Rss, Day1, Day2), CancellationToken.None);
@@ -141,17 +168,18 @@ public class GetCrawlReportQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_MultiProviderRun_ExcludedFromPerProviderArticleCountsButFailedFeedsStayAttributed()
+    public async Task Handle_MultiProviderRun_ExcludedFromPerProviderRunCountsButFailedFeedsStayAttributed()
     {
         // A manual "trigger everything" run bundles both providers into one record - exact
-        // new/updated/duplicate attribution isn't possible per provider, so BuildProviderBreakdown
-        // deliberately excludes it from either provider's own counters (it still lands in the
+        // run/updated/duplicate attribution isn't possible per provider, so BuildProviderBreakdown
+        // deliberately excludes it from either provider's own run counters (it still lands in the
         // overall Summary, covered by the aggregation test above). Failed-feed strings are
-        // "{Provider}/{Feed}" though, so that attribution stays exact regardless.
+        // "{Provider}/{Feed}" though, so that attribution stays exact regardless. NewArticles is
+        // unaffected by this exclusion entirely - it comes from ArticleFingerprints, not from runs.
         var runs = new[]
         {
             BuildRun(CrawlPipeline.Rss, Day1, ["AajTak", "ABPNews"], CrawlStatus.CompletedWithErrors,
-                newArticles: 10, failedFeeds: ["AajTak/Home", "ABPNews/Home"])
+                failedFeeds: ["AajTak/Home", "ABPNews/Home"])
         };
 
         var handler = BuildHandler(runs, out _);
@@ -159,7 +187,6 @@ public class GetCrawlReportQueryHandlerTests
 
         var aajTak = Assert.Single(result.Providers, p => p.Provider == "AajTak");
         Assert.False(aajTak.HasRun);
-        Assert.Equal(0, aajTak.NewArticles);
         Assert.Equal(1, aajTak.FailedFeeds);
 
         var abpNews = Assert.Single(result.Providers, p => p.Provider == "ABPNews");
