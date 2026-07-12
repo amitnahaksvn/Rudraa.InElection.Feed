@@ -252,6 +252,36 @@ public static class HangfireRecurringJobRegistrar
     }
 
     /// <summary>
+    /// Registers the self-ping recurring job (see <see cref="HangfireKeepAliveExecutor"/>) that
+    /// keeps a free-tier host from spinning down due to inactivity. Always registered regardless
+    /// of whether a ping URL is actually configured - the executor itself no-ops harmlessly when
+    /// neither <c>KeepAlive:PingUrl</c> nor Render's own <c>RENDER_EXTERNAL_URL</c> is set (i.e.
+    /// local dev, docker-compose, the Aspire AppHost), so there's no need for this method to know
+    /// which environment it's running in.
+    /// </summary>
+    public static void RegisterKeepAliveRecurringJob(IServiceProvider services, ILogger logger)
+    {
+        var options = services.GetRequiredService<IOptions<KeepAliveOptions>>().Value;
+
+        if (string.IsNullOrWhiteSpace(options.Cron))
+        {
+            logger.LogWarning("KeepAlive:Cron is not configured - no self-ping job registered");
+            return;
+        }
+
+        var recurringJobManager = services.GetRequiredService<IRecurringJobManager>();
+
+        recurringJobManager.AddOrUpdate<HangfireKeepAliveExecutor>(
+            HangfireJobIds.KeepAlivePing,
+            executor => executor.RunAsync(null!, CancellationToken.None),
+            options.Cron,
+            RecurringJobOptionsFactory.Create(TimeZoneInfo.Utc));
+
+        logger.LogInformation(
+            "Registered Hangfire recurring job '{JobId}' with cron '{Cron}'", HangfireJobIds.KeepAlivePing, options.Cron);
+    }
+
+    /// <summary>
     /// Bootstraps the Mongo-driven <c>FeedSource</c> pipeline: seeds the Phase 1 PIB feed if missing,
     /// then registers one Hangfire recurring job per currently-active <c>FeedSource</c> document.
     /// Unlike <see cref="RegisterNewsCrawlerRecurringJobsAsync"/> (whose provider list is fixed at compile

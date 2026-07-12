@@ -114,13 +114,18 @@ public static class Extensions
         {
             // All health checks must pass for app to be considered ready to accept traffic after starting
             app.MapHealthChecks(HealthEndpointPath);
-
-            // Only health checks tagged with the "live" tag must pass for app to be considered alive
-            app.MapHealthChecks(AlivenessEndpointPath, new HealthCheckOptions
-            {
-                Predicate = r => r.Tags.Contains("live")
-            });
         }
+
+        // Unlike /health above, /alive only reports the static "self" check registered in
+        // AddDefaultHealthChecks (always Healthy, no dependency probing) - there's nothing here for
+        // a non-development environment's security concern to apply to, so it's mapped
+        // unconditionally. This is what HangfireKeepAliveExecutor pings to keep a free-tier host
+        // (e.g. Render, which spins down a Web Service after ~15 minutes with no inbound HTTP
+        // traffic) from sleeping - that self-ping is pointless if this route 404s in Production.
+        app.MapHealthChecks(AlivenessEndpointPath, new HealthCheckOptions
+        {
+            Predicate = r => r.Tags.Contains("live")
+        });
 
         return app;
     }

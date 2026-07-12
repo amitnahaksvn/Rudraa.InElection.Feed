@@ -487,6 +487,14 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddTransient<HangfireRawResponseCleanupExecutor>();
         services.AddTransient<HangfireErrorNotificationDispatchExecutor>();
 
+        services
+            .AddOptions<KeepAliveOptions>()
+            .Bind(configuration.GetSection(KeepAliveOptions.SectionName));
+        // Short timeout and no retry policy - a missed self-ping just tries again on its own next
+        // minute, so there's nothing worth retrying immediately for.
+        services.AddHttpClient("SelfPing", client => client.Timeout = TimeSpan.FromSeconds(15));
+        services.AddTransient<HangfireKeepAliveExecutor>();
+
         return services;
     }
 

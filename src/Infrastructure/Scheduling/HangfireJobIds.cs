@@ -13,6 +13,9 @@ public static class HangfireJobIds
 
     public const string ErrorNotificationDispatch = "dispatch-error-notifications";
 
+    /// <summary>See <c>HangfireKeepAliveExecutor</c> - keeps a free-tier host from spinning down.</summary>
+    public const string KeepAlivePing = "keep-alive-ping";
+
     /// <summary>Job id for a <see cref="Domain.Entities.FeedSource"/>-driven feed, keyed by its own SourceCode (e.g. "dynamic-feed-PIB").</summary>
     public static string DynamicFeed(string sourceCode) => $"dynamic-feed-{sourceCode}";
 
