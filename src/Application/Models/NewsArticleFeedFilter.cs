@@ -12,10 +12,23 @@ public enum NewsFeedSortBy
     CrawledAt
 }
 
-/// <summary>Query shape for <see cref="Abstractions.INewsArticleRepository.GetFeedAsync"/> - backs the News Feed page's infinite scroll: narrow by pipeline (RSS/API) and/or country, page via Skip/Take, newest first by <see cref="SortBy"/>.</summary>
+/// <summary>
+/// Which way <see cref="NewsArticleFeedFilter.SortBy"/> orders the feed. Descending is the default
+/// (and first enum member, so it's also what an omitted/default-constructed filter gets) since
+/// "newest first" is what every reader expects walking in; Ascending exists for someone
+/// deliberately reading oldest-first (e.g. reconstructing a story's timeline).
+/// </summary>
+public enum NewsFeedSortDirection
+{
+    Descending,
+    Ascending
+}
+
+/// <summary>Query shape for <see cref="Abstractions.INewsArticleRepository.GetFeedAsync"/> - backs the News Feed page's infinite scroll: narrow by pipeline (RSS/API) and/or country, page via Skip/Take, ordered by <see cref="SortBy"/>/<see cref="SortDirection"/>.</summary>
 public sealed record NewsArticleFeedFilter(
     ArticleSourceType? SourceType = null,
     string? Country = null,
     int Skip = 0,
     int Take = 20,
-    NewsFeedSortBy SortBy = NewsFeedSortBy.PublishedAt);
+    NewsFeedSortBy SortBy = NewsFeedSortBy.PublishedAt,
+    NewsFeedSortDirection SortDirection = NewsFeedSortDirection.Descending);

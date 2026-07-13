@@ -7,6 +7,9 @@ export type ArticleSourceType = 'Rss' | 'Api';
 // scroll is ordered by.
 export type NewsFeedSortBy = 'PublishedAt' | 'CrawledAt';
 
+// Mirrors Application.Models.NewsFeedSortDirection - which way NewsFeedSortBy orders the feed.
+export type NewsFeedSortDirection = 'Descending' | 'Ascending';
+
 export interface NewsArticle {
   id: string;
   provider: string;

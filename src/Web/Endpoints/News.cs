@@ -72,16 +72,18 @@ public sealed class News : IEndpointGroup
 
     [EndpointSummary("News feed, paged")]
     [EndpointDescription(
-        "Newest-first articles for the News Feed page's infinite scroll - 'sourceType' (Rss/Api) " +
-        "picks the tab, 'country' optionally narrows to one publisher country, 'sortBy' " +
-        "(PublishedAt/CrawledAt, defaults to PublishedAt) picks which timestamp 'newest' means, and " +
+        "Articles for the News Feed page's infinite scroll - 'sourceType' (Rss/Api) picks the tab, " +
+        "'country' optionally narrows to one publisher country, 'sortBy' (PublishedAt/CrawledAt, " +
+        "defaults to PublishedAt) picks which timestamp orders the feed, 'sortDirection' " +
+        "(Descending/Ascending, defaults to Descending - i.e. newest first) picks which way, and " +
         "'skip'/'count' page through the results as the reader scrolls.")]
     public static async Task<Ok<IReadOnlyList<NewsArticleDto>>> GetFeed(
         ISender sender, IOptions<ApiOptions> apiOptions, ArticleSourceType? sourceType, string? country, int skip, int count,
-        NewsFeedSortBy sortBy = NewsFeedSortBy.PublishedAt, CancellationToken cancellationToken = default)
+        NewsFeedSortBy sortBy = NewsFeedSortBy.PublishedAt, NewsFeedSortDirection sortDirection = NewsFeedSortDirection.Descending,
+        CancellationToken cancellationToken = default)
     {
         var result = await sender.Send(
-            new GetNewsFeedQuery(sourceType, country, Math.Max(0, skip), ResolvePageSize(count, apiOptions.Value), sortBy),
+            new GetNewsFeedQuery(sourceType, country, Math.Max(0, skip), ResolvePageSize(count, apiOptions.Value), sortBy, sortDirection),
             cancellationToken);
         return TypedResults.Ok(result);
     }

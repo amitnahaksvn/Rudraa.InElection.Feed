@@ -1,4 +1,4 @@
-import type { ArticleSourceType, NewsArticle, NewsFeedSortBy } from './newsTypes';
+import type { ArticleSourceType, NewsArticle, NewsFeedSortBy, NewsFeedSortDirection } from './newsTypes';
 import { throwIfNotOk } from './httpUtils';
 
 export interface NewsFeedQuery {
@@ -7,6 +7,7 @@ export interface NewsFeedQuery {
   skip: number;
   count: number;
   sortBy: NewsFeedSortBy;
+  sortDirection: NewsFeedSortDirection;
 }
 
 export async function fetchNewsFeed(query: NewsFeedQuery): Promise<NewsArticle[]> {
@@ -15,6 +16,7 @@ export async function fetchNewsFeed(query: NewsFeedQuery): Promise<NewsArticle[]
     skip: String(query.skip),
     count: String(query.count),
     sortBy: query.sortBy,
+    sortDirection: query.sortDirection,
   });
   if (query.country) {
     params.set('country', query.country);
