@@ -25,6 +25,26 @@ public class NewsFeedQueryHandlerTests
 
         Assert.NotNull(captured);
         Assert.Equal(NewsFeedSortBy.PublishedAt, captured!.SortBy);
+        Assert.Equal(NewsFeedSortDirection.Descending, captured.SortDirection);
+    }
+
+    [Fact]
+    public async Task GetNewsFeedQueryHandler_PassesRequestedAscendingDirectionThrough()
+    {
+        var repo = new Mock<INewsArticleRepository>();
+        NewsArticleFeedFilter? captured = null;
+        repo
+            .Setup(r => r.GetFeedAsync(It.IsAny<NewsArticleFeedFilter>(), It.IsAny<CancellationToken>()))
+            .Callback<NewsArticleFeedFilter, CancellationToken>((f, _) => captured = f)
+            .ReturnsAsync([]);
+
+        var handler = new GetNewsFeedQueryHandler(repo.Object);
+        await handler.Handle(
+            new GetNewsFeedQuery(ArticleSourceType.Rss, null, 0, 20, NewsFeedSortBy.PublishedAt, NewsFeedSortDirection.Ascending),
+            CancellationToken.None);
+
+        Assert.NotNull(captured);
+        Assert.Equal(NewsFeedSortDirection.Ascending, captured!.SortDirection);
     }
 
     [Fact]

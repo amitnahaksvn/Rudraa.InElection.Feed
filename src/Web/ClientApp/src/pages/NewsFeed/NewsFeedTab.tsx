@@ -6,11 +6,15 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import ToggleButton from '@mui/material/ToggleButton';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import type { ArticleSourceType, NewsFeedSortBy } from '../../api/newsTypes';
+import type { ArticleSourceType, NewsFeedSortBy, NewsFeedSortDirection } from '../../api/newsTypes';
 import { useNewsFeed } from './useNewsFeed';
 import { useNewsFeedCount } from './useNewsFeedCount';
 import { useNewsCountries } from './useNewsCountries';
@@ -21,6 +25,7 @@ import { getCountryFlagEmoji } from '../../utils/countryFlags';
 export function NewsFeedTab({ sourceType }: { sourceType: ArticleSourceType }) {
   const [country, setCountry] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<NewsFeedSortBy>('PublishedAt');
+  const [sortDirection, setSortDirection] = useState<NewsFeedSortDirection>('Descending');
 
   const { data: countries } = useNewsCountries(sourceType);
   const { data: totalCount } = useNewsFeedCount(sourceType, country);
@@ -31,7 +36,7 @@ export function NewsFeedTab({ sourceType }: { sourceType: ArticleSourceType }) {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useNewsFeed(sourceType, country, sortBy);
+  } = useNewsFeed(sourceType, country, sortBy, sortDirection);
 
   const sentinelRef = useInfiniteScrollSentinel(() => fetchNextPage(), Boolean(hasNextPage) && !isFetchingNextPage);
 
@@ -70,6 +75,16 @@ export function NewsFeedTab({ sourceType }: { sourceType: ArticleSourceType }) {
             <ToggleButton value="PublishedAt">Published</ToggleButton>
             <ToggleButton value="CrawledAt">Crawled</ToggleButton>
           </ToggleButtonGroup>
+
+          <Tooltip title={sortDirection === 'Descending' ? 'Newest first - click for oldest first' : 'Oldest first - click for newest first'}>
+            <IconButton
+              size="small"
+              aria-label="Toggle sort direction"
+              onClick={() => setSortDirection((prev) => (prev === 'Descending' ? 'Ascending' : 'Descending'))}
+            >
+              {sortDirection === 'Descending' ? <ArrowDownwardIcon fontSize="small" /> : <ArrowUpwardIcon fontSize="small" />}
+            </IconButton>
+          </Tooltip>
         </Stack>
 
         {totalCount !== undefined && (
