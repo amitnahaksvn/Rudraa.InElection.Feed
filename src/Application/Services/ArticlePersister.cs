@@ -26,6 +26,20 @@ internal static class ArticlePersister
         foreach (var normalized in articles)
         {
             var now = DateTimeOffset.UtcNow;
+
+            // A source's own PublishedAt is occasionally ahead of real time - a publisher's CMS
+            // clock running fast, or content pre-scheduled/staged before its nominal publish time
+            // (confirmed live against AmarUjala's own feed: an item dated ~11.5 hours into the
+            // future). A story can never be validly recorded as published after the moment this
+            // crawl actually saw it, so that's the clamp - not an attempt to guess the "true"
+            // publish time, which isn't recoverable from a wrong source timestamp. Hash below
+            // deliberately uses the raw, unclamped normalized.PublishedAt - clamping against `now`
+            // would make the hash drift on every crawl of the same still-future-dated story instead
+            // of staying a stable dedup signature.
+            var publishedAt = normalized.PublishedAt is { } claimedPublishedAt && claimedPublishedAt > now
+                ? now
+                : normalized.PublishedAt;
+
             var article = new NewsArticle
             {
                 Provider = normalized.Provider,
@@ -41,7 +55,7 @@ internal static class ArticlePersister
                 Language = normalized.Language,
                 Country = normalized.Country,
                 ImageUrl = normalized.ImageUrl,
-                PublishedAt = normalized.PublishedAt,
+                PublishedAt = publishedAt,
                 CrawledAt = now,
                 UpdatedAt = now,
                 Tags = normalized.Tags,

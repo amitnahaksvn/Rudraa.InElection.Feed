@@ -281,20 +281,107 @@ public abstract partial class BaseRssProvider : IRssProvider
         // Java's Date.toString() token order ("ddd MMM d HH:mm:ss zzz yyyy" - weekday, month, day,
         // time, offset, *then* year) isn't one .NET's parser accepts at all, regardless of the
         // zone-abbreviation fix above, so it's reordered into "d MMM yyyy HH:mm:ss zzz" - which is.
+        // A non-match here isn't a dead end - it just means this specific tier doesn't apply,
+        // falling through to the Hindi-month/NL Times tiers below rather than giving up immediately.
         var reorderMatch = JavaDateOrderRegex().Match(cleaned);
-        if (!reorderMatch.Success)
+        if (reorderMatch.Success)
+        {
+            var reordered =
+                $"{reorderMatch.Groups["day"].Value} {reorderMatch.Groups["month"].Value} {reorderMatch.Groups["year"].Value} " +
+                $"{reorderMatch.Groups["time"].Value} {reorderMatch.Groups["offset"].Value}";
+
+            if (DateTimeOffset.TryParse(reordered, CultureInfo.InvariantCulture, DateTimeStyles.None, out parsed))
+            {
+                return parsed.ToUniversalTime();
+            }
+        }
+
+        // MPInfo (Madhya Pradesh) emits a Hindi weekday name that its own feed generator has
+        // double-HTML-escaped into literal, undecodable "&#2360;&#2379;..." text (a bug on their
+        // side, not recoverable), followed by a *written-out Hindi month name* - e.g.
+        // "&amp;#2360;&amp;#2379;&amp;#2350;&amp;#2357;&amp;#2366;&amp;#2352;, जुलाई 13, 2026,
+        // 21:46 IST". None of .NET's parser tiers above recognize a Hindi month name (InvariantCulture
+        // only knows English names), so the whole leading weekday token is discarded (it's redundant
+        // once day/month/year are known) and the month name is mapped to its numeric equivalent
+        // before falling through to the existing IST-abbreviation handling above. A feed with the
+        // time genuinely omitted (MPInfo's own CM_News sub-feed truncates some items to just
+        // "..., 2026,  " with nothing after) has nothing to recover and correctly falls through to
+        // null. Matched against the original trimmed string, not the GMT/IST-substituted `cleaned`
+        // above - that substitution already rewrote the trailing literal "IST" this regex looks for
+        // into "+05:30", so matching against `cleaned` here would never find it.
+        var hindiMonthMatch = HindiMonthDateRegex().Match(trimmed);
+        if (hindiMonthMatch.Success && HindiMonths.TryGetValue(hindiMonthMatch.Groups["month"].Value, out var englishMonth))
+        {
+            var reconstructed =
+                $"{hindiMonthMatch.Groups["day"].Value} {englishMonth} {hindiMonthMatch.Groups["year"].Value} " +
+                $"{hindiMonthMatch.Groups["time"].Value} +05:30";
+
+            if (DateTimeOffset.TryParse(reconstructed, CultureInfo.InvariantCulture, DateTimeStyles.None, out parsed))
+            {
+                return parsed.ToUniversalTime();
+            }
+        }
+
+        // NL Times (Netherlands) emits no offset/zone at all - "13 July 2026 - 21:10" - which
+        // DateTimeStyles.None would otherwise silently interpret using whatever machine-local time
+        // zone happens to be running this process (wrong, and non-deterministic across dev/prod).
+        // Parsed as a plain local DateTime, then anchored to the Netherlands' own actual UTC offset
+        // for that specific date via TimeZoneInfo (Amsterdam observes CET/CEST DST, unlike India's
+        // fixed IST, so this can't be a single hardcoded constant the way the EDT/EST tier above is).
+        var nlTimesMatch = NlTimesDateRegex().Match(trimmed);
+        if (nlTimesMatch.Success &&
+            DateTime.TryParseExact(
+                $"{nlTimesMatch.Groups["day"].Value} {nlTimesMatch.Groups["month"].Value} {nlTimesMatch.Groups["year"].Value} {nlTimesMatch.Groups["time"].Value}",
+                "d MMMM yyyy HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out var nlLocal))
+        {
+            var offset = NetherlandsTimeZone?.GetUtcOffset(nlLocal) ?? TimeSpan.Zero;
+            return new DateTimeOffset(nlLocal, offset).ToUniversalTime();
+        }
+
+        return null;
+    }
+
+    // Resolved once - null (falling back to a UTC offset above) only if the host's tzdata lacks
+    // this id, same "don't crash startup/parsing over a missing tzdata entry" fallback already used
+    // for RawResponseCleanupCron's Asia/Kolkata lookup.
+    private static readonly TimeZoneInfo? NetherlandsTimeZone = ResolveNetherlandsTimeZone();
+
+    private static TimeZoneInfo? ResolveNetherlandsTimeZone()
+    {
+        try
+        {
+            return TimeZoneInfo.FindSystemTimeZoneById("Europe/Amsterdam");
+        }
+        catch (Exception ex) when (ex is TimeZoneNotFoundException or InvalidTimeZoneException)
         {
             return null;
         }
-
-        var reordered =
-            $"{reorderMatch.Groups["day"].Value} {reorderMatch.Groups["month"].Value} {reorderMatch.Groups["year"].Value} " +
-            $"{reorderMatch.Groups["time"].Value} {reorderMatch.Groups["offset"].Value}";
-
-        return DateTimeOffset.TryParse(reordered, CultureInfo.InvariantCulture, DateTimeStyles.None, out parsed)
-            ? parsed.ToUniversalTime()
-            : null;
     }
+
+    private static readonly Dictionary<string, string> HindiMonths = new()
+    {
+        ["जनवरी"] = "January",
+        ["फरवरी"] = "February",
+        ["मार्च"] = "March",
+        ["अप्रैल"] = "April",
+        ["मई"] = "May",
+        ["जून"] = "June",
+        ["जुलाई"] = "July",
+        ["अगस्त"] = "August",
+        ["सितंबर"] = "September",
+        ["सितम्बर"] = "September",
+        ["अक्टूबर"] = "October",
+        ["नवंबर"] = "November",
+        ["नवम्बर"] = "November",
+        ["दिसंबर"] = "December",
+        ["दिसम्बर"] = "December",
+    };
+
+    [GeneratedRegex(@"(?<month>जनवरी|फरवरी|मार्च|अप्रैल|मई|जून|जुलाई|अगस्त|सितंबर|सितम्बर|अक्टूबर|नवंबर|नवम्बर|दिसंबर|दिसम्बर)\s+(?<day>\d{1,2}),\s*(?<year>\d{4}),\s*(?<time>\d{1,2}:\d{2})\s*IST")]
+    private static partial Regex HindiMonthDateRegex();
+
+    [GeneratedRegex(@"^(?<day>\d{1,2})\s+(?<month>\w+)\s+(?<year>\d{4})\s*-\s*(?<time>\d{2}:\d{2})$")]
+    private static partial Regex NlTimesDateRegex();
 
     /// <summary>Widened to internal so <c>DynamicFeedIngestionService</c> (Mongo-driven feeds) reuses the exact same stripping, not a duplicate.</summary>
     internal static string? StripHtml(string? html) =>

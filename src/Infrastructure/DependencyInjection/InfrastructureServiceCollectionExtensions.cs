@@ -37,6 +37,17 @@ public static class InfrastructureServiceCollectionExtensions
     {
         MongoClassMapConfigurator.Configure();
 
+        // Applies to every HttpClient registered anywhere below (every RSS/API provider, og:image
+        // fetches, dynamic feed ingestion, Resend) - none of them set Accept-Encoding or expect a
+        // compressed body, but at least two confirmed providers (Vietnam's VietnamPlus/NhanDan)
+        // gzip-compress their response regardless of what the client asked for. Without this,
+        // .NET's HttpClient defaults to no decompression at all, so the raw gzip bytes get UTF8-decoded
+        // as if they were XML text - not a parse-quality issue, a complete parse failure (zero items,
+        // not just a wrong PublishedAt). AutomaticDecompression is a no-op for every server that
+        // doesn't compress unprompted, so this is safe to apply globally rather than per-provider.
+        services.ConfigureHttpClientDefaults(builder => builder.ConfigurePrimaryHttpMessageHandler(() =>
+            new SocketsHttpHandler { AutomaticDecompression = System.Net.DecompressionMethods.All }));
+
         services
             .AddOptions<MongoDbOptions>()
             .Bind(configuration.GetSection(MongoDbOptions.SectionName))
