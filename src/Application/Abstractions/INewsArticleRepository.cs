@@ -41,6 +41,21 @@ public interface INewsArticleRepository
     /// <summary>Every distinct, non-empty country currently represented among active articles (optionally narrowed to one pipeline) - backs the News Feed page's country filter.</summary>
     Task<IReadOnlyList<string>> GetDistinctCountriesAsync(ArticleSourceType? sourceType, CancellationToken cancellationToken);
 
+    /// <summary>
+    /// Soft-deletes the articles with these ids (sets <see cref="Domain.Entities.NewsArticle.IsActive"/>
+    /// to false) - backs the News Feed page's per-card delete and its multi-select bulk delete, the
+    /// same call either way. <see cref="Domain.Entities.NewsArticle.IsActive"/> already gates every
+    /// read path here (<see cref="GetLatestAsync"/>/<see cref="GetByProviderAsync"/>/
+    /// <see cref="GetByCategoryAsync"/>/<see cref="GetFeedAsync"/>/<see cref="CountFeedAsync"/>/
+    /// <see cref="GetDistinctCountriesAsync"/> all already filter on it, and its own indexes are
+    /// already built around it) - this is the first place that actually flips it to false, rather
+    /// than a new mechanism. Ids that don't match any document are silently ignored rather than
+    /// erroring. The document itself, and its matching <see cref="Domain.Entities.ArticleFingerprint"/>,
+    /// are both left in place - so a deleted article stops appearing everywhere immediately but
+    /// isn't silently re-ingested the next time its source feed is crawled.
+    /// </summary>
+    Task<long> DeleteManyAsync(IReadOnlyList<string> ids, CancellationToken cancellationToken);
+
     /// <summary>Ensures the PublishedAt, Provider and Category indexes exist - Url/OriginalGuid/Hash uniqueness now lives on <see cref="IArticleFingerprintRepository"/> instead.</summary>
     Task EnsureIndexesAsync(CancellationToken cancellationToken);
 }

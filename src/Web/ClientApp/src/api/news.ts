@@ -42,3 +42,14 @@ export async function fetchNewsFeedCount(sourceType: ArticleSourceType, country:
   await throwIfNotOk(response);
   return response.json();
 }
+
+/** Soft-deletes one or more articles by id - one call for both a single-card delete and a multi-select bulk delete. Returns how many were actually found and deleted. */
+export async function deleteArticles(ids: string[]): Promise<number> {
+  const response = await fetch('/api/news/articles', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ids }),
+  });
+  await throwIfNotOk(response);
+  return response.json();
+}

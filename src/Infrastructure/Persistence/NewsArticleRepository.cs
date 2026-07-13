@@ -254,6 +254,14 @@ public sealed class NewsArticleRepository : INewsArticleRepository
             .ToList();
     }
 
+    public async Task<long> DeleteManyAsync(IReadOnlyList<string> ids, CancellationToken cancellationToken)
+    {
+        var filter = Builders<NewsArticle>.Filter.In(a => a.Id, ids);
+        var update = Builders<NewsArticle>.Update.Set(a => a.IsActive, false);
+        var result = await _collection.UpdateManyAsync(filter, update, cancellationToken: cancellationToken);
+        return result.ModifiedCount;
+    }
+
     public async Task EnsureIndexesAsync(CancellationToken cancellationToken)
     {
         var models = new List<CreateIndexModel<NewsArticle>>

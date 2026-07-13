@@ -4,20 +4,40 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
 import Link from '@mui/material/Link';
+import Checkbox from '@mui/material/Checkbox';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 import ArticleIcon from '@mui/icons-material/Article';
 import PublicIcon from '@mui/icons-material/Public';
 import RssFeedIcon from '@mui/icons-material/RssFeed';
 import ApiIcon from '@mui/icons-material/Api';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import type { NewsArticle } from '../../api/newsTypes';
 import { getCountryFlagEmoji } from '../../utils/countryFlags';
 import { formatAbsoluteTime, formatRelativeTime } from '../../utils/formatDate';
 
-export function ArticleCard({ article }: { article: NewsArticle }) {
+interface ArticleCardProps {
+  article: NewsArticle;
+  selected: boolean;
+  onToggleSelect: (id: string) => void;
+  onDelete: (id: string) => void;
+}
+
+export function ArticleCard({ article, selected, onToggleSelect, onDelete }: ArticleCardProps) {
   const flag = getCountryFlagEmoji(article.country);
   const timestamp = article.publishedAt ?? article.crawledAt;
 
   return (
     <Card variant="outlined" sx={{ display: 'flex', overflow: 'hidden' }}>
+      <Stack alignItems="center" justifyContent="flex-start" sx={{ pl: 0.5, pt: 0.5 }}>
+        <Checkbox
+          size="small"
+          checked={selected}
+          onChange={() => onToggleSelect(article.id)}
+          aria-label={selected ? 'Deselect article' : 'Select article'}
+        />
+      </Stack>
+
       <Box
         sx={{
           width: { xs: 96, sm: 180 },
@@ -99,6 +119,11 @@ export function ArticleCard({ article }: { article: NewsArticle }) {
           >
             {formatRelativeTime(timestamp)}
           </Typography>
+          <Tooltip title="Delete article">
+            <IconButton size="small" aria-label="Delete article" onClick={() => onDelete(article.id)}>
+              <DeleteOutlineIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
         </Stack>
       </Stack>
     </Card>

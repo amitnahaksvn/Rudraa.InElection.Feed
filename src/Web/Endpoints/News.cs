@@ -1,7 +1,9 @@
 using Mediator;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Application.Models;
+using Application.News.Commands.DeleteArticles;
 using Application.News.Dtos;
 using Application.News.Queries.GetLatestNews;
 using Application.News.Queries.GetNewsByCategory;
@@ -16,7 +18,7 @@ using Web.Options;
 
 namespace Web.Endpoints;
 
-/// <summary>Read-only access to crawled news articles.</summary>
+/// <summary>Read access to crawled news articles, plus deletion from the News Feed page.</summary>
 public sealed class News : IEndpointGroup
 {
     public static void Map(RouteGroupBuilder groupBuilder)
@@ -30,6 +32,7 @@ public sealed class News : IEndpointGroup
         group.MapGet("feed", GetFeed);
         group.MapGet("feed/count", GetFeedCount);
         group.MapGet("countries", GetCountries);
+        group.MapDelete("articles", DeleteArticles);
     }
 
     [EndpointSummary("Latest articles")]
@@ -103,6 +106,18 @@ public sealed class News : IEndpointGroup
         ISender sender, ArticleSourceType? sourceType, CancellationToken cancellationToken)
     {
         var result = await sender.Send(new GetNewsCountriesQuery(sourceType), cancellationToken);
+        return TypedResults.Ok(result);
+    }
+
+    [EndpointSummary("Delete articles")]
+    [EndpointDescription(
+        "Soft-deletes one or more articles by id - used by both the News Feed page's per-card " +
+        "delete button and its multi-select bulk delete, the same request shape either way. " +
+        "Returns how many were actually found and deleted.")]
+    public static async Task<Ok<long>> DeleteArticles(
+        ISender sender, [FromBody] DeleteArticlesCommand command, CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(command, cancellationToken);
         return TypedResults.Ok(result);
     }
 

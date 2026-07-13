@@ -896,6 +896,83 @@
             "Category": "Education",
             "Language": "en",
             "Enabled": true
+          },
+          {
+            "Name": "Mumbai",
+            "Url": "https://indianexpress.com/section/cities/mumbai/feed/",
+            "Category": "Maharashtra",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Kolkata",
+            "Url": "https://indianexpress.com/section/cities/kolkata/feed/",
+            "Category": "West Bengal",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Delhi",
+            "Url": "https://indianexpress.com/section/cities/delhi/feed/",
+            "Category": "Delhi",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "DelhiConfidential",
+            "Url": "https://indianexpress.com/section/delhi-confidential/feed/",
+            "Category": "Delhi",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Jammu",
+            "Url": "https://indianexpress.com/section/cities/jammu/feed/",
+            "Category": "Jammu and Kashmir",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Srinagar",
+            "Url": "https://indianexpress.com/section/cities/srinagar/feed/",
+            "Category": "Jammu and Kashmir",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Hyderabad",
+            "Url": "https://indianexpress.com/section/cities/hyderabad/feed/",
+            "Category": "Telangana",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Kerala",
+            "Url": "https://indianexpress.com/section/india/kerala/feed/",
+            "Category": "Kerala",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "ArunachalPradesh",
+            "Url": "https://indianexpress.com/section/north-east-india/arunachal-pradesh/feed/",
+            "Category": "Arunachal Pradesh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Mizoram",
+            "Url": "https://indianexpress.com/section/north-east-india/mizoram/feed/",
+            "Category": "Mizoram",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Tripura",
+            "Url": "https://indianexpress.com/section/north-east-india/tripura/feed/",
+            "Category": "Tripura",
+            "Language": "en",
+            "Enabled": true
           }
         ]
       },
@@ -1447,6 +1524,314 @@
             "Category": "Bihar",
             "Language": "hi",
             "Enabled": true
+          },
+          {
+            "Name": "BiharPatna",
+            "Url": "https://api.livehindustan.com/feeds/rss/bihar/patna/rssfeed.xml",
+            "Category": "Bihar",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Chhattisgarh",
+            "Url": "https://api.livehindustan.com/feeds/rss/chhattisgarh/rssfeed.xml",
+            "Category": "Chhattisgarh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "ChhattisgarhRaipur",
+            "Url": "https://api.livehindustan.com/feeds/rss/chhattisgarh/raipur/rssfeed.xml",
+            "Category": "Chhattisgarh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "ChhattisgarhBilaspur",
+            "Url": "https://api.livehindustan.com/feeds/rss/chhattisgarh/bilaspur/rssfeed.xml",
+            "Category": "Chhattisgarh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "ChhattisgarhBastar",
+            "Url": "https://api.livehindustan.com/feeds/rss/chhattisgarh/bastar/rssfeed.xml",
+            "Category": "Chhattisgarh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Jharkhand",
+            "Url": "https://api.livehindustan.com/feeds/rss/jharkhand/rssfeed.xml",
+            "Category": "Jharkhand",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "JharkhandRanchi",
+            "Url": "https://api.livehindustan.com/feeds/rss/jharkhand/ranchi/rssfeed.xml",
+            "Category": "Jharkhand",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "MadhyaPradesh",
+            "Url": "https://api.livehindustan.com/feeds/rss/madhya-pradesh/rssfeed.xml",
+            "Category": "Madhya Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "MadhyaPradeshBhopal",
+            "Url": "https://api.livehindustan.com/feeds/rss/madhya-pradesh/bhopal/rssfeed.xml",
+            "Category": "Madhya Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "MadhyaPradeshIndore",
+            "Url": "https://api.livehindustan.com/feeds/rss/madhya-pradesh/indore/rssfeed.xml",
+            "Category": "Madhya Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "MadhyaPradeshJabalpur",
+            "Url": "https://api.livehindustan.com/feeds/rss/madhya-pradesh/jabalpur/rssfeed.xml",
+            "Category": "Madhya Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "MadhyaPradeshGwalior",
+            "Url": "https://api.livehindustan.com/feeds/rss/madhya-pradesh/gwalior/rssfeed.xml",
+            "Category": "Madhya Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "MadhyaPradeshUjjain",
+            "Url": "https://api.livehindustan.com/feeds/rss/madhya-pradesh/ujjain/rssfeed.xml",
+            "Category": "Madhya Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "MadhyaPradeshSatna",
+            "Url": "https://api.livehindustan.com/feeds/rss/madhya-pradesh/satna/rssfeed.xml",
+            "Category": "Madhya Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "MadhyaPradeshSagar",
+            "Url": "https://api.livehindustan.com/feeds/rss/madhya-pradesh/sagar/rssfeed.xml",
+            "Category": "Madhya Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "RajasthanJaipur",
+            "Url": "https://api.livehindustan.com/feeds/rss/rajasthan/jaipur/rssfeed.xml",
+            "Category": "Rajasthan",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "RajasthanJodhpur",
+            "Url": "https://api.livehindustan.com/feeds/rss/rajasthan/jodhpur/rssfeed.xml",
+            "Category": "Rajasthan",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "RajasthanUdaipur",
+            "Url": "https://api.livehindustan.com/feeds/rss/rajasthan/udaipur/rssfeed.xml",
+            "Category": "Rajasthan",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "RajasthanKota",
+            "Url": "https://api.livehindustan.com/feeds/rss/rajasthan/kota/rssfeed.xml",
+            "Category": "Rajasthan",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "RajasthanAjmer",
+            "Url": "https://api.livehindustan.com/feeds/rss/rajasthan/ajmer/rssfeed.xml",
+            "Category": "Rajasthan",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "RajasthanAlwar",
+            "Url": "https://api.livehindustan.com/feeds/rss/rajasthan/alwar/rssfeed.xml",
+            "Category": "Rajasthan",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarPradeshLucknow",
+            "Url": "https://api.livehindustan.com/feeds/rss/uttar-pradesh/lucknow/rssfeed.xml",
+            "Category": "Uttar Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarPradeshVaranasi",
+            "Url": "https://api.livehindustan.com/feeds/rss/uttar-pradesh/varanasi/rssfeed.xml",
+            "Category": "Uttar Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarPradeshKanpur",
+            "Url": "https://api.livehindustan.com/feeds/rss/uttar-pradesh/kanpur/rssfeed.xml",
+            "Category": "Uttar Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarPradeshPrayagraj",
+            "Url": "https://api.livehindustan.com/feeds/rss/uttar-pradesh/prayagraj/rssfeed.xml",
+            "Category": "Uttar Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarPradeshAgra",
+            "Url": "https://api.livehindustan.com/feeds/rss/uttar-pradesh/agra/rssfeed.xml",
+            "Category": "Uttar Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarPradeshMeerut",
+            "Url": "https://api.livehindustan.com/feeds/rss/uttar-pradesh/meerut/rssfeed.xml",
+            "Category": "Uttar Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarPradeshGorakhpur",
+            "Url": "https://api.livehindustan.com/feeds/rss/uttar-pradesh/gorakhpur/rssfeed.xml",
+            "Category": "Uttar Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarPradeshAyodhya",
+            "Url": "https://api.livehindustan.com/feeds/rss/uttar-pradesh/ayodhya/rssfeed.xml",
+            "Category": "Uttar Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Uttarakhand",
+            "Url": "https://api.livehindustan.com/feeds/rss/uttarakhand/rssfeed.xml",
+            "Category": "Uttarakhand",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarakhandDehradun",
+            "Url": "https://api.livehindustan.com/feeds/rss/uttarakhand/dehradun/rssfeed.xml",
+            "Category": "Uttarakhand",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarakhandHaridwar",
+            "Url": "https://api.livehindustan.com/feeds/rss/uttarakhand/haridwar/rssfeed.xml",
+            "Category": "Uttarakhand",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarakhandHaldwani",
+            "Url": "https://api.livehindustan.com/feeds/rss/uttarakhand/haldwani/rssfeed.xml",
+            "Category": "Uttarakhand",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarakhandRishikesh",
+            "Url": "https://api.livehindustan.com/feeds/rss/uttarakhand/rishikesh/rssfeed.xml",
+            "Category": "Uttarakhand",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarakhandNainital",
+            "Url": "https://api.livehindustan.com/feeds/rss/uttarakhand/nainital/rssfeed.xml",
+            "Category": "Uttarakhand",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarakhandRudrapur",
+            "Url": "https://api.livehindustan.com/feeds/rss/uttarakhand/rudrapur/rssfeed.xml",
+            "Category": "Uttarakhand",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarakhandRoorki",
+            "Url": "https://api.livehindustan.com/feeds/rss/uttarakhand/roorki/rssfeed.xml",
+            "Category": "Uttarakhand",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarakhandPithoragarh",
+            "Url": "https://api.livehindustan.com/feeds/rss/uttarakhand/pithoragarh/rssfeed.xml",
+            "Category": "Uttarakhand",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarakhandAlmora",
+            "Url": "https://api.livehindustan.com/feeds/rss/uttarakhand/almora/rssfeed.xml",
+            "Category": "Uttarakhand",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarakhandChamoli",
+            "Url": "https://api.livehindustan.com/feeds/rss/uttarakhand/chamoli/rssfeed.xml",
+            "Category": "Uttarakhand",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarakhandAssemblyElection",
+            "Url": "https://api.livehindustan.com/feeds/rss/assembly-elections/uttarakhand-election/rssfeed.xml",
+            "Category": "Uttarakhand",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "Tripura",
+            "Url": "https://api.livehindustan.com/feeds/rss/tripura/rssfeed.xml",
+            "Category": "Tripura",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "TripuraAssemblyElection",
+            "Url": "https://api.livehindustan.com/feeds/rss/assembly-elections/tripura/rssfeed.xml",
+            "Category": "Tripura",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "TelanganaAssemblyElection",
+            "Url": "https://api.livehindustan.com/feeds/rss/assembly-elections/telangana-elections/rssfeed.xml",
+            "Category": "Telangana",
+            "Language": "hi",
+            "Enabled": true
           }
         ]
       },
@@ -1640,6 +2025,132 @@
             "Category": "Latest",
             "Language": "en",
             "Enabled": false
+          },
+          {
+            "Name": "TeluguNews",
+            "Url": "https://telugu.oneindia.com/rss/feeds/telugu-news-fb.xml",
+            "Category": "General",
+            "Language": "te",
+            "Enabled": true
+          },
+          {
+            "Name": "KannadaNews",
+            "Url": "https://kannada.oneindia.com/rss/feeds/kannada-news-fb.xml",
+            "Category": "Karnataka",
+            "Language": "kn",
+            "Enabled": true
+          },
+          {
+            "Name": "KannadaBengaluru",
+            "Url": "https://kannada.oneindia.com/rss/feeds/kannada-bengaluru-fb.xml",
+            "Category": "Karnataka",
+            "Language": "kn",
+            "Enabled": true
+          },
+          {
+            "Name": "KannadaMysuru",
+            "Url": "https://kannada.oneindia.com/rss/feeds/kannada-mysuru-fb.xml",
+            "Category": "Karnataka",
+            "Language": "kn",
+            "Enabled": true
+          },
+          {
+            "Name": "KannadaMangaluru",
+            "Url": "https://kannada.oneindia.com/rss/feeds/kannada-mangaluru-fb.xml",
+            "Category": "Karnataka",
+            "Language": "kn",
+            "Enabled": true
+          },
+          {
+            "Name": "KannadaBelagavi",
+            "Url": "https://kannada.oneindia.com/rss/feeds/kannada-belagavi-fb.xml",
+            "Category": "Karnataka",
+            "Language": "kn",
+            "Enabled": true
+          },
+          {
+            "Name": "KannadaShivamogga",
+            "Url": "https://kannada.oneindia.com/rss/feeds/kannada-shivamogga-fb.xml",
+            "Category": "Karnataka",
+            "Language": "kn",
+            "Enabled": true
+          },
+          {
+            "Name": "MalayalamNews",
+            "Url": "https://malayalam.oneindia.com/rss/feeds/malayalam-news-fb.xml",
+            "Category": "Kerala",
+            "Language": "ml",
+            "Enabled": true
+          },
+          {
+            "Name": "MalayalamThiruvananthapuram",
+            "Url": "https://malayalam.oneindia.com/rss/feeds/malayalam-thiruvananthapuram-fb.xml",
+            "Category": "Kerala",
+            "Language": "ml",
+            "Enabled": true
+          },
+          {
+            "Name": "MalayalamErnakulam",
+            "Url": "https://malayalam.oneindia.com/rss/feeds/malayalam-ernakulam-fb.xml",
+            "Category": "Kerala",
+            "Language": "ml",
+            "Enabled": true
+          },
+          {
+            "Name": "MalayalamKozhikode",
+            "Url": "https://malayalam.oneindia.com/rss/feeds/malayalam-kozhikode-fb.xml",
+            "Category": "Kerala",
+            "Language": "ml",
+            "Enabled": true
+          },
+          {
+            "Name": "TamilNews",
+            "Url": "https://tamil.oneindia.com/rss/feeds/tamil-news-fb.xml",
+            "Category": "Tamil Nadu",
+            "Language": "ta",
+            "Enabled": true
+          },
+          {
+            "Name": "Chennai",
+            "Url": "https://www.oneindia.com/rss/feeds/chennai-fb.xml",
+            "Category": "Tamil Nadu",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "HindiBihar",
+            "Url": "https://hindi.oneindia.com/rss/feeds/hindi-bihar-fb.xml",
+            "Category": "Bihar",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "HindiRajasthan",
+            "Url": "https://hindi.oneindia.com/rss/feeds/hindi-rajasthan-fb.xml",
+            "Category": "Rajasthan",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "HindiUttarPradesh",
+            "Url": "https://hindi.oneindia.com/rss/feeds/hindi-uttar-pradesh-fb.xml",
+            "Category": "Uttar Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "OdiaOdisha",
+            "Url": "https://odia.oneindia.com/rss/feeds/odia-odisha-fb.xml",
+            "Category": "Odisha",
+            "Language": "or",
+            "Enabled": true
+          },
+          {
+            "Name": "OdiaNational",
+            "Url": "https://odia.oneindia.com/rss/feeds/odia-national-fb.xml",
+            "Category": "General",
+            "Language": "or",
+            "Enabled": true
           }
         ]
       },
@@ -1855,6 +2366,811 @@
             "Name": "ElectionCommissionOfIndia",
             "Url": "Election Commission of India",
             "Category": "Politics",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "AndhraPradesh",
+            "Url": "Andhra Pradesh",
+            "Category": "Andhra Pradesh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "AndhraPradeshTelugu",
+            "Url": "ఆంధ్రప్రదేశ్",
+            "Category": "Andhra Pradesh",
+            "Language": "te",
+            "Enabled": true
+          },
+          {
+            "Name": "AndhraPradeshPolitics",
+            "Url": "Andhra Pradesh politics",
+            "Category": "Andhra Pradesh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "ArunachalPradesh",
+            "Url": "Arunachal Pradesh",
+            "Category": "Arunachal Pradesh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "ArunachalPradeshPolitics",
+            "Url": "Arunachal Pradesh politics",
+            "Category": "Arunachal Pradesh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Itanagar",
+            "Url": "Itanagar",
+            "Category": "Arunachal Pradesh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Assam",
+            "Url": "Assam",
+            "Category": "Assam",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "AssamAssamese",
+            "Url": "অসম",
+            "Category": "Assam",
+            "Language": "as",
+            "Enabled": true
+          },
+          {
+            "Name": "AssamPolitics",
+            "Url": "Assam Politics",
+            "Category": "Assam",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Guwahati",
+            "Url": "Guwahati",
+            "Category": "Assam",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Bihar",
+            "Url": "Bihar",
+            "Category": "Bihar",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "BiharHindi",
+            "Url": "बिहार",
+            "Category": "Bihar",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "BiharPolitics",
+            "Url": "Bihar Politics",
+            "Category": "Bihar",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Chhattisgarh",
+            "Url": "Chhattisgarh",
+            "Category": "Chhattisgarh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "ChhattisgarhHindi",
+            "Url": "छत्तीसगढ़",
+            "Category": "Chhattisgarh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "ChhattisgarhPolitics",
+            "Url": "Chhattisgarh Politics",
+            "Category": "Chhattisgarh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Goa",
+            "Url": "Goa",
+            "Category": "Goa",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "GoaPolitics",
+            "Url": "Goa Politics",
+            "Category": "Goa",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Panaji",
+            "Url": "Panaji",
+            "Category": "Goa",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Gujarat",
+            "Url": "Gujarat",
+            "Category": "Gujarat",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "GujaratGujarati",
+            "Url": "ગુજરાત",
+            "Category": "Gujarat",
+            "Language": "gu",
+            "Enabled": true
+          },
+          {
+            "Name": "GujaratPolitics",
+            "Url": "Gujarat Politics",
+            "Category": "Gujarat",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Haryana",
+            "Url": "Haryana",
+            "Category": "Haryana",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "HaryanaHindi",
+            "Url": "हरियाणा",
+            "Category": "Haryana",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "HaryanaPolitics",
+            "Url": "Haryana Politics",
+            "Category": "Haryana",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "HimachalPradesh",
+            "Url": "Himachal Pradesh",
+            "Category": "Himachal Pradesh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "HimachalPradeshHindi",
+            "Url": "हिमाचल प्रदेश",
+            "Category": "Himachal Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "HimachalPradeshPolitics",
+            "Url": "Himachal Pradesh Politics",
+            "Category": "Himachal Pradesh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Jharkhand",
+            "Url": "Jharkhand",
+            "Category": "Jharkhand",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "JharkhandHindi",
+            "Url": "झारखंड",
+            "Category": "Jharkhand",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "JharkhandPolitics",
+            "Url": "Jharkhand Politics",
+            "Category": "Jharkhand",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Karnataka",
+            "Url": "Karnataka",
+            "Category": "Karnataka",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "KarnatakaKannada",
+            "Url": "ಕರ್ನಾಟಕ",
+            "Category": "Karnataka",
+            "Language": "kn",
+            "Enabled": true
+          },
+          {
+            "Name": "KarnatakaPolitics",
+            "Url": "Karnataka Politics",
+            "Category": "Karnataka",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Kerala",
+            "Url": "Kerala",
+            "Category": "Kerala",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "KeralaMalayalam",
+            "Url": "കേരളം",
+            "Category": "Kerala",
+            "Language": "ml",
+            "Enabled": true
+          },
+          {
+            "Name": "KeralaPolitics",
+            "Url": "Kerala Politics",
+            "Category": "Kerala",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "MadhyaPradesh",
+            "Url": "Madhya Pradesh",
+            "Category": "Madhya Pradesh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "MadhyaPradeshHindi",
+            "Url": "मध्य प्रदेश",
+            "Category": "Madhya Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "MadhyaPradeshPolitics",
+            "Url": "Madhya Pradesh Politics",
+            "Category": "Madhya Pradesh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Maharashtra",
+            "Url": "Maharashtra",
+            "Category": "Maharashtra",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "MaharashtraMarathi",
+            "Url": "महाराष्ट्र",
+            "Category": "Maharashtra",
+            "Language": "mr",
+            "Enabled": true
+          },
+          {
+            "Name": "MaharashtraPolitics",
+            "Url": "Maharashtra Politics",
+            "Category": "Maharashtra",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Manipur",
+            "Url": "Manipur",
+            "Category": "Manipur",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "ManipurPolitics",
+            "Url": "Manipur Politics",
+            "Category": "Manipur",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Imphal",
+            "Url": "Imphal",
+            "Category": "Manipur",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Meghalaya",
+            "Url": "Meghalaya",
+            "Category": "Meghalaya",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Shillong",
+            "Url": "Shillong",
+            "Category": "Meghalaya",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "MeghalayaPolitics",
+            "Url": "Meghalaya Politics",
+            "Category": "Meghalaya",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Mizoram",
+            "Url": "Mizoram",
+            "Category": "Mizoram",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Aizawl",
+            "Url": "Aizawl",
+            "Category": "Mizoram",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "MizoramPolitics",
+            "Url": "Mizoram Politics",
+            "Category": "Mizoram",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Nagaland",
+            "Url": "Nagaland",
+            "Category": "Nagaland",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Kohima",
+            "Url": "Kohima",
+            "Category": "Nagaland",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "NagalandPolitics",
+            "Url": "Nagaland Politics",
+            "Category": "Nagaland",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "OdishaPolitics",
+            "Url": "Odisha politics",
+            "Category": "Odisha",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "OdishaOdia",
+            "Url": "ଓଡ଼ିଶା ରାଜନୀତି",
+            "Category": "Odisha",
+            "Language": "or",
+            "Enabled": true
+          },
+          {
+            "Name": "OdishaElection",
+            "Url": "Odisha Election",
+            "Category": "Odisha",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Punjab",
+            "Url": "Punjab",
+            "Category": "Punjab",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "PunjabPunjabi",
+            "Url": "ਪੰਜਾਬ",
+            "Category": "Punjab",
+            "Language": "pa",
+            "Enabled": true
+          },
+          {
+            "Name": "PunjabPolitics",
+            "Url": "Punjab Politics",
+            "Category": "Punjab",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Rajasthan",
+            "Url": "Rajasthan",
+            "Category": "Rajasthan",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "RajasthanHindi",
+            "Url": "राजस्थान",
+            "Category": "Rajasthan",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "RajasthanPolitics",
+            "Url": "Rajasthan Politics",
+            "Category": "Rajasthan",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Sikkim",
+            "Url": "Sikkim",
+            "Category": "Sikkim",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Gangtok",
+            "Url": "Gangtok",
+            "Category": "Sikkim",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "SikkimPolitics",
+            "Url": "Sikkim Politics",
+            "Category": "Sikkim",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "TamilNadu",
+            "Url": "Tamil Nadu",
+            "Category": "Tamil Nadu",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "TamilNaduTamil",
+            "Url": "தமிழ்நாடு",
+            "Category": "Tamil Nadu",
+            "Language": "ta",
+            "Enabled": true
+          },
+          {
+            "Name": "TamilNaduPolitics",
+            "Url": "Tamil Nadu Politics",
+            "Category": "Tamil Nadu",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Telangana",
+            "Url": "Telangana",
+            "Category": "Telangana",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "TelanganaTelugu",
+            "Url": "తెలంగాణ",
+            "Category": "Telangana",
+            "Language": "te",
+            "Enabled": true
+          },
+          {
+            "Name": "TelanganaPolitics",
+            "Url": "Telangana Politics",
+            "Category": "Telangana",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Tripura",
+            "Url": "Tripura",
+            "Category": "Tripura",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Agartala",
+            "Url": "Agartala",
+            "Category": "Tripura",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "TripuraPolitics",
+            "Url": "Tripura Politics",
+            "Category": "Tripura",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarPradesh",
+            "Url": "Uttar Pradesh",
+            "Category": "Uttar Pradesh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarPradeshHindi",
+            "Url": "उत्तर प्रदेश",
+            "Category": "Uttar Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarPradeshPolitics",
+            "Url": "Uttar Pradesh Politics",
+            "Category": "Uttar Pradesh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Uttarakhand",
+            "Url": "Uttarakhand",
+            "Category": "Uttarakhand",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarakhandHindi",
+            "Url": "उत्तराखंड",
+            "Category": "Uttarakhand",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "UttarakhandPolitics",
+            "Url": "Uttarakhand Politics",
+            "Category": "Uttarakhand",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "WestBengal",
+            "Url": "West Bengal",
+            "Category": "West Bengal",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "WestBengalBengali",
+            "Url": "পশ্চিমবঙ্গ",
+            "Category": "West Bengal",
+            "Language": "bn",
+            "Enabled": true
+          },
+          {
+            "Name": "WestBengalPolitics",
+            "Url": "West Bengal Politics",
+            "Category": "West Bengal",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Kolkata",
+            "Url": "Kolkata",
+            "Category": "West Bengal",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "AndamanNicobar",
+            "Url": "Andaman and Nicobar Islands",
+            "Category": "Andaman and Nicobar Islands",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "PortBlair",
+            "Url": "Port Blair",
+            "Category": "Andaman and Nicobar Islands",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "AndamanPolitics",
+            "Url": "Andaman Politics",
+            "Category": "Andaman and Nicobar Islands",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Chandigarh",
+            "Url": "Chandigarh",
+            "Category": "Chandigarh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "ChandigarhPolitics",
+            "Url": "Chandigarh Politics",
+            "Category": "Chandigarh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "ChandigarhElection",
+            "Url": "Chandigarh Election",
+            "Category": "Chandigarh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "DadraNagarHaveliDamanDiu",
+            "Url": "Dadra and Nagar Haveli and Daman and Diu",
+            "Category": "Dadra and Nagar Haveli and Daman and Diu",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Silvassa",
+            "Url": "Silvassa",
+            "Category": "Dadra and Nagar Haveli and Daman and Diu",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Daman",
+            "Url": "Daman",
+            "Category": "Dadra and Nagar Haveli and Daman and Diu",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Diu",
+            "Url": "Diu",
+            "Category": "Dadra and Nagar Haveli and Daman and Diu",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Delhi",
+            "Url": "Delhi",
+            "Category": "Delhi",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "DelhiHindi",
+            "Url": "दिल्ली",
+            "Category": "Delhi",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "DelhiPolitics",
+            "Url": "Delhi Politics",
+            "Category": "Delhi",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "NewDelhi",
+            "Url": "New Delhi",
+            "Category": "Delhi",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "JammuKashmir",
+            "Url": "Jammu and Kashmir",
+            "Category": "Jammu and Kashmir",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Kashmir",
+            "Url": "Kashmir",
+            "Category": "Jammu and Kashmir",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Jammu",
+            "Url": "Jammu",
+            "Category": "Jammu and Kashmir",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Srinagar",
+            "Url": "Srinagar",
+            "Category": "Jammu and Kashmir",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "JammuKashmirPolitics",
+            "Url": "Jammu and Kashmir Politics",
+            "Category": "Jammu and Kashmir",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Ladakh",
+            "Url": "Ladakh",
+            "Category": "Ladakh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Leh",
+            "Url": "Leh",
+            "Category": "Ladakh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Kargil",
+            "Url": "Kargil",
+            "Category": "Ladakh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "LadakhPolitics",
+            "Url": "Ladakh Politics",
+            "Category": "Ladakh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Lakshadweep",
+            "Url": "Lakshadweep",
+            "Category": "Lakshadweep",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Kavaratti",
+            "Url": "Kavaratti",
+            "Category": "Lakshadweep",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "LakshadweepPolitics",
+            "Url": "Lakshadweep Politics",
+            "Category": "Lakshadweep",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Puducherry",
+            "Url": "Puducherry",
+            "Category": "Puducherry",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Pondicherry",
+            "Url": "Pondicherry",
+            "Category": "Puducherry",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "PuducherryPolitics",
+            "Url": "Puducherry Politics",
+            "Category": "Puducherry",
             "Language": "en",
             "Enabled": true
           }
@@ -2263,6 +3579,109 @@
             "Enabled": true
           }
         ]
+      },
+      {
+        "Name": "BiharNews",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Bihar",
+            "Url": "https://biharnews.com/en/rss/category/bihar-news",
+            "Category": "Bihar",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "Political",
+            "Url": "https://biharnews.com/en/rss/category/Political-en",
+            "Category": "Bihar",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "MPInfo",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Hindi",
+            "Url": "https://mpinfo.org/RSSFeed/RSSFeed_News.xml",
+            "Category": "Madhya Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "English",
+            "Url": "https://mpinfo.org/RSSFeed/RSSFeed_EngNews.xml",
+            "Category": "Madhya Pradesh",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "CMNews",
+            "Url": "https://mpinfo.org/RSSFeed/RSSFeed_CM_News.xml",
+            "Category": "Madhya Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          },
+          {
+            "Name": "CabinetDecisions",
+            "Url": "https://mpinfo.org/RSSFeed/RSSFeed_Cabinet_Decision.xml",
+            "Category": "Madhya Pradesh",
+            "Language": "hi",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "NavhindTimes",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://navhindtimes.in/feed/",
+            "Category": "Goa",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "AndamanSheekha",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://andamansheekha.com/feed/",
+            "Category": "Andaman and Nicobar Islands",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
+        "Name": "ManipurOrg",
+        "Enabled": true,
+        "Cron": "*/20 * * * *",
+        "SaveRawResponses": true,
+        "Feeds": [
+          {
+            "Name": "Home",
+            "Url": "https://www.manipur.org/news/feed/",
+            "Category": "Manipur",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
       }
     ]
   },
@@ -2340,6 +3759,474 @@
             "Category": "General",
             "Language": "en",
             "Enabled": true
+          },
+          {
+            "Name": "StateAndhraPradesh",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Andhra Pradesh",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Andhra Pradesh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateArunachalPradesh",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Arunachal Pradesh",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Arunachal Pradesh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateAssam",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Assam",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Assam",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateBihar",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Bihar",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Bihar",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateChhattisgarh",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Chhattisgarh",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Chhattisgarh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateGoa",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Goa",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Goa",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateGujarat",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Gujarat",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Gujarat",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateHaryana",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Haryana",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Haryana",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateHimachalPradesh",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Himachal Pradesh",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Himachal Pradesh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateJharkh",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Jharkhand",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Jharkhand",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateKarnataka",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Karnataka",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Karnataka",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateKerala",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Kerala",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Kerala",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateMadhyaPradesh",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Madhya Pradesh",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Madhya Pradesh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateMaharashtra",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Maharashtra",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Maharashtra",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateManipur",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Manipur",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Manipur",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateMeghalaya",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Meghalaya",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Meghalaya",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateMizoram",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Mizoram",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Mizoram",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateNagal",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Nagaland",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Nagaland",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateOdisha",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Odisha",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Odisha",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StatePunjab",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Punjab",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Punjab",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateRajasthan",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Rajasthan",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Rajasthan",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateSikkim",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Sikkim",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Sikkim",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateTamilNadu",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Tamil Nadu",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Tamil Nadu",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateTelangana",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Telangana",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Telangana",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateTripura",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Tripura",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Tripura",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateUttarPradesh",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Uttar Pradesh",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Uttar Pradesh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateUttarakh",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Uttarakhand",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Uttarakhand",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateWestBengal",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "West Bengal",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "West Bengal",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateAndamanNicobarIsls",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Andaman and Nicobar Islands",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Andaman and Nicobar Islands",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateChigarh",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Chandigarh",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Chandigarh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateDadraNagarHaveliDamanDiu",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Dadra and Nagar Haveli and Daman and Diu",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Dadra and Nagar Haveli and Daman and Diu",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateDelhi",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Delhi",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Delhi",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateJammuKashmir",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Jammu and Kashmir",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Jammu and Kashmir",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateLadakh",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Ladakh",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Ladakh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateLakshadweep",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Lakshadweep",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Lakshadweep",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StatePuducherry",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "q": "Puducherry",
+              "lang": "en",
+              "country": "in",
+              "max": "10"
+            },
+            "Category": "Puducherry",
+            "Language": "en",
+            "Enabled": false
           }
         ]
       },
@@ -2376,6 +4263,438 @@
             "Category": "General",
             "Language": "en",
             "Enabled": true
+          },
+          {
+            "Name": "StateAndhraPradesh",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Andhra Pradesh",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Andhra Pradesh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateArunachalPradesh",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Arunachal Pradesh",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Arunachal Pradesh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateAssam",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Assam",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Assam",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateBihar",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Bihar",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Bihar",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateChhattisgarh",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Chhattisgarh",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Chhattisgarh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateGoa",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Goa",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Goa",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateGujarat",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Gujarat",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Gujarat",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateHaryana",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Haryana",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Haryana",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateHimachalPradesh",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Himachal Pradesh",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Himachal Pradesh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateJharkh",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Jharkhand",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Jharkhand",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateKarnataka",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Karnataka",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Karnataka",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateKerala",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Kerala",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Kerala",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateMadhyaPradesh",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Madhya Pradesh",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Madhya Pradesh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateMaharashtra",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Maharashtra",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Maharashtra",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateManipur",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Manipur",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Manipur",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateMeghalaya",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Meghalaya",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Meghalaya",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateMizoram",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Mizoram",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Mizoram",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateNagal",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Nagaland",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Nagaland",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateOdisha",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Odisha",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Odisha",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StatePunjab",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Punjab",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Punjab",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateRajasthan",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Rajasthan",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Rajasthan",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateSikkim",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Sikkim",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Sikkim",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateTamilNadu",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Tamil Nadu",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Tamil Nadu",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateTelangana",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Telangana",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Telangana",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateTripura",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Tripura",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Tripura",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateUttarPradesh",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Uttar Pradesh",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Uttar Pradesh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateUttarakh",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Uttarakhand",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Uttarakhand",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateWestBengal",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "West Bengal",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "West Bengal",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateAndamanNicobarIsls",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Andaman and Nicobar Islands",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Andaman and Nicobar Islands",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateChigarh",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Chandigarh",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Chandigarh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateDadraNagarHaveliDamanDiu",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Dadra and Nagar Haveli and Daman and Diu",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Dadra and Nagar Haveli and Daman and Diu",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateDelhi",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Delhi",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Delhi",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateJammuKashmir",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Jammu and Kashmir",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Jammu and Kashmir",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateLadakh",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Ladakh",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Ladakh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateLakshadweep",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Lakshadweep",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Lakshadweep",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StatePuducherry",
+            "Endpoint": "all",
+            "QueryParameters": {
+              "search": "Puducherry",
+              "language": "en",
+              "limit": "25"
+            },
+            "Category": "Puducherry",
+            "Language": "en",
+            "Enabled": false
           }
         ]
       },
@@ -2410,6 +4729,438 @@
             "Category": "Politics",
             "Language": "en",
             "Enabled": true
+          },
+          {
+            "Name": "StateAndhraPradesh",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Andhra Pradesh",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Andhra Pradesh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateArunachalPradesh",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Arunachal Pradesh",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Arunachal Pradesh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateAssam",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Assam",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Assam",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateBihar",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Bihar",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Bihar",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateChhattisgarh",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Chhattisgarh",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Chhattisgarh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateGoa",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Goa",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Goa",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateGujarat",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Gujarat",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Gujarat",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateHaryana",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Haryana",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Haryana",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateHimachalPradesh",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Himachal Pradesh",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Himachal Pradesh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateJharkh",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Jharkhand",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Jharkhand",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateKarnataka",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Karnataka",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Karnataka",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateKerala",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Kerala",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Kerala",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateMadhyaPradesh",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Madhya Pradesh",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Madhya Pradesh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateMaharashtra",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Maharashtra",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Maharashtra",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateManipur",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Manipur",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Manipur",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateMeghalaya",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Meghalaya",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Meghalaya",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateMizoram",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Mizoram",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Mizoram",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateNagal",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Nagaland",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Nagaland",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateOdisha",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Odisha",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Odisha",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StatePunjab",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Punjab",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Punjab",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateRajasthan",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Rajasthan",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Rajasthan",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateSikkim",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Sikkim",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Sikkim",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateTamilNadu",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Tamil Nadu",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Tamil Nadu",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateTelangana",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Telangana",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Telangana",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateTripura",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Tripura",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Tripura",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateUttarPradesh",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Uttar Pradesh",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Uttar Pradesh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateUttarakh",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Uttarakhand",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Uttarakhand",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateWestBengal",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "West Bengal",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "West Bengal",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateAndamanNicobarIsls",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Andaman and Nicobar Islands",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Andaman and Nicobar Islands",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateChigarh",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Chandigarh",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Chandigarh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateDadraNagarHaveliDamanDiu",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Dadra and Nagar Haveli and Daman and Diu",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Dadra and Nagar Haveli and Daman and Diu",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateDelhi",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Delhi",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Delhi",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateJammuKashmir",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Jammu and Kashmir",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Jammu and Kashmir",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateLadakh",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Ladakh",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Ladakh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateLakshadweep",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Lakshadweep",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Lakshadweep",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StatePuducherry",
+            "Endpoint": "search",
+            "QueryParameters": {
+              "keywords": "Puducherry",
+              "language": "en",
+              "country": "IN"
+            },
+            "Category": "Puducherry",
+            "Language": "en",
+            "Enabled": false
           }
         ]
       },
@@ -2459,6 +5210,438 @@
             "Category": "Politics",
             "Language": "en",
             "Enabled": true
+          },
+          {
+            "Name": "StateAndhraPradesh",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Andhra Pradesh",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Andhra Pradesh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateArunachalPradesh",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Arunachal Pradesh",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Arunachal Pradesh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateAssam",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Assam",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Assam",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateBihar",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Bihar",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Bihar",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateChhattisgarh",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Chhattisgarh",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Chhattisgarh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateGoa",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Goa",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Goa",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateGujarat",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Gujarat",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Gujarat",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateHaryana",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Haryana",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Haryana",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateHimachalPradesh",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Himachal Pradesh",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Himachal Pradesh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateJharkh",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Jharkhand",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Jharkhand",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateKarnataka",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Karnataka",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Karnataka",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateKerala",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Kerala",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Kerala",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateMadhyaPradesh",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Madhya Pradesh",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Madhya Pradesh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateMaharashtra",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Maharashtra",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Maharashtra",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateManipur",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Manipur",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Manipur",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateMeghalaya",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Meghalaya",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Meghalaya",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateMizoram",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Mizoram",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Mizoram",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateNagal",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Nagaland",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Nagaland",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateOdisha",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Odisha",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Odisha",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StatePunjab",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Punjab",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Punjab",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateRajasthan",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Rajasthan",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Rajasthan",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateSikkim",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Sikkim",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Sikkim",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateTamilNadu",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Tamil Nadu",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Tamil Nadu",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateTelangana",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Telangana",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Telangana",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateTripura",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Tripura",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Tripura",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateUttarPradesh",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Uttar Pradesh",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Uttar Pradesh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateUttarakh",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Uttarakhand",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Uttarakhand",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateWestBengal",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "West Bengal",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "West Bengal",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateAndamanNicobarIsls",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Andaman and Nicobar Islands",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Andaman and Nicobar Islands",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateChigarh",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Chandigarh",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Chandigarh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateDadraNagarHaveliDamanDiu",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Dadra and Nagar Haveli and Daman and Diu",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Dadra and Nagar Haveli and Daman and Diu",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateDelhi",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Delhi",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Delhi",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateJammuKashmir",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Jammu and Kashmir",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Jammu and Kashmir",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateLadakh",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Ladakh",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Ladakh",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StateLakshadweep",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Lakshadweep",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Lakshadweep",
+            "Language": "en",
+            "Enabled": false
+          },
+          {
+            "Name": "StatePuducherry",
+            "Endpoint": "latest",
+            "QueryParameters": {
+              "q": "Puducherry",
+              "country": "in",
+              "language": "en"
+            },
+            "Category": "Puducherry",
+            "Language": "en",
+            "Enabled": false
           }
         ]
       },

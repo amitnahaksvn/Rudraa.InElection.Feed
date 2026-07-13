@@ -380,6 +380,13 @@ public static class InfrastructureServiceCollectionExtensions
         AddRssProvider<PresidentOfIndiaRssProvider>(services, PresidentOfIndiaRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<NitiAayogRssProvider>(services, NitiAayogRssProvider.ClientName, CrawlerUserAgent);
 
+        // State-level publishers, added alongside India.json's state-tagged Feed/Endpoint entries.
+        AddRssProvider<BiharNewsRssProvider>(services, BiharNewsRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<MPInfoRssProvider>(services, MPInfoRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<NavhindTimesRssProvider>(services, NavhindTimesRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<AndamanSheekhaRssProvider>(services, AndamanSheekhaRssProvider.ClientName, CrawlerUserAgent);
+        AddRssProvider<ManipurOrgRssProvider>(services, ManipurOrgRssProvider.ClientName, CrawlerUserAgent);
+
         // The Mongo-driven FeedSource pipeline (PIB first) - a generic alternative to the
         // file-configured providers above, for feeds that need no publisher-specific quirks.
         // One shared named HttpClient (rather than one per FeedSource, which would need a DI

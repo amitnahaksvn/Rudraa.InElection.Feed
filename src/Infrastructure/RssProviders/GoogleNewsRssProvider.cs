@@ -22,6 +22,14 @@ namespace Infrastructure.RssProviders;
 /// scheme or a headless browser, both judged too fragile to depend on. Articles are stored under
 /// their Google-hosted link as-is, so the same story already ingested from a direct publisher
 /// feed will not dedupe against its Google News copy - they are intentionally separate documents.
+///
+/// <see cref="ResolveFeedUrl"/> derives the <c>hl</c>/<c>ceid</c> query parameters from the feed's
+/// own <see cref="RssFeedOptions.Language"/> (already required on every feed for article tagging,
+/// so this reuses it rather than adding a new property) instead of hardcoding English - needed for
+/// state-level regional-language searches (e.g. Language "te" -> hl=te&amp;ceid=IN:te for a Telugu
+/// query), verified against Google News' own accepted <c>hl</c> values. English still maps to
+/// "en-IN" specifically (not bare "en"), matching Google News' own convention for the English-India
+/// edition.
 /// </summary>
 public sealed class GoogleNewsRssProvider : BaseRssProvider
 {
@@ -37,6 +45,10 @@ public sealed class GoogleNewsRssProvider : BaseRssProvider
 
     protected override string HttpClientName => ClientName;
 
-    protected override string ResolveFeedUrl(RssFeedOptions feed) =>
-        $"https://news.google.com/rss/search?q={WebUtility.UrlEncode(feed.Url)}&hl=en-IN&gl=IN&ceid=IN:en";
+    protected override string ResolveFeedUrl(RssFeedOptions feed)
+    {
+        var language = string.IsNullOrWhiteSpace(feed.Language) ? "en" : feed.Language;
+        var hl = language == "en" ? "en-IN" : language;
+        return $"https://news.google.com/rss/search?q={WebUtility.UrlEncode(feed.Url)}&hl={hl}&gl=IN&ceid=IN:{language}";
+    }
 }
