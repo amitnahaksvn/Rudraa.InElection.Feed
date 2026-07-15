@@ -21,7 +21,7 @@
             "Url": "https://www.tak.live/rss/news-tak/video.xml",
             "Category": "National",
             "Language": "hi",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "CrimeTak",
@@ -35,112 +35,112 @@
             "Url": "https://www.tak.live/rss/bharat-tak/video.xml",
             "Category": "National",
             "Language": "hi",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "BizTak",
             "Url": "https://www.tak.live/rss/biz-tak/video.xml",
             "Category": "Business",
             "Language": "hi",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "UPTak",
             "Url": "https://www.tak.live/rss/up-tak/video.xml",
             "Category": "Uttar Pradesh",
             "Language": "hi",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "BiharTak",
             "Url": "https://www.tak.live/rss/bihar-tak/video.xml",
             "Category": "Bihar",
             "Language": "hi",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "LifeTak",
             "Url": "https://www.tak.live/rss/life-tak/video.xml",
             "Category": "Lifestyle",
             "Language": "hi",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "SahityaTak",
             "Url": "https://www.tak.live/rss/sahitya-tak/video.xml",
             "Category": "Literature",
             "Language": "hi",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "FitTak",
             "Url": "https://www.tak.live/rss/fit-tak/video.xml",
             "Category": "Health & Fitness",
             "Language": "hi",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "MPTak",
             "Url": "https://www.tak.live/rss/mp-tak/video.xml",
             "Category": "Madhya Pradesh",
             "Language": "hi",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "AstroTak",
             "Url": "https://www.tak.live/rss/astro-tak/video.xml",
             "Category": "Astrology",
             "Language": "hi",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "DilliTak",
             "Url": "https://www.tak.live/rss/dilli-tak/video.xml",
             "Category": "Delhi",
             "Language": "hi",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "RajasthanTak",
             "Url": "https://www.tak.live/rss/rajasthan-tak/video.xml",
             "Category": "Rajasthan",
             "Language": "hi",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "GujaratTak",
             "Url": "https://www.tak.live/rss/gujarat-tak/video.xml",
             "Category": "Gujarat",
             "Language": "hi",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "PunjabTak",
             "Url": "https://www.tak.live/rss/punjab-tak/video.xml",
             "Category": "Punjab",
             "Language": "hi",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "HaryanaTak",
             "Url": "https://www.tak.live/rss/haryana-tak/video.xml",
             "Category": "Haryana",
             "Language": "hi",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "UttarakhandTak",
             "Url": "https://www.tak.live/rss/uttarakhand-tak/video.xml",
             "Category": "Uttarakhand",
             "Language": "hi",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "KarnatakaTak",
             "Url": "https://www.tak.live/rss/karnataka-tak/video.xml",
             "Category": "Karnataka",
             "Language": "hi",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
