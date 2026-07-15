@@ -28,7 +28,7 @@
             "Url": "https://www.tak.live/rss/crime-tak/video.xml",
             "Category": "Crime",
             "Language": "hi",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "BharatTak",
