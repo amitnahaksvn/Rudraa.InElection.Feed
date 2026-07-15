@@ -8,6 +8,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import ToggleButton from '@mui/material/ToggleButton';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
+import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
@@ -53,6 +54,12 @@ export function NewsFeedTab({ sourceType }: { sourceType: ArticleSourceType }) {
 
   const articles = data?.pages.flat() ?? [];
 
+  // Tracks whatever is currently loaded (infinite scroll only fetches a page at a time) - if more
+  // articles load in afterwards, they start unselected and the checkbox naturally drops to its
+  // indeterminate state rather than silently claiming everything is selected.
+  const allLoadedSelected = articles.length > 0 && articles.every((a) => selectedIds.has(a.id));
+  const someLoadedSelected = articles.some((a) => selectedIds.has(a.id));
+
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
@@ -63,6 +70,10 @@ export function NewsFeedTab({ sourceType }: { sourceType: ArticleSourceType }) {
       }
       return next;
     });
+  };
+
+  const toggleSelectAll = () => {
+    setSelectedIds(allLoadedSelected ? new Set() : new Set(articles.map((a) => a.id)));
   };
 
   const handleConfirmDelete = () => {
@@ -146,6 +157,19 @@ export function NewsFeedTab({ sourceType }: { sourceType: ArticleSourceType }) {
               >
                 {isRefetching ? <CircularProgress size={18} /> : <RefreshIcon fontSize="small" />}
               </IconButton>
+            </span>
+          </Tooltip>
+
+          <Tooltip title={allLoadedSelected ? 'Deselect all' : 'Select all loaded articles'}>
+            <span>
+              <Checkbox
+                size="small"
+                checked={allLoadedSelected}
+                indeterminate={someLoadedSelected && !allLoadedSelected}
+                onChange={toggleSelectAll}
+                disabled={articles.length === 0}
+                aria-label={allLoadedSelected ? 'Deselect all' : 'Select all loaded articles'}
+              />
             </span>
           </Tooltip>
         </Stack>
