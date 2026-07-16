@@ -13,8 +13,6 @@ public sealed record CrawlHistoryDto(
     TimeSpan? Duration,
     int FeedCount,
     int NewArticles,
-    int UpdatedArticles,
-    int DuplicateArticles,
     IReadOnlyList<string> FailedFeeds,
     string Status,
     string? Error)
@@ -31,8 +29,6 @@ public sealed record CrawlHistoryDto(
         history.Duration,
         history.FeedCount,
         history.NewArticles,
-        history.UpdatedArticles,
-        history.DuplicateArticles,
         history.FailedFeeds,
         history.Status.ToString(),
         history.Error);

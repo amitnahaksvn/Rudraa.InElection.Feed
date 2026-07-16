@@ -20,8 +20,6 @@ public class GetCrawlReportQueryHandlerTests
         IReadOnlyList<string> providers,
         CrawlStatus status,
         int newArticles = 0,
-        int updatedArticles = 0,
-        int duplicateArticles = 0,
         IReadOnlyList<string>? failedFeeds = null) => new()
     {
         Id = Guid.NewGuid().ToString(),
@@ -32,8 +30,6 @@ public class GetCrawlReportQueryHandlerTests
         Duration = TimeSpan.FromMinutes(1),
         Status = status,
         NewArticles = newArticles,
-        UpdatedArticles = updatedArticles,
-        DuplicateArticles = duplicateArticles,
         FailedFeeds = (failedFeeds ?? []).ToList()
     };
 
@@ -57,8 +53,7 @@ public class GetCrawlReportQueryHandlerTests
     private GetCrawlReportQueryHandler BuildHandler(
         IReadOnlyList<CrawlHistory> runs,
         out Mock<ICrawlHistoryRepository> historyRepo,
-        IReadOnlyList<ArticleCrawlCount>? articleCounts = null,
-        IReadOnlyList<ArticleCrawlCount>? updatedArticleCounts = null)
+        IReadOnlyList<ArticleCrawlCount>? articleCounts = null)
     {
         historyRepo = new Mock<ICrawlHistoryRepository>();
         historyRepo
@@ -69,9 +64,6 @@ public class GetCrawlReportQueryHandlerTests
         fingerprintRepo
             .Setup(f => f.GetDailyProviderCountsAsync(It.IsAny<ArticleSourceType>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(articleCounts ?? []);
-        fingerprintRepo
-            .Setup(f => f.GetDailyProviderUpdatedCountsAsync(It.IsAny<ArticleSourceType>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(updatedArticleCounts ?? []);
 
         var statusReader = new Mock<ICrawlJobStatusReader>();
         statusReader
@@ -91,7 +83,7 @@ public class GetCrawlReportQueryHandlerTests
     {
         var runs = new[]
         {
-            BuildRun(CrawlPipeline.Rss, Day1, ["AajTak"], CrawlStatus.Completed, duplicateArticles: 2),
+            BuildRun(CrawlPipeline.Rss, Day1, ["AajTak"], CrawlStatus.Completed),
             BuildRun(CrawlPipeline.Rss, Day2, ["AajTak"], CrawlStatus.CompletedWithErrors, failedFeeds: ["AajTak/Home"]),
             BuildRun(CrawlPipeline.Rss, Day2, ["ABPNews"], CrawlStatus.Failed),
         };
@@ -100,12 +92,8 @@ public class GetCrawlReportQueryHandlerTests
             new ArticleCrawlCount(DateOnly.FromDateTime(Day1.UtcDateTime), "AajTak", 3),
             new ArticleCrawlCount(DateOnly.FromDateTime(Day2.UtcDateTime), "AajTak", 1),
         };
-        var updatedArticleCounts = new[]
-        {
-            new ArticleCrawlCount(DateOnly.FromDateTime(Day1.UtcDateTime), "AajTak", 1),
-        };
 
-        var handler = BuildHandler(runs, out _, articleCounts, updatedArticleCounts);
+        var handler = BuildHandler(runs, out _, articleCounts);
         var result = await handler.Handle(new GetCrawlReportQuery(CrawlPipeline.Rss, Day1, Day2), CancellationToken.None);
 
         Assert.Equal(3, result.Summary.TotalRuns);
@@ -114,10 +102,6 @@ public class GetCrawlReportQueryHandlerTests
         Assert.Equal(1, result.Summary.FailedRuns);
         Assert.Equal(0, result.Summary.SkippedRuns);
         Assert.Equal(4, result.Summary.NewArticles); // 3 + 1
-        Assert.Equal(1, result.Summary.UpdatedArticles);
-        Assert.Equal(2, result.Summary.SkippedDuplicates);
-        Assert.Equal(7, result.Summary.Messages); // 4 new + 1 updated + 2 duplicate
-        Assert.Equal(5, result.Summary.Saved); // 4 new + 1 updated
         Assert.Equal(1, result.Summary.FailedFeeds);
         Assert.Equal(33.3, result.Summary.SuccessRatePercent); // 1 of 3 runs succeeded
     }
@@ -171,9 +155,9 @@ public class GetCrawlReportQueryHandlerTests
     public async Task Handle_MultiProviderRun_ExcludedFromPerProviderRunCountsButFailedFeedsStayAttributed()
     {
         // A manual "trigger everything" run bundles both providers into one record - exact
-        // run/updated/duplicate attribution isn't possible per provider, so BuildProviderBreakdown
-        // deliberately excludes it from either provider's own run counters (it still lands in the
-        // overall Summary, covered by the aggregation test above). Failed-feed strings are
+        // per-provider run attribution isn't possible, so BuildProviderBreakdown deliberately
+        // excludes it from either provider's own run counters (it still lands in the overall
+        // Summary, covered by the aggregation test above). Failed-feed strings are
         // "{Provider}/{Feed}" though, so that attribution stays exact regardless. NewArticles is
         // unaffected by this exclusion entirely - it comes from ArticleFingerprints, not from runs.
         var runs = new[]

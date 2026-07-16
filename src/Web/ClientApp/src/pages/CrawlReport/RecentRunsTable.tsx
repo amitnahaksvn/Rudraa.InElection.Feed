@@ -40,8 +40,6 @@ export function RecentRunsTable({ pipeline, from, to }: { pipeline: CrawlPipelin
               <TableCell>Status</TableCell>
               <TableCell align="right">Feeds/Endpoints</TableCell>
               <TableCell align="right">New</TableCell>
-              <TableCell align="right">Updated</TableCell>
-              <TableCell align="right">Duplicate</TableCell>
               <TableCell align="right">Failed</TableCell>
               <TableCell align="center">Detail</TableCell>
             </TableRow>
@@ -66,12 +64,6 @@ export function RecentRunsTable({ pipeline, from, to }: { pipeline: CrawlPipelin
                 <TableCell align="right" sx={{ fontVariantNumeric: 'tabular-nums' }}>
                   {formatFullNumber(run.newArticles)}
                 </TableCell>
-                <TableCell align="right" sx={{ fontVariantNumeric: 'tabular-nums' }}>
-                  {formatFullNumber(run.updatedArticles)}
-                </TableCell>
-                <TableCell align="right" sx={{ fontVariantNumeric: 'tabular-nums' }}>
-                  {formatFullNumber(run.duplicateArticles)}
-                </TableCell>
                 <TableCell
                   align="right"
                   sx={{ fontVariantNumeric: 'tabular-nums', color: run.failedFeeds.length > 0 ? 'error.main' : undefined }}
@@ -87,7 +79,7 @@ export function RecentRunsTable({ pipeline, from, to }: { pipeline: CrawlPipelin
             ))}
             {!isLoading && runs.length === 0 && (
               <TableRow>
-                <TableCell colSpan={9} align="center">
+                <TableCell colSpan={7} align="center">
                   <Typography variant="body2" color="text.secondary" sx={{ py: 3 }}>
                     No runs recorded in this window.
                   </Typography>

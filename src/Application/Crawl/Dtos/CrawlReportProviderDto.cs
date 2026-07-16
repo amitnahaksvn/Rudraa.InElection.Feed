@@ -26,6 +26,4 @@ public sealed record CrawlReportProviderDto(
     int SkippedRuns,
     double SuccessRatePercent,
     int NewArticles,
-    int UpdatedArticles,
-    int DuplicateArticles,
     int FailedFeeds);

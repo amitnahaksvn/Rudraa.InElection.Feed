@@ -48,10 +48,11 @@ public sealed class GetCrawlReportQueryHandler : IRequestHandler<GetCrawlReportQ
             new CrawlHistoryFilter(request.Pipeline, Provider: null, from, to, Skip: 0, Take: MaxRunsConsidered),
             cancellationToken);
 
-        // "New"/"Updated" articles are sourced from ArticleFingerprints' own CrawledAt/UpdatedAt (a
-        // real count of articles actually persisted/changed) rather than trusting each run's
-        // self-reported counters. "Duplicate" stays CrawlHistory-derived below - a duplicate skip
-        // never writes a fingerprint at all, so there's no trace of it anywhere else to count.
+        // "New" articles are sourced from ArticleFingerprints' own CrawledAt (a real count of
+        // articles actually persisted) rather than trusting each run's self-reported counters.
+        // There's no "Duplicate"/"Updated" figure at all - a duplicate is silently skipped at
+        // persistence time and an existing article is never modified in place, so neither has
+        // anything worth reporting.
         var sourceType = request.Pipeline == CrawlPipeline.Api ? ArticleSourceType.Api : ArticleSourceType.Rss;
 
         var newCounts = await _fingerprints.GetDailyProviderCountsAsync(sourceType, from, to, cancellationToken);
@@ -60,26 +61,19 @@ public sealed class GetCrawlReportQueryHandler : IRequestHandler<GetCrawlReportQ
             .GroupBy(c => c.Provider, StringComparer.OrdinalIgnoreCase)
             .ToDictionary(g => g.Key, g => g.Sum(c => c.Count), StringComparer.OrdinalIgnoreCase);
 
-        var updatedCounts = await _fingerprints.GetDailyProviderUpdatedCountsAsync(sourceType, from, to, cancellationToken);
-        var updatedArticlesByDay = updatedCounts.GroupBy(c => c.Date).ToDictionary(g => g.Key, g => g.Sum(c => c.Count));
-        var updatedArticlesByProvider = updatedCounts
-            .GroupBy(c => c.Provider, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(g => g.Key, g => g.Sum(c => c.Count), StringComparer.OrdinalIgnoreCase);
-
-        var summary = BuildSummary(runs, newCounts.Sum(c => c.Count), updatedCounts.Sum(c => c.Count));
-        var timeSeries = BuildTimeSeries(runs, from, to, newArticlesByDay, updatedArticlesByDay);
-        var providers = BuildProviderBreakdown(request.Pipeline, runs, newArticlesByProvider, updatedArticlesByProvider);
+        var summary = BuildSummary(runs, newCounts.Sum(c => c.Count));
+        var timeSeries = BuildTimeSeries(runs, from, to, newArticlesByDay);
+        var providers = BuildProviderBreakdown(request.Pipeline, runs, newArticlesByProvider);
 
         return new CrawlReportDto(request.Pipeline.ToString(), from, to, summary, timeSeries, providers);
     }
 
-    private static CrawlReportSummaryDto BuildSummary(IReadOnlyList<CrawlHistory> runs, int newArticles, int updatedArticles)
+    private static CrawlReportSummaryDto BuildSummary(IReadOnlyList<CrawlHistory> runs, int newArticles)
     {
         var successful = runs.Count(r => r.Status == CrawlStatus.Completed);
         var withErrors = runs.Count(r => r.Status == CrawlStatus.CompletedWithErrors);
         var failed = runs.Count(r => r.Status == CrawlStatus.Failed);
         var skippedRuns = runs.Count(r => r.Status == CrawlStatus.Skipped);
-        var duplicateArticles = runs.Sum(r => r.DuplicateArticles);
         var failedFeeds = runs.Sum(r => r.FailedFeeds.Count);
         var totalRuns = runs.Count;
         var successRate = totalRuns == 0 ? 0 : Math.Round(successful * 100.0 / totalRuns, 1);
@@ -91,11 +85,7 @@ public sealed class GetCrawlReportQueryHandler : IRequestHandler<GetCrawlReportQ
             failed,
             skippedRuns,
             successRate,
-            Messages: newArticles + updatedArticles + duplicateArticles,
-            Saved: newArticles + updatedArticles,
             newArticles,
-            updatedArticles,
-            SkippedDuplicates: duplicateArticles,
             failedFeeds);
     }
 
@@ -103,8 +93,7 @@ public sealed class GetCrawlReportQueryHandler : IRequestHandler<GetCrawlReportQ
         IReadOnlyList<CrawlHistory> runs,
         DateTimeOffset from,
         DateTimeOffset to,
-        IReadOnlyDictionary<DateOnly, int> newArticlesByDay,
-        IReadOnlyDictionary<DateOnly, int> updatedArticlesByDay)
+        IReadOnlyDictionary<DateOnly, int> newArticlesByDay)
     {
         var byDay = runs.ToLookup(r => DateOnly.FromDateTime(r.StartTime.UtcDateTime));
 
@@ -120,8 +109,6 @@ public sealed class GetCrawlReportQueryHandler : IRequestHandler<GetCrawlReportQ
                 FailedRuns: dayRuns.Count(r => r.Status == CrawlStatus.Failed),
                 SkippedRuns: dayRuns.Count(r => r.Status == CrawlStatus.Skipped),
                 NewArticles: newArticlesByDay.GetValueOrDefault(day),
-                UpdatedArticles: updatedArticlesByDay.GetValueOrDefault(day),
-                DuplicateArticles: dayRuns.Sum(r => r.DuplicateArticles),
                 FailedFeeds: dayRuns.Sum(r => r.FailedFeeds.Count)));
         }
 
@@ -131,8 +118,7 @@ public sealed class GetCrawlReportQueryHandler : IRequestHandler<GetCrawlReportQ
     private IReadOnlyList<CrawlReportProviderDto> BuildProviderBreakdown(
         CrawlPipeline pipeline,
         IReadOnlyList<CrawlHistory> runs,
-        IReadOnlyDictionary<string, int> newArticlesByProvider,
-        IReadOnlyDictionary<string, int> updatedArticlesByProvider)
+        IReadOnlyDictionary<string, int> newArticlesByProvider)
     {
         var configured = (pipeline == CrawlPipeline.Api
             ? _apiOptions.Countries.Where(c => c.Enabled).SelectMany(c => c.Providers.Where(p => p.Enabled).Select(p => (Country: c.Name, Provider: p.Name)))
@@ -189,8 +175,6 @@ public sealed class GetCrawlReportQueryHandler : IRequestHandler<GetCrawlReportQ
                 skipped,
                 SuccessRatePercent: totalRuns == 0 ? 0 : Math.Round(successful * 100.0 / totalRuns, 1),
                 NewArticles: newArticlesByProvider.GetValueOrDefault(providerName),
-                UpdatedArticles: updatedArticlesByProvider.GetValueOrDefault(providerName),
-                DuplicateArticles: providerRuns.Sum(r => r.DuplicateArticles),
                 failedFeeds));
         }
 

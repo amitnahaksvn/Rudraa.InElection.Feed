@@ -9,6 +9,4 @@ public sealed record CrawlReportDailyPointDto(
     int FailedRuns,
     int SkippedRuns,
     int NewArticles,
-    int UpdatedArticles,
-    int DuplicateArticles,
     int FailedFeeds);

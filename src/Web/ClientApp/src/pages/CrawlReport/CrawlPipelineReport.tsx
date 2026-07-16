@@ -54,18 +54,7 @@ export function CrawlPipelineReport({ pipeline }: { pipeline: CrawlPipelineName 
             <Stack direction="row" flexWrap="wrap" gap={1.5}>
               <StatTile label="Total runs" value={report.summary.totalRuns} />
               <StatTile label="Success rate" value={report.summary.successRatePercent} suffix="%" color={colors.good} />
-              <StatTile
-                label="Messages in"
-                value={report.summary.messages}
-                caption="Articles seen (new + updated + duplicate)"
-              />
-              <StatTile label="Saved" value={report.summary.saved} caption="New + updated" color={colors.seriesNew} />
-              <StatTile
-                label="Skipped"
-                value={report.summary.skippedDuplicates}
-                caption="Already existed (duplicate)"
-                color={colors.inkMuted}
-              />
+              <StatTile label="New articles" value={report.summary.newArticles} color={colors.seriesNew} />
               <StatTile label="Failed feeds" value={report.summary.failedFeeds} color={report.summary.failedFeeds > 0 ? colors.critical : undefined} />
             </Stack>
 
@@ -101,17 +90,11 @@ export function CrawlPipelineReport({ pipeline }: { pipeline: CrawlPipelineName 
                 </Typography>
                 <DailyStackedChart
                   variant="area"
-                  ariaLabel={`${pipeline} articles by day, new vs updated vs duplicate`}
+                  ariaLabel={`${pipeline} new articles by day`}
                   dates={dates}
-                  series={[
-                    { key: 'new', label: 'New', color: colors.seriesNew },
-                    { key: 'updated', label: 'Updated', color: colors.seriesUpdated },
-                    { key: 'duplicate', label: 'Duplicate (skipped)', color: colors.seriesDuplicate },
-                  ]}
+                  series={[{ key: 'new', label: 'New', color: colors.seriesNew }]}
                   values={{
                     new: report.timeSeries.map((p) => p.newArticles),
-                    updated: report.timeSeries.map((p) => p.updatedArticles),
-                    duplicate: report.timeSeries.map((p) => p.duplicateArticles),
                   }}
                 />
               </CardContent>

@@ -30,10 +30,6 @@ public sealed class CrawlHistory
 
     public int NewArticles { get; set; }
 
-    public int UpdatedArticles { get; set; }
-
-    public int DuplicateArticles { get; set; }
-
     public List<string> FailedFeeds { get; set; } = [];
 
     public CrawlStatus Status { get; set; } = CrawlStatus.Running;

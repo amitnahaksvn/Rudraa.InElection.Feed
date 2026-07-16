@@ -149,8 +149,6 @@ public class NewsCrawlerOrchestratorTests
 
         Assert.Equal(CrawlStatus.Completed, history.Status);
         Assert.Equal(2, history.NewArticles);
-        Assert.Equal(0, history.UpdatedArticles);
-        Assert.Equal(0, history.DuplicateArticles);
         Assert.Empty(history.FailedFeeds);
         Assert.Equal(CrawlPipeline.Rss, history.Pipeline);
         Assert.Equal(["AajTak"], history.Providers);
@@ -205,7 +203,7 @@ public class NewsCrawlerOrchestratorTests
     }
 
     [Fact]
-    public async Task RunCrawlAsync_DuplicateArticle_IsCountedAsDuplicateNotNew()
+    public async Task RunCrawlAsync_DuplicateArticle_IsSkippedNotCountedAsNew()
     {
         var provider = new Mock<IRssProvider>();
         provider.Setup(p => p.Name).Returns("AajTak");
@@ -238,7 +236,7 @@ public class NewsCrawlerOrchestratorTests
         var history = await orchestrator.RunCrawlAsync(CancellationToken.None);
 
         Assert.Equal(0, history.NewArticles);
-        Assert.Equal(1, history.DuplicateArticles);
+        articleRepo.Verify(r => r.UpsertAsync(It.IsAny<NewsArticle>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]

@@ -139,8 +139,6 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
         var failedFeeds = new List<string>();
         var errors = new List<ErrorNotification>();
         var newCount = 0;
-        var updatedCount = 0;
-        var duplicateCount = 0;
         var feedCount = 0;
         string? runError = null;
 
@@ -168,8 +166,6 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
                 _logger.LogInformation("[{RunId}] Started: {Provider} ({FeedCount} feeds)", history.Id, provider.Name, enabledFeeds.Count);
                 var providerStopwatch = Stopwatch.StartNew();
                 var providerNewCount = 0;
-                var providerUpdatedCount = 0;
-                var providerDuplicateCount = 0;
                 var providerFailedCount = 0;
 
                 var results = await provider.FetchAllFeedsAsync(enabledFeeds, cancellationToken);
@@ -227,26 +223,22 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
                         continue;
                     }
 
-                    var (inserted, updated, duplicates) = await PersistArticlesAsync(
+                    var inserted = await PersistArticlesAsync(
                         result.Articles.Take(_options.BatchSize).Select(a => a with { Country = country }),
                         cancellationToken);
 
                     newCount += inserted;
-                    updatedCount += updated;
-                    duplicateCount += duplicates;
                     providerNewCount += inserted;
-                    providerUpdatedCount += updated;
-                    providerDuplicateCount += duplicates;
 
                     _logger.LogDebug(
-                        "Feed completed: {Provider}/{Feed} - {New} new, {Updated} updated, {Duplicate} duplicates",
-                        provider.Name, result.FeedName, inserted, updated, duplicates);
+                        "Feed completed: {Provider}/{Feed} - {New} new",
+                        provider.Name, result.FeedName, inserted);
                 }
 
                 providerStopwatch.Stop();
                 _logger.LogInformation(
-                    "[{RunId}] Completed: {Provider} - {New} new, {Updated} updated, {Duplicate} duplicate, {Failed} failed ({Elapsed})",
-                    history.Id, provider.Name, providerNewCount, providerUpdatedCount, providerDuplicateCount, providerFailedCount, providerStopwatch.Elapsed);
+                    "[{RunId}] Completed: {Provider} - {New} new, {Failed} failed ({Elapsed})",
+                    history.Id, provider.Name, providerNewCount, providerFailedCount, providerStopwatch.Elapsed);
             }
 
             history.Status = failedFeeds.Count == 0 ? CrawlStatus.Completed : CrawlStatus.CompletedWithErrors;
@@ -272,23 +264,21 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
         history.Duration = history.EndTime - history.StartTime;
         history.FeedCount = feedCount;
         history.NewArticles = newCount;
-        history.UpdatedArticles = updatedCount;
-        history.DuplicateArticles = duplicateCount;
         history.FailedFeeds = failedFeeds;
         history.Error = runError;
 
         await _historyRepository.UpdateAsync(history, cancellationToken);
 
         _logger.LogInformation(
-            "[{RunId}] Crawl completed: {Status} - {New} new, {Updated} updated, {Duplicate} duplicate, {Failed} failed ({Duration})",
-            history.Id, history.Status, newCount, updatedCount, duplicateCount, failedFeeds.Count, history.Duration);
+            "[{RunId}] Crawl completed: {Status} - {New} new, {Failed} failed ({Duration})",
+            history.Id, history.Status, newCount, failedFeeds.Count, history.Duration);
 
         await ErrorLogRecorder.RecordIfAnyAsync(_errorLogRepository, errors, _logger, history.Id, cancellationToken);
 
         return history;
     }
 
-    private Task<(int Inserted, int Updated, int Duplicates)> PersistArticlesAsync(
+    private Task<int> PersistArticlesAsync(
         IEnumerable<NormalizedArticle> articles,
         CancellationToken cancellationToken) =>
         ArticlePersister.PersistAsync(_articleRepository, articles, _normalizers, _logger, cancellationToken);

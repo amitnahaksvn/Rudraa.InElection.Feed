@@ -19,23 +19,11 @@ public interface IArticleFingerprintRepository
 
     Task InsertAsync(ArticleFingerprint fingerprint, CancellationToken cancellationToken);
 
-    Task ReplaceAsync(ArticleFingerprint fingerprint, CancellationToken cancellationToken);
-
     /// <summary>
     /// Real per-(day, provider) article counts within a date range, grouped straight out of this
     /// lean collection's own CrawledAt - backs the crawl-report page's "New articles" figures.
     /// </summary>
     Task<IReadOnlyList<ArticleCrawlCount>> GetDailyProviderCountsAsync(
-        ArticleSourceType sourceType, DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken);
-
-    /// <summary>
-    /// Real per-(day, provider) counts of articles whose content actually changed after creation
-    /// (UpdatedAt differs from CrawledAt) within a date range, bucketed by UpdatedAt - backs the
-    /// crawl-report page's "Updated articles" figures the same way GetDailyProviderCountsAsync
-    /// backs "New articles". "Duplicate" has no equivalent here - a duplicate skip never writes a
-    /// fingerprint at all, so that figure stays sourced from CrawlHistory's own run counters.
-    /// </summary>
-    Task<IReadOnlyList<ArticleCrawlCount>> GetDailyProviderUpdatedCountsAsync(
         ArticleSourceType sourceType, DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken);
 
     Task EnsureIndexesAsync(CancellationToken cancellationToken);

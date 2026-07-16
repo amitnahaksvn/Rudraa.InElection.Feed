@@ -25,8 +25,6 @@ type SortKey =
   | 'totalRuns'
   | 'successRatePercent'
   | 'newArticles'
-  | 'updatedArticles'
-  | 'duplicateArticles'
   | 'failedFeeds';
 
 const COLUMNS: { key: SortKey; label: string; align?: 'right' }[] = [
@@ -37,8 +35,6 @@ const COLUMNS: { key: SortKey; label: string; align?: 'right' }[] = [
   { key: 'totalRuns', label: 'Runs', align: 'right' },
   { key: 'successRatePercent', label: 'Success rate' },
   { key: 'newArticles', label: 'New', align: 'right' },
-  { key: 'updatedArticles', label: 'Updated', align: 'right' },
-  { key: 'duplicateArticles', label: 'Skipped (dup.)', align: 'right' },
   { key: 'failedFeeds', label: 'Failed', align: 'right' },
 ];
 
@@ -130,12 +126,6 @@ export function ProviderBreakdownTable({ rows }: { rows: CrawlReportProviderRow[
                 <TableCell>{row.hasRun ? <SuccessRateMeter percent={row.successRatePercent} /> : '—'}</TableCell>
                 <TableCell align="right" sx={{ fontVariantNumeric: 'tabular-nums' }}>
                   {formatFullNumber(row.newArticles)}
-                </TableCell>
-                <TableCell align="right" sx={{ fontVariantNumeric: 'tabular-nums' }}>
-                  {formatFullNumber(row.updatedArticles)}
-                </TableCell>
-                <TableCell align="right" sx={{ fontVariantNumeric: 'tabular-nums' }}>
-                  {formatFullNumber(row.duplicateArticles)}
                 </TableCell>
                 <TableCell align="right" sx={{ fontVariantNumeric: 'tabular-nums', color: row.failedFeeds > 0 ? 'error.main' : undefined }}>
                   {formatFullNumber(row.failedFeeds)}

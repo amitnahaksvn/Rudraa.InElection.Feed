@@ -82,12 +82,10 @@ export function RunDetailDialog({ runId, onClose }: { runId: string | null; onCl
 
             <Divider />
 
-            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1 }}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 1 }}>
               {[
                 ['Feeds/endpoints', run.feedCount],
                 ['New', run.newArticles],
-                ['Updated', run.updatedArticles],
-                ['Duplicate', run.duplicateArticles],
               ].map(([label, value]) => (
                 <Stack key={label as string} alignItems="center">
                   <Typography variant="h6" fontWeight={700}>

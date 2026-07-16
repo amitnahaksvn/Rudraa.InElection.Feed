@@ -29,9 +29,6 @@ public sealed class ArticleFingerprintRepository : IArticleFingerprintRepository
     public Task InsertAsync(ArticleFingerprint fingerprint, CancellationToken cancellationToken) =>
         _collection.InsertOneAsync(fingerprint, options: null, cancellationToken);
 
-    public Task ReplaceAsync(ArticleFingerprint fingerprint, CancellationToken cancellationToken) =>
-        _collection.ReplaceOneAsync(f => f.Id == fingerprint.Id, fingerprint, cancellationToken: cancellationToken);
-
     /// <summary>
     /// <see cref="ArticleFingerprint.CrawledAt"/> (a DateTimeOffset) is stored via the Mongo C#
     /// driver's default structure representation - <c>{ DateTime, Ticks, Offset }</c>, not a
@@ -56,50 +53,6 @@ public sealed class ArticleFingerprintRepository : IArticleFingerprintRepository
                     "_id", new BsonDocument
                     {
                         { "day", new BsonDocument("$dateToString", new BsonDocument { { "format", "%Y-%m-%d" }, { "date", "$crawledAt.DateTime" } }) },
-                        { "provider", "$provider" }
-                    }
-                },
-                { "count", new BsonDocument("$sum", 1) }
-            })
-        };
-
-        var pipeline = PipelineDefinition<ArticleFingerprint, BsonDocument>.Create(stages);
-        var results = await _collection.Aggregate(pipeline, cancellationToken: cancellationToken).ToListAsync(cancellationToken);
-
-        return results.Select(r =>
-        {
-            var id = r["_id"].AsBsonDocument;
-            var day = DateOnly.ParseExact(id["day"].AsString, "yyyy-MM-dd");
-            return new ArticleCrawlCount(day, id["provider"].AsString, r["count"].ToInt32());
-        }).ToList();
-    }
-
-    /// <summary>
-    /// Same shape as <see cref="GetDailyProviderCountsAsync"/>, bucketed by UpdatedAt instead of
-    /// CrawledAt and excluding a fingerprint whose UpdatedAt still equals its CrawledAt (a brand
-    /// new article, not an in-place update - see NewsArticleRepository.InsertAsync, which stamps
-    /// both to the same value at creation). Deliberately reuses the sourceType-equality prefix of
-    /// ix_articlefingerprint_sourcetype_crawledat rather than adding a second dedicated index on
-    /// updatedAt.DateTime - one more compound index on a collection this size is a real storage
-    /// cost on an already storage-constrained cluster, and this query isn't a hot path.
-    /// </summary>
-    public async Task<IReadOnlyList<ArticleCrawlCount>> GetDailyProviderUpdatedCountsAsync(
-        ArticleSourceType sourceType, DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken)
-    {
-        var stages = new[]
-        {
-            new BsonDocument("$match", new BsonDocument
-            {
-                { "sourceType", sourceType.ToString() },
-                { "updatedAt.DateTime", new BsonDocument { { "$gte", from.UtcDateTime }, { "$lte", to.UtcDateTime } } },
-                { "$expr", new BsonDocument("$ne", new BsonArray { "$updatedAt.DateTime", "$crawledAt.DateTime" }) }
-            }),
-            new BsonDocument("$group", new BsonDocument
-            {
-                {
-                    "_id", new BsonDocument
-                    {
-                        { "day", new BsonDocument("$dateToString", new BsonDocument { { "format", "%Y-%m-%d" }, { "date", "$updatedAt.DateTime" } }) },
                         { "provider", "$provider" }
                     }
                 },

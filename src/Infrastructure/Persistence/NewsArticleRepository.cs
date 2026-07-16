@@ -21,41 +21,34 @@ public sealed class NewsArticleRepository : INewsArticleRepository
 
     /// <summary>
     /// Every dedup check below is resolved against <see cref="IArticleFingerprintRepository"/> -
-    /// a lean per-article record (Url/OriginalGuid/Hash/ContentHash/CrawledAt) - so a duplicate or
-    /// no-change skip (the overwhelming majority of crawls, since most ticks just re-see articles
-    /// already stored) never loads the full NewsArticle document (Title/Summary/Content/ImageUrl/
-    /// Tags/Metadata, the bulk of a document's actual size).
+    /// a lean per-article record (Url/OriginalGuid/Hash/CrawledAt) - so a duplicate skip (the
+    /// overwhelming majority of crawls, since most ticks just re-see articles already stored)
+    /// never loads the full NewsArticle document (Title/Summary/Content/ImageUrl/Tags/Metadata,
+    /// the bulk of a document's actual size). An existing article is never modified in place -
+    /// any match on Url, OriginalGuid, or Hash is always a duplicate skip, regardless of whether
+    /// the incoming content differs; only a genuinely new article gets inserted.
     /// </summary>
     public async Task<ArticleUpsertOutcome> UpsertAsync(NewsArticle article, CancellationToken cancellationToken)
     {
-        var contentHash = ArticleHasher.ComputeContentHash(article.Title, article.Summary, article.Content, article.ImageUrl);
-
         var existing = await _fingerprints.FindByUrlAsync(article.Url, cancellationToken);
 
         existing ??= !string.IsNullOrEmpty(article.OriginalGuid)
             ? await _fingerprints.FindByOriginalGuidAsync(article.OriginalGuid, cancellationToken)
             : null;
 
-        if (existing is null)
-        {
-            var byHash = await _fingerprints.FindByHashAsync(article.Hash, cancellationToken);
-            if (byHash is not null)
-            {
-                // Same story (Title + PublishedAt) already stored under a different Url/guid.
-                return ArticleUpsertOutcome.DuplicateSkipped;
-            }
-
-            return await InsertAsync(article, contentHash, cancellationToken);
-        }
-
-        var contentChanged = existing.Url != article.Url || existing.ContentHash != contentHash;
-
-        if (!contentChanged)
+        if (existing is not null)
         {
             return ArticleUpsertOutcome.DuplicateSkipped;
         }
 
-        return await ReplaceAsync(article, existing, contentHash, cancellationToken);
+        var byHash = await _fingerprints.FindByHashAsync(article.Hash, cancellationToken);
+        if (byHash is not null)
+        {
+            // Same story (Title + PublishedAt) already stored under a different Url/guid.
+            return ArticleUpsertOutcome.DuplicateSkipped;
+        }
+
+        return await InsertAsync(article, cancellationToken);
     }
 
     /// <summary>
@@ -68,7 +61,7 @@ public sealed class NewsArticleRepository : INewsArticleRepository
     /// documented narrow-race trade-offs) rather than adding a multi-document transaction for a
     /// window this small.
     /// </summary>
-    private async Task<ArticleUpsertOutcome> InsertAsync(NewsArticle article, string contentHash, CancellationToken cancellationToken)
+    private async Task<ArticleUpsertOutcome> InsertAsync(NewsArticle article, CancellationToken cancellationToken)
     {
         var fingerprint = new ArticleFingerprint
         {
@@ -77,7 +70,6 @@ public sealed class NewsArticleRepository : INewsArticleRepository
             Url = article.Url,
             OriginalGuid = article.OriginalGuid,
             Hash = article.Hash,
-            ContentHash = contentHash,
             PublishedAt = article.PublishedAt,
             CrawledAt = article.CrawledAt,
             UpdatedAt = article.UpdatedAt
@@ -104,48 +96,6 @@ public sealed class NewsArticleRepository : INewsArticleRepository
         article.Id = fingerprint.Id;
         await _collection.InsertOneAsync(article, options: null, cancellationToken);
         return ArticleUpsertOutcome.Inserted;
-    }
-
-    private async Task<ArticleUpsertOutcome> ReplaceAsync(
-        NewsArticle article, ArticleFingerprint existing, string contentHash, CancellationToken cancellationToken)
-    {
-        article.Id = existing.Id;
-        article.CrawledAt = existing.CrawledAt;
-        article.UpdatedAt = DateTimeOffset.UtcNow;
-
-        var updatedFingerprint = new ArticleFingerprint
-        {
-            Id = existing.Id,
-            Provider = article.Provider,
-            SourceType = article.SourceType,
-            Url = article.Url,
-            OriginalGuid = article.OriginalGuid,
-            Hash = article.Hash,
-            ContentHash = contentHash,
-            PublishedAt = article.PublishedAt,
-            CrawledAt = existing.CrawledAt,
-            UpdatedAt = article.UpdatedAt
-        };
-
-        try
-        {
-            await _fingerprints.ReplaceAsync(updatedFingerprint, cancellationToken);
-        }
-        catch (MongoWriteException ex) when (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)
-        {
-            // The article's own content changed enough to recompute its Hash (Title/PublishedAt),
-            // and that new Hash now collides with a *different* fingerprint's Hash - typically two
-            // providers independently carrying the same wire story (identical normalized title and
-            // identical PublishedAt) under different Urls. Per the documented dedup contract
-            // (Url -> OriginalGuid -> Hash, any Hash match is a no-op duplicate), leave the existing
-            // document as-is rather than crash the whole run over what is, by design, "the same
-            // story already recorded elsewhere" - resolved here without ever touching the full
-            // NewsArticle document.
-            return ArticleUpsertOutcome.DuplicateSkipped;
-        }
-
-        await _collection.ReplaceOneAsync(a => a.Id == existing.Id, article, cancellationToken: cancellationToken);
-        return ArticleUpsertOutcome.Updated;
     }
 
     public async Task<IReadOnlyList<NewsArticle>> GetLatestAsync(int count, CancellationToken cancellationToken) =>

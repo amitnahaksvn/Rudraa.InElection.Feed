@@ -129,8 +129,6 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
         var failedEndpoints = new List<string>();
         var errors = new List<ErrorNotification>();
         var newCount = 0;
-        var updatedCount = 0;
-        var duplicateCount = 0;
         var endpointCount = 0;
         string? runError = null;
 
@@ -158,8 +156,6 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
                 _logger.LogInformation("[{RunId}] Started: {Provider} ({EndpointCount} endpoints)", history.Id, provider.Name, enabledEndpoints);
                 var providerStopwatch = Stopwatch.StartNew();
                 var providerNewCount = 0;
-                var providerUpdatedCount = 0;
-                var providerDuplicateCount = 0;
                 var providerFailedCount = 0;
 
                 var results = await provider.FetchAllEndpointsAsync(providerOptions, cancellationToken);
@@ -195,7 +191,7 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
                         continue;
                     }
 
-                    var (inserted, updated, duplicates) = await ArticlePersister.PersistAsync(
+                    var inserted = await ArticlePersister.PersistAsync(
                         _articleRepository,
                         result.Articles.Take(_options.BatchSize).Select(a => a with { Country = country }),
                         _normalizers,
@@ -203,21 +199,17 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
                         cancellationToken);
 
                     newCount += inserted;
-                    updatedCount += updated;
-                    duplicateCount += duplicates;
                     providerNewCount += inserted;
-                    providerUpdatedCount += updated;
-                    providerDuplicateCount += duplicates;
 
                     _logger.LogDebug(
-                        "News API endpoint completed: {Provider}/{Endpoint} - {New} new, {Updated} updated, {Duplicate} duplicates",
-                        provider.Name, result.EndpointName, inserted, updated, duplicates);
+                        "News API endpoint completed: {Provider}/{Endpoint} - {New} new",
+                        provider.Name, result.EndpointName, inserted);
                 }
 
                 providerStopwatch.Stop();
                 _logger.LogInformation(
-                    "[{RunId}] Completed: {Provider} - {New} new, {Updated} updated, {Duplicate} duplicate, {Failed} failed ({Elapsed})",
-                    history.Id, provider.Name, providerNewCount, providerUpdatedCount, providerDuplicateCount, providerFailedCount, providerStopwatch.Elapsed);
+                    "[{RunId}] Completed: {Provider} - {New} new, {Failed} failed ({Elapsed})",
+                    history.Id, provider.Name, providerNewCount, providerFailedCount, providerStopwatch.Elapsed);
             }
 
             history.Status = failedEndpoints.Count == 0 ? CrawlStatus.Completed : CrawlStatus.CompletedWithErrors;
@@ -240,16 +232,14 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
         history.Duration = history.EndTime - history.StartTime;
         history.FeedCount = endpointCount;
         history.NewArticles = newCount;
-        history.UpdatedArticles = updatedCount;
-        history.DuplicateArticles = duplicateCount;
         history.FailedFeeds = failedEndpoints;
         history.Error = runError;
 
         await _historyRepository.UpdateAsync(history, cancellationToken);
 
         _logger.LogInformation(
-            "[{RunId}] Crawl completed: {Status} - {New} new, {Updated} updated, {Duplicate} duplicate, {Failed} failed ({Duration})",
-            history.Id, history.Status, newCount, updatedCount, duplicateCount, failedEndpoints.Count, history.Duration);
+            "[{RunId}] Crawl completed: {Status} - {New} new, {Failed} failed ({Duration})",
+            history.Id, history.Status, newCount, failedEndpoints.Count, history.Duration);
 
         await ErrorLogRecorder.RecordIfAnyAsync(_errorLogRepository, errors, _logger, history.Id, cancellationToken);
 

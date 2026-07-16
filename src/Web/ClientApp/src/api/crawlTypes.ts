@@ -10,11 +10,7 @@ export interface CrawlReportSummary {
   failedRuns: number;
   skippedRuns: number;
   successRatePercent: number;
-  messages: number;
-  saved: number;
   newArticles: number;
-  updatedArticles: number;
-  skippedDuplicates: number;
   failedFeeds: number;
 }
 
@@ -26,8 +22,6 @@ export interface CrawlReportDailyPoint {
   failedRuns: number;
   skippedRuns: number;
   newArticles: number;
-  updatedArticles: number;
-  duplicateArticles: number;
   failedFeeds: number;
 }
 
@@ -48,8 +42,6 @@ export interface CrawlReportProviderRow {
   skippedRuns: number;
   successRatePercent: number;
   newArticles: number;
-  updatedArticles: number;
-  duplicateArticles: number;
   failedFeeds: number;
 }
 
@@ -70,8 +62,6 @@ export interface CrawlHistoryRun {
   endTime: string | null;
   feedCount: number;
   newArticles: number;
-  updatedArticles: number;
-  duplicateArticles: number;
   failedFeeds: string[];
   status: string;
   error: string | null;

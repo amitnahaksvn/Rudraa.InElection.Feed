@@ -90,7 +90,7 @@ public sealed class SocialMediaIngestionService : ISocialMediaIngestionService
         {
             var articles = await fetcher.FetchAsync(source, timeoutCts.Token);
 
-            var (inserted, updated, duplicates) = await ArticlePersister.PersistAsync(
+            var inserted = await ArticlePersister.PersistAsync(
                 _articleRepository,
                 articles.Select(a => a with { Country = source.Country }),
                 _normalizers,
@@ -102,14 +102,12 @@ public sealed class SocialMediaIngestionService : ISocialMediaIngestionService
             history.EndTime = DateTimeOffset.UtcNow;
             history.Duration = history.EndTime - history.StartTime;
             history.NewArticles = inserted;
-            history.UpdatedArticles = updated;
-            history.DuplicateArticles = duplicates;
             history.Status = CrawlStatus.Completed;
             await _historyRepository.UpdateAsync(history, cancellationToken);
 
             _logger.LogInformation(
-                "[{RunId}] Completed: {Platform}/{Name} - {New} new, {Updated} updated, {Duplicate} duplicate ({Duration})",
-                history.Id, source.Platform, source.Name, inserted, updated, duplicates, history.Duration);
+                "[{RunId}] Completed: {Platform}/{Name} - {New} new ({Duration})",
+                history.Id, source.Platform, source.Name, inserted, history.Duration);
         }
         catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
         {

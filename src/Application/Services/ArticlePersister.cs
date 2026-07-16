@@ -16,7 +16,7 @@ namespace Application.Services;
 /// </summary>
 internal static class ArticlePersister
 {
-    public static async Task<(int Inserted, int Updated, int Duplicates)> PersistAsync(
+    public static async Task<int> PersistAsync(
         INewsArticleRepository articleRepository,
         IEnumerable<NormalizedArticle> articles,
         IEnumerable<IArticleNormalizer> normalizers,
@@ -26,8 +26,6 @@ internal static class ArticlePersister
         var normalizersByProvider = normalizers.ToDictionary(n => n.Provider, StringComparer.OrdinalIgnoreCase);
 
         var inserted = 0;
-        var updated = 0;
-        var duplicates = 0;
 
         foreach (var rawNormalized in articles)
         {
@@ -81,17 +79,12 @@ internal static class ArticlePersister
                     inserted++;
                     logger.LogDebug("New article inserted: {Title} ({Url})", article.Title, article.Url);
                     break;
-                case ArticleUpsertOutcome.Updated:
-                    updated++;
-                    logger.LogDebug("Existing article updated: {Title} ({Url})", article.Title, article.Url);
-                    break;
                 case ArticleUpsertOutcome.DuplicateSkipped:
-                    duplicates++;
                     logger.LogDebug("Duplicate skipped: {Title} ({Url})", article.Title, article.Url);
                     break;
             }
         }
 
-        return (inserted, updated, duplicates);
+        return inserted;
     }
 }

@@ -8,18 +8,17 @@ namespace Application.Abstractions;
 public enum ArticleUpsertOutcome
 {
     Inserted,
-    Updated,
     DuplicateSkipped
 }
 
 public interface INewsArticleRepository
 {
     /// <summary>
-    /// Inserts a brand new article, updates an existing one whose content changed, or reports
-    /// a duplicate skip when the incoming article matches an existing one with no changes.
-    /// Duplicate detection order: Url, then OriginalGuid, then Hash - resolved entirely against
-    /// the lean <see cref="Domain.Entities.ArticleFingerprint"/> collection
-    /// (<see cref="IArticleFingerprintRepository"/>), so a duplicate/no-change skip never loads
+    /// Inserts a brand new article, or reports a duplicate skip when the incoming article matches
+    /// an existing one - an existing article is never modified in place, regardless of whether its
+    /// content differs from what's stored. Duplicate detection order: Url, then OriginalGuid, then
+    /// Hash - resolved entirely against the lean <see cref="Domain.Entities.ArticleFingerprint"/>
+    /// collection (<see cref="IArticleFingerprintRepository"/>), so a duplicate skip never loads
     /// the full article.
     /// </summary>
     Task<ArticleUpsertOutcome> UpsertAsync(NewsArticle article, CancellationToken cancellationToken);
