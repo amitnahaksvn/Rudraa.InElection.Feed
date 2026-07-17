@@ -48,6 +48,7 @@ export interface ProviderTestResult {
   fetchedAt: string;
   error: string | null;
   exceptionType: string | null;
+  rawResponseBody: string | null;
 }
 
 export type CrawlPipelineName = 'Rss' | 'Api';

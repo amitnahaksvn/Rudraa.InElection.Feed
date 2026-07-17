@@ -109,6 +109,7 @@ public abstract class BaseNewsApiProvider : INewsApiProvider
                 EndpointUrl = url,
                 Success = true,
                 Articles = articles,
+                ResponseBody = responseBody,
                 FetchedAt = fetchedAt,
                 HttpStatusCode = httpStatusCode,
                 ProcessingDurationMs = stopwatch.ElapsedMilliseconds

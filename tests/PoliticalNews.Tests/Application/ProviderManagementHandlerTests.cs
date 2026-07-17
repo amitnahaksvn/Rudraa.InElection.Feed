@@ -145,6 +145,7 @@ public class ProviderManagementHandlerTests
                     Articles = [BuildArticle(), BuildArticle()],
                     FetchedAt = DateTimeOffset.UtcNow,
                     ProcessingDurationMs = 123,
+                    RawXml = "<rss><channel><item><title>Test</title></item></channel></rss>",
                 },
             ]);
 
@@ -156,6 +157,7 @@ public class ProviderManagementHandlerTests
         Assert.Equal(2, result.ArticleCount);
         Assert.Equal(123, result.ProcessingDurationMs);
         Assert.Null(result.Error);
+        Assert.Equal("<rss><channel><item><title>Test</title></item></channel></rss>", result.RawResponseBody);
     }
 
     [Fact]
@@ -199,6 +201,7 @@ public class ProviderManagementHandlerTests
                     Articles = [BuildArticle()],
                     FetchedAt = DateTimeOffset.UtcNow,
                     ProcessingDurationMs = 456,
+                    ResponseBody = """{"status":"ok","articles":[]}""",
                 },
             ]);
 
@@ -209,6 +212,7 @@ public class ProviderManagementHandlerTests
         Assert.Equal(200, result.HttpStatusCode);
         Assert.Equal(1, result.ArticleCount);
         Assert.Equal(456, result.ProcessingDurationMs);
+        Assert.Equal("""{"status":"ok","articles":[]}""", result.RawResponseBody);
     }
 
     [Fact]

@@ -5656,7 +5656,7 @@
         "Cron": "*/20 * * * *",
         "BaseUrl": "https://api.worldnewsapi.com",
         "AuthType": "HttpHeader",
-        "AuthParamName": "x-api-key",
+        "AuthParamName": "bb2d8ebf168249efb85edf27adef61aa",
         "TimeoutSeconds": 30,
         "Endpoints": [
           {

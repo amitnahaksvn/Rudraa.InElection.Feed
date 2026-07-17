@@ -49,7 +49,7 @@ export function ApiEndpointRow({
           {(testEndpoint.error as Error).message}
         </Typography>
       )}
-      {testEndpoint.data && <TestResultPanel result={testEndpoint.data} />}
+      {testEndpoint.data && <TestResultPanel result={testEndpoint.data} onClose={() => testEndpoint.reset()} />}
     </Stack>
   );
 }

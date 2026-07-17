@@ -41,7 +41,7 @@ export function RssFeedRow({ country, providerName, feed }: { country: string; p
           {(testFeed.error as Error).message}
         </Typography>
       )}
-      {testFeed.data && <TestResultPanel result={testFeed.data} />}
+      {testFeed.data && <TestResultPanel result={testFeed.data} onClose={() => testFeed.reset()} />}
     </Stack>
   );
 }
