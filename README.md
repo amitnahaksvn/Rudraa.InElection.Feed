@@ -186,6 +186,46 @@ crashing the host. Overlap prevention is handled inside the orchestrator via the
 Mongo lock, not by the scheduler itself - so a scheduled tick and a manual API trigger can't run
 concurrently either.
 
+## Provider cron scheduling
+
+Every RSS/API provider's `Cron` used to be the identical literal `"*/20 * * * *"` - all 600+
+providers (RSS and JSON-API combined) ticking at the same three instants every hour. Two problems
+came from that: (1) a genuine "thundering herd" - the whole crawl/API surface fired at once
+instead of spreading load over time, and (2) several high-endpoint-count JSON-API providers were
+making far more requests per cycle than their real free-tier rate limits allow (e.g. an API
+provider shared across many countries but billed as one API key/one Hangfire job - see
+`NewsApiCrawlerOrchestrator` - can easily have 100+ enabled endpoints in aggregate), guaranteeing
+constant 429/403 responses and wasted retries on every tick.
+
+This was fixed with per-provider, researched cron values in both
+`src/NewsCrawler.appsettings.json` and `src/Countries/*.json`:
+
+- **RSS providers** moved from every-20-minutes to every 30 minutes, with each provider's own
+  start-minute deterministically derived from a hash of its name (`sha256(name) mod 30`) so the
+  ~240 RSS providers spread evenly across the full 0-29 minute range instead of clustering - same
+  total coverage, no synchronized spike.
+- **JSON-API providers** each got an individually researched interval based on their real
+  published free/base-tier rate limit as of July 2026 (checked directly against each provider's
+  own API docs), sized so that (enabled endpoints aggregated across every country sharing that
+  provider) x (fetches/day at the chosen interval) stays safely under the documented quota - for
+  example NewsAPI.org/GNews/NewsData.io (each ~100+ endpoints against a ~100-200/day free quota)
+  moved to once daily, GDELT (no daily cap, but a documented burst limit) to hourly, and
+  Alpha Vantage (25 requests/day) to once every two hours. Government/legislative APIs with
+  generous published limits (FEC, Congress.gov, UK Parliament Bills, etc.) stayed hourly, just
+  staggered by minute like the RSS providers.
+
+**Where this actually lives at runtime**: a provider's live `Cron` (and `Enabled`/`TimeZone`) is
+read from the `ProviderSchedule` Mongo collection, not straight from the JSON files, once a
+document exists there for that provider (`Domain/Entities/ProviderSchedule.cs`) - editable from
+the Provider Management page without a redeploy. `ProviderScheduleSeeder.SeedAsync` bootstraps
+that collection from the JSON config the first time a provider is ever seen, and
+`ProviderScheduleSeeder.UpgradeLegacyDefaultCronsAsync` (run once at every startup, right after
+seeding and before recurring jobs are registered - see `Web/Program.cs`) migrates any
+already-seeded document still sitting on the old `*/20 * * * *` value onto its provider's new
+cron. A schedule a user has already edited away from that legacy default (via Provider
+Management) is never touched by this migration - only documents still exactly on the old shared
+default are upgraded.
+
 ## API
 
 Enable/disable Swagger, default/max page size via the `Api` config section. Every route below is

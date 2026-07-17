@@ -67,6 +67,23 @@ public static class HangfireRecurringJobRegistrar
         return seeder.SeedAsync(CancellationToken.None);
     }
 
+    /// <summary>
+    /// One-time follow-up to <see cref="SeedProviderSchedulesAsync"/>: moves any already-seeded
+    /// <see cref="Domain.Entities.ProviderSchedule"/> document still on the old shared
+    /// <c>*/20 * * * *</c> cron onto that provider's new file-configured cron (see
+    /// <see cref="ProviderScheduleSeeder.UpgradeLegacyDefaultCronsAsync"/>) - without this, a
+    /// database already seeded before the "stop crawling everything every 20 minutes" config
+    /// rewrite would keep every provider on the old cron forever, since ProviderSchedule always
+    /// wins over the file once a document exists. Must run before both
+    /// <see cref="RegisterNewsCrawlerRecurringJobsAsync"/> and
+    /// <see cref="RegisterNewsApiRecurringJobsAsync"/> so their own DB reads see the upgraded cron.
+    /// </summary>
+    public static Task UpgradeLegacyProviderCronsAsync(IServiceProvider services, ILogger logger)
+    {
+        var seeder = services.GetRequiredService<ProviderScheduleSeeder>();
+        return seeder.UpgradeLegacyDefaultCronsAsync(CancellationToken.None);
+    }
+
     public static async Task RegisterNewsCrawlerRecurringJobsAsync(IServiceProvider services, ILogger logger)
     {
         var options = services.GetRequiredService<IOptions<NewsCrawlerOptions>>().Value;

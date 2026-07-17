@@ -21,6 +21,10 @@ public sealed class ProviderScheduleSeeder
     // per-provider Mongo round trips - independent upserts, no reason to run them one at a time.
     private const int SeedConcurrency = 32;
 
+    // Every provider (RSS and API alike, 600+ of them) shared this exact literal cron until the
+    // "stop crawling everything every 20 minutes" pass - see UpgradeLegacyDefaultCronsAsync below.
+    private const string LegacyDefaultCron = "*/20 * * * *";
+
     private readonly IProviderScheduleRepository _schedules;
     private readonly NewsCrawlerOptions _rssOptions;
     private readonly NewsApiCrawlerOptions _apiOptions;
@@ -73,4 +77,58 @@ public sealed class ProviderScheduleSeeder
         TimeZone = "UTC",
         UpdatedAt = now
     };
+
+    /// <summary>
+    /// One-time follow-up migration for documents <see cref="SeedAsync"/> already created before the
+    /// "stop crawling everything every 20 minutes" config rewrite: a document whose Cron is still
+    /// exactly the old shared literal gets moved onto that provider's new file-configured Cron.
+    /// Never touches a document a user has since edited away from the legacy default (Provider
+    /// Management page or otherwise) - those are left exactly as chosen, same non-destructive
+    /// guarantee <see cref="SeedAsync"/> already gives for Enabled/Cron generally.
+    /// </summary>
+    public async Task UpgradeLegacyDefaultCronsAsync(CancellationToken cancellationToken)
+    {
+        var rssCronByProvider = _rssOptions.Countries
+            .SelectMany(c => c.Providers)
+            .GroupBy(p => p.Name, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.First().Cron, StringComparer.OrdinalIgnoreCase);
+
+        var apiCronByProvider = _apiOptions.Countries
+            .SelectMany(c => c.Providers)
+            .GroupBy(p => p.Name, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.First().Cron, StringComparer.OrdinalIgnoreCase);
+
+        var rssUpgraded = await UpgradeAsync(CrawlPipeline.Rss, rssCronByProvider, cancellationToken);
+        var apiUpgraded = await UpgradeAsync(CrawlPipeline.Api, apiCronByProvider, cancellationToken);
+
+        _logger.LogInformation(
+            "Upgraded {Count} provider schedules off the legacy '{LegacyCron}' default cron ({Rss} RSS, {Api} API)",
+            rssUpgraded + apiUpgraded, LegacyDefaultCron, rssUpgraded, apiUpgraded);
+    }
+
+    private async Task<int> UpgradeAsync(
+        CrawlPipeline pipeline, IReadOnlyDictionary<string, string> cronByProvider, CancellationToken cancellationToken)
+    {
+        var existing = await _schedules.GetAllAsync(pipeline, cancellationToken);
+
+        var toUpgrade = existing
+            .Where(s => s.Cron == LegacyDefaultCron
+                && cronByProvider.TryGetValue(s.Provider, out var newCron)
+                && newCron != LegacyDefaultCron)
+            .ToList();
+
+        var now = DateTimeOffset.UtcNow;
+
+        await Parallel.ForEachAsync(
+            toUpgrade,
+            new ParallelOptions { MaxDegreeOfParallelism = SeedConcurrency },
+            async (schedule, ct) =>
+            {
+                schedule.Cron = cronByProvider[schedule.Provider];
+                schedule.UpdatedAt = now;
+                await _schedules.UpsertAsync(schedule, ct);
+            });
+
+        return toUpgrade.Count;
+    }
 }

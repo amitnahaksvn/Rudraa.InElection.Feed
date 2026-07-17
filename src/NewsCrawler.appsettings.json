@@ -16,7 +16,7 @@
           {
             "Name": "NYTimes",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "24,54 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -59,7 +59,7 @@
           {
             "Name": "TechCrunch",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "19,49 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -74,7 +74,7 @@
           {
             "Name": "NPR",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "24,54 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -89,7 +89,7 @@
           {
             "Name": "ABCNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "0,30 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -118,7 +118,7 @@
           {
             "Name": "CBSNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "11,41 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -147,7 +147,7 @@
           {
             "Name": "NBCNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "6,36 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -169,7 +169,7 @@
           {
             "Name": "FoxNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "14,44 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -198,7 +198,7 @@
           {
             "Name": "WashingtonPost",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17,47 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -227,7 +227,7 @@
           {
             "Name": "WSJ",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23,53 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -249,7 +249,7 @@
           {
             "Name": "Bloomberg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "0,30 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -278,7 +278,7 @@
           {
             "Name": "TheHill",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "20,50 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -293,7 +293,7 @@
           {
             "Name": "Newsweek",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "10,40 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -308,7 +308,7 @@
           {
             "Name": "Time",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "20,50 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -323,7 +323,7 @@
           {
             "Name": "Forbes",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "5,35 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -338,7 +338,7 @@
           {
             "Name": "Fortune",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "16,46 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -353,7 +353,7 @@
           {
             "Name": "BusinessInsider",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "21,51 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -368,7 +368,7 @@
           {
             "Name": "MarketWatch",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "29,59 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -383,7 +383,7 @@
           {
             "Name": "CNBC",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "22,52 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -405,7 +405,7 @@
           {
             "Name": "LATimes",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "3,33 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -420,7 +420,7 @@
           {
             "Name": "ProPublica",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "16,46 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -435,7 +435,7 @@
           {
             "Name": "PBSNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "1,31 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -450,7 +450,7 @@
           {
             "Name": "Vox",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "3,33 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -465,7 +465,7 @@
           {
             "Name": "PolitiFact",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "5,35 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -486,7 +486,7 @@
           {
             "Name": "BBCNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "5,35 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -557,7 +557,7 @@
           {
             "Name": "BBCSport",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "15,45 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -572,7 +572,7 @@
           {
             "Name": "SkyNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "18,48 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -622,7 +622,7 @@
           {
             "Name": "TheGuardian",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "12,42 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -707,7 +707,7 @@
           {
             "Name": "FinancialTimes",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "20,50 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -757,7 +757,7 @@
           {
             "Name": "TheIndependent",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "2,32 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -786,7 +786,7 @@
           {
             "Name": "TheTelegraph",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23,53 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -829,7 +829,7 @@
           {
             "Name": "Metro",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "27,57 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -844,7 +844,7 @@
           {
             "Name": "EveningStandard",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "4,34 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -859,7 +859,7 @@
           {
             "Name": "DailyExpress",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "4,34 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -874,7 +874,7 @@
           {
             "Name": "Mirror",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17,47 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -889,7 +889,7 @@
           {
             "Name": "PoliticsCoUk",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "10,40 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -904,7 +904,7 @@
           {
             "Name": "GOVUKNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23,53 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -925,7 +925,7 @@
           {
             "Name": "CBCNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "0,30 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -975,7 +975,7 @@
           {
             "Name": "GlobalNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17,47 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1011,7 +1011,7 @@
           {
             "Name": "NationalPost",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8,38 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1032,7 +1032,7 @@
           {
             "Name": "ABCNewsAustralia",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "19,49 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1047,7 +1047,7 @@
           {
             "Name": "SBSNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23,53 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1062,7 +1062,7 @@
           {
             "Name": "SydneyMorningHerald",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "16,46 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1077,7 +1077,7 @@
           {
             "Name": "SevenNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "28,58 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1092,7 +1092,7 @@
           {
             "Name": "TheAge",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23,53 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1107,7 +1107,7 @@
           {
             "Name": "GuardianAustralia",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "0,30 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1128,7 +1128,7 @@
           {
             "Name": "DW",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "16,46 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1171,7 +1171,7 @@
           {
             "Name": "DerSpiegel",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "28,58 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1214,7 +1214,7 @@
           {
             "Name": "FAZ",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "28,58 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1243,7 +1243,7 @@
           {
             "Name": "Tagesschau",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "11,41 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1258,7 +1258,7 @@
           {
             "Name": "ZDF",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "16,46 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1279,7 +1279,7 @@
           {
             "Name": "France24",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "11,41 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1315,7 +1315,7 @@
           {
             "Name": "LeMonde",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "25,55 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1337,7 +1337,7 @@
           {
             "Name": "LeFigaro",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "4,34 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1366,7 +1366,7 @@
           {
             "Name": "RFI",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "0,30 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1381,7 +1381,7 @@
           {
             "Name": "FranceInfo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "14,44 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1396,7 +1396,7 @@
           {
             "Name": "Liberation",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23,53 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1417,7 +1417,7 @@
           {
             "Name": "NHKWorld",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "25,55 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1460,7 +1460,7 @@
           {
             "Name": "JapanTimes",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23,53 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1475,7 +1475,7 @@
           {
             "Name": "NikkeiAsia",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23,53 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1490,7 +1490,7 @@
           {
             "Name": "MainichiJapan",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "20,50 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1505,7 +1505,7 @@
           {
             "Name": "AsahiShimbun",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "2,32 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1520,7 +1520,7 @@
           {
             "Name": "JapanToday",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "18,48 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1541,7 +1541,7 @@
           {
             "Name": "Yonhap",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "1,31 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1569,7 +1569,7 @@
           {
             "Name": "CNA",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "26,56 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1597,7 +1597,7 @@
           {
             "Name": "GlobalTimes",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "29,59 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1618,7 +1618,7 @@
           {
             "Name": "Antara",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "2,32 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1633,7 +1633,7 @@
           {
             "Name": "Tempo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "29,59 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1654,7 +1654,7 @@
           {
             "Name": "BangkokPost",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "12,42 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1675,7 +1675,7 @@
           {
             "Name": "AlJazeera",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "27,57 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1690,7 +1690,7 @@
           {
             "Name": "GulfTimes",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "18,48 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1711,7 +1711,7 @@
           {
             "Name": "JerusalemPost",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "0,30 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1726,7 +1726,7 @@
           {
             "Name": "TimesOfIsrael",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "27,57 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1741,7 +1741,7 @@
           {
             "Name": "YnetNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "7,37 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1762,7 +1762,7 @@
           {
             "Name": "MexicoNewsDaily",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "0,30 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1777,7 +1777,7 @@
           {
             "Name": "Reforma",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "11,41 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1798,7 +1798,7 @@
           {
             "Name": "AnadoluAgency",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "12,42 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1827,7 +1827,7 @@
           {
             "Name": "DailySabah",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "10,40 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1862,7 +1862,7 @@
           {
             "Name": "KyivPost",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23,53 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1883,7 +1883,7 @@
           {
             "Name": "TASS",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "6,36 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1898,7 +1898,7 @@
           {
             "Name": "RT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "26,56 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1920,7 +1920,7 @@
           {
             "Name": "InterfaxRussia",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "24,54 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1935,7 +1935,7 @@
           {
             "Name": "RBC",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "14,44 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1956,7 +1956,7 @@
           {
             "Name": "SABCNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "20,50 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1977,7 +1977,7 @@
           {
             "Name": "Folha",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "19,49 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -1992,7 +1992,7 @@
           {
             "Name": "BrazilReports",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "2,32 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2013,7 +2013,7 @@
           {
             "Name": "ANSA",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23,53 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2028,7 +2028,7 @@
           {
             "Name": "CorriereDellaSera",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "27,57 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2043,7 +2043,7 @@
           {
             "Name": "IlSole24Ore",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "14,44 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2085,7 +2085,7 @@
           {
             "Name": "ElPais",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "9,39 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2100,7 +2100,7 @@
           {
             "Name": "ElMundo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "15,45 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2115,7 +2115,7 @@
           {
             "Name": "AbcEspana",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "13,43 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2130,7 +2130,7 @@
           {
             "Name": "EuropaPress",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17,47 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2151,7 +2151,7 @@
           {
             "Name": "NLTimes",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "24,54 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2166,7 +2166,7 @@
           {
             "Name": "DutchNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "20,50 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2181,7 +2181,7 @@
           {
             "Name": "NOS",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8,38 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2196,7 +2196,7 @@
           {
             "Name": "NuNl",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "18,48 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2211,7 +2211,7 @@
           {
             "Name": "DeTelegraaf",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "18,48 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2232,7 +2232,7 @@
           {
             "Name": "SVTNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "1,31 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2247,7 +2247,7 @@
           {
             "Name": "DagensNyheter",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "28,58 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2262,7 +2262,7 @@
           {
             "Name": "Sydsvenskan",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "6,36 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2277,7 +2277,7 @@
           {
             "Name": "Aftonbladet",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "13,43 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2292,7 +2292,7 @@
           {
             "Name": "TheLocalSweden",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "3,33 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2313,7 +2313,7 @@
           {
             "Name": "NRK",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "26,56 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2328,7 +2328,7 @@
           {
             "Name": "Aftenposten",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "29,59 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2343,7 +2343,7 @@
           {
             "Name": "E24",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8,38 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2358,7 +2358,7 @@
           {
             "Name": "TheLocalNorway",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "16,46 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2379,7 +2379,7 @@
           {
             "Name": "YLENews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "29,59 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2394,7 +2394,7 @@
           {
             "Name": "HelsinginSanomat",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23,53 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2409,7 +2409,7 @@
           {
             "Name": "IltaSanomat",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "27,57 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2430,7 +2430,7 @@
           {
             "Name": "RTBF",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "3,33 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2451,7 +2451,7 @@
           {
             "Name": "NZZ",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "28,58 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2472,7 +2472,7 @@
           {
             "Name": "ORFNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "19,49 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2487,7 +2487,7 @@
           {
             "Name": "DerStandard",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "27,57 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2502,7 +2502,7 @@
           {
             "Name": "Kurier",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8,38 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2517,7 +2517,7 @@
           {
             "Name": "DiePresse",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "1,31 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2538,7 +2538,7 @@
           {
             "Name": "RTENews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "2,32 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2553,7 +2553,7 @@
           {
             "Name": "TheIrishTimes",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "15,45 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2568,7 +2568,7 @@
           {
             "Name": "IrishIndependent",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "9,39 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2583,7 +2583,7 @@
           {
             "Name": "TheJournal",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "5,35 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2604,7 +2604,7 @@
           {
             "Name": "DRNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "18,48 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2619,7 +2619,7 @@
           {
             "Name": "TheLocalDenmark",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "28,58 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2640,7 +2640,7 @@
           {
             "Name": "RNZ",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "14,44 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2655,7 +2655,7 @@
           {
             "Name": "Stuff",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "26,56 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2676,7 +2676,7 @@
           {
             "Name": "Rzeczpospolita",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "2,32 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2691,7 +2691,7 @@
           {
             "Name": "Onet",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "4,34 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2712,7 +2712,7 @@
           {
             "Name": "CTK",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "0,30 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2727,7 +2727,7 @@
           {
             "Name": "RadioPragueInternational",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "11,41 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2742,7 +2742,7 @@
           {
             "Name": "iDNES",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "20,50 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2757,7 +2757,7 @@
           {
             "Name": "SeznamZpravy",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "20,50 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2778,7 +2778,7 @@
           {
             "Name": "Digi24",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "27,57 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2793,7 +2793,7 @@
           {
             "Name": "HotNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "5,35 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2808,7 +2808,7 @@
           {
             "Name": "RomaniaInsider",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "3,33 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2829,7 +2829,7 @@
           {
             "Name": "HungaryToday",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "12,42 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2844,7 +2844,7 @@
           {
             "Name": "MagyarNemzet",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "22,52 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2859,7 +2859,7 @@
           {
             "Name": "IndexHu",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "5,35 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2874,7 +2874,7 @@
           {
             "Name": "HVG",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "7,37 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2895,7 +2895,7 @@
           {
             "Name": "ProtoThema",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "0,30 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2916,7 +2916,7 @@
           {
             "Name": "RTPNoticias",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "9,39 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2937,7 +2937,7 @@
           {
             "Name": "MalayMail",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "20,50 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2952,7 +2952,7 @@
           {
             "Name": "NewStraitsTimes",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17,47 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2973,7 +2973,7 @@
           {
             "Name": "VietnamNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "15,45 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -2988,7 +2988,7 @@
           {
             "Name": "VietnamPlus",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "10,40 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3003,7 +3003,7 @@
           {
             "Name": "VnExpress",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "13,43 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3018,7 +3018,7 @@
           {
             "Name": "NhanDan",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "18,48 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3039,7 +3039,7 @@
           {
             "Name": "Inquirer",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "22,52 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3054,7 +3054,7 @@
           {
             "Name": "Rappler",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "5,35 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3069,7 +3069,7 @@
           {
             "Name": "GMANews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "15,45 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3090,7 +3090,7 @@
           {
             "Name": "TheNewsInternational",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "9,39 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3105,7 +3105,7 @@
           {
             "Name": "GeoNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23,53 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3126,7 +3126,7 @@
           {
             "Name": "TheDailyStar",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "14,44 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3147,7 +3147,7 @@
           {
             "Name": "KathmanduPost",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17,47 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3162,7 +3162,7 @@
           {
             "Name": "Republica",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8,38 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3183,7 +3183,7 @@
           {
             "Name": "AdaDerana",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23,53 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3204,7 +3204,7 @@
           {
             "Name": "PremiumTimes",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "22,52 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3219,7 +3219,7 @@
           {
             "Name": "Punch",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "5,35 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3234,7 +3234,7 @@
           {
             "Name": "Vanguard",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "10,40 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3255,7 +3255,7 @@
           {
             "Name": "TheStandardKenya",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "28,58 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3290,7 +3290,7 @@
           {
             "Name": "DailyNewsEgypt",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "19,49 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3311,7 +3311,7 @@
           {
             "Name": "FocusTaiwan",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "20,50 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3326,7 +3326,7 @@
           {
             "Name": "TaipeiTimes",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "25,55 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3347,7 +3347,7 @@
           {
             "Name": "IRNA",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "27,57 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3362,7 +3362,7 @@
           {
             "Name": "TehranTimes",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "19,49 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3377,7 +3377,7 @@
           {
             "Name": "MehrNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "25,55 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3398,7 +3398,7 @@
           {
             "Name": "KhaleejTimes",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "28,58 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3419,7 +3419,7 @@
           {
             "Name": "SCMP",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "10,40 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3434,7 +3434,7 @@
           {
             "Name": "HongKongFreePress",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "5,35 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3455,7 +3455,7 @@
           {
             "Name": "BuenosAiresTimes",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "2,32 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3470,7 +3470,7 @@
           {
             "Name": "LaNacion",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "9,39 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3485,7 +3485,7 @@
           {
             "Name": "Clarin",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "18,48 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3506,7 +3506,7 @@
           {
             "Name": "ElEspectador",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "27,57 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3521,7 +3521,7 @@
           {
             "Name": "Semana",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "19,49 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3536,7 +3536,7 @@
           {
             "Name": "LaRepublicaColombia",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "28,58 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3557,7 +3557,7 @@
           {
             "Name": "CaracasChronicles",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "12,42 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3572,7 +3572,7 @@
           {
             "Name": "ElNacional",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "29,59 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3593,7 +3593,7 @@
           {
             "Name": "MyanmarNow",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "1,31 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3608,7 +3608,7 @@
           {
             "Name": "GlobalNewLightOfMyanmar",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8,38 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3623,7 +3623,7 @@
           {
             "Name": "ElevenMedia",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "25,55 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3644,7 +3644,7 @@
           {
             "Name": "Andina",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "6,36 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3659,7 +3659,7 @@
           {
             "Name": "PeruReports",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "24,54 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3680,7 +3680,7 @@
           {
             "Name": "Hespress",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "29,59 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3701,7 +3701,7 @@
           {
             "Name": "TSAAlgeria",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "6,36 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3716,7 +3716,7 @@
           {
             "Name": "ElWatan",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "21,51 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3737,7 +3737,7 @@
           {
             "Name": "JoyNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "25,55 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3752,7 +3752,7 @@
           {
             "Name": "GraphicOnline",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "26,56 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3773,7 +3773,7 @@
           {
             "Name": "LBCINews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23,53 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3788,7 +3788,7 @@
           {
             "Name": "Naharnet",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "14,44 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3809,7 +3809,7 @@
           {
             "Name": "TimesOfOman",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "1,31 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3830,7 +3830,7 @@
           {
             "Name": "RoyaNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "6,36 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3851,7 +3851,7 @@
           {
             "Name": "UNNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "29,59 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3866,7 +3866,7 @@
           {
             "Name": "Snopes",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "2,32 * * * *",
             "SaveRawResponses": true,
             "Feeds": [
               {
@@ -3895,7 +3895,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -3931,7 +3931,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -3955,7 +3955,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -3979,7 +3979,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -4001,7 +4001,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -4025,7 +4025,7 @@
           {
             "Name": "FEC",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "3 * * * *",
             "BaseUrl": "https://api.open.fec.gov/v1",
             "AuthType": "QueryParameter",
             "AuthParamName": "api_key",
@@ -4047,7 +4047,7 @@
           {
             "Name": "CongressGov",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "11 * * * *",
             "BaseUrl": "https://api.congress.gov/v3",
             "AuthType": "QueryParameter",
             "AuthParamName": "api_key",
@@ -4069,7 +4069,7 @@
           {
             "Name": "APContentAPI",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "19 * * * *",
             "BaseUrl": "https://api.ap.org/media/v",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -4091,7 +4091,7 @@
           {
             "Name": "NYTimesAPI",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "27 * * * *",
             "BaseUrl": "https://api.nytimes.com/svc/topstories/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "api-key",
@@ -4110,7 +4110,7 @@
           {
             "Name": "ProPublicaCongress",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "35 * * * *",
             "BaseUrl": "https://api.propublica.org/congress/v1",
             "AuthType": "HttpHeader",
             "AuthParamName": "X-API-Key",
@@ -4135,7 +4135,7 @@
           {
             "Name": "UKParliamentBills",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "43 * * * *",
             "BaseUrl": "https://bills-api.parliament.uk/api/v1",
             "AuthType": "None",
             "AuthParamName": "",
@@ -4158,7 +4158,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -4194,7 +4194,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -4231,7 +4231,7 @@
           {
             "Name": "TheNewsAPI",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "9 7 * * *",
             "BaseUrl": "https://api.thenewsapi.com/v1/news",
             "AuthType": "QueryParameter",
             "AuthParamName": "api_token",
@@ -4267,7 +4267,7 @@
           {
             "Name": "CurrentsAPI",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "37 */2 * * *",
             "BaseUrl": "https://api.currentsapi.services/v1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -4302,7 +4302,7 @@
           {
             "Name": "Mediastack",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "5 9 */2 * *",
             "BaseUrl": "http://api.mediastack.com/v1",
             "AuthType": "QueryParameter",
             "AuthParamName": "access_key",
@@ -4327,7 +4327,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -4351,7 +4351,7 @@
           {
             "Name": "WorldNewsAPI",
             "Enabled": false,
-            "Cron": "*/20 * * * *",
+            "Cron": "12 */6 * * *",
             "BaseUrl": "https://api.worldnewsapi.com",
             "AuthType": "HttpHeader",
             "AuthParamName": "x-api-key",
@@ -4386,7 +4386,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -4408,7 +4408,7 @@
           {
             "Name": "Guardian",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "14,44 * * * *",
             "BaseUrl": "https://content.guardianapis.com",
             "AuthType": "QueryParameter",
             "AuthParamName": "api-key",
@@ -4430,7 +4430,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -4454,7 +4454,7 @@
           {
             "Name": "SerpApiGoogleNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "54 8 * * *",
             "BaseUrl": "https://serpapi.com",
             "AuthType": "QueryParameter",
             "AuthParamName": "api_key",
@@ -4478,7 +4478,7 @@
           {
             "Name": "Reddit",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "47 * * * *",
             "BaseUrl": "https://oauth.reddit.com",
             "AuthType": "HttpHeader",
             "AuthParamName": "Authorization (ignored - RedditProvider manages its own OAuth2 bearer token internally, see its own doc comments)",
@@ -4518,7 +4518,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -4554,7 +4554,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -4591,7 +4591,7 @@
           {
             "Name": "TheNewsAPI",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "9 7 * * *",
             "BaseUrl": "https://api.thenewsapi.com/v1/news",
             "AuthType": "QueryParameter",
             "AuthParamName": "api_token",
@@ -4627,7 +4627,7 @@
           {
             "Name": "CurrentsAPI",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "37 */2 * * *",
             "BaseUrl": "https://api.currentsapi.services/v1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -4662,7 +4662,7 @@
           {
             "Name": "Mediastack",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "5 9 */2 * *",
             "BaseUrl": "http://api.mediastack.com/v1",
             "AuthType": "QueryParameter",
             "AuthParamName": "access_key",
@@ -4687,7 +4687,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -4711,7 +4711,7 @@
           {
             "Name": "WorldNewsAPI",
             "Enabled": false,
-            "Cron": "*/20 * * * *",
+            "Cron": "12 */6 * * *",
             "BaseUrl": "https://api.worldnewsapi.com",
             "AuthType": "HttpHeader",
             "AuthParamName": "x-api-key",
@@ -4746,7 +4746,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -4768,7 +4768,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -4792,7 +4792,7 @@
           {
             "Name": "SerpApiGoogleNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "54 8 * * *",
             "BaseUrl": "https://serpapi.com",
             "AuthType": "QueryParameter",
             "AuthParamName": "api_key",
@@ -4822,7 +4822,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -4858,7 +4858,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -4895,7 +4895,7 @@
           {
             "Name": "TheNewsAPI",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "9 7 * * *",
             "BaseUrl": "https://api.thenewsapi.com/v1/news",
             "AuthType": "QueryParameter",
             "AuthParamName": "api_token",
@@ -4931,7 +4931,7 @@
           {
             "Name": "CurrentsAPI",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "37 */2 * * *",
             "BaseUrl": "https://api.currentsapi.services/v1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -4966,7 +4966,7 @@
           {
             "Name": "Mediastack",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "5 9 */2 * *",
             "BaseUrl": "http://api.mediastack.com/v1",
             "AuthType": "QueryParameter",
             "AuthParamName": "access_key",
@@ -4991,7 +4991,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -5015,7 +5015,7 @@
           {
             "Name": "WorldNewsAPI",
             "Enabled": false,
-            "Cron": "*/20 * * * *",
+            "Cron": "12 */6 * * *",
             "BaseUrl": "https://api.worldnewsapi.com",
             "AuthType": "HttpHeader",
             "AuthParamName": "x-api-key",
@@ -5050,7 +5050,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -5072,7 +5072,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -5096,7 +5096,7 @@
           {
             "Name": "SerpApiGoogleNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "54 8 * * *",
             "BaseUrl": "https://serpapi.com",
             "AuthType": "QueryParameter",
             "AuthParamName": "api_key",
@@ -5126,7 +5126,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -5162,7 +5162,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -5186,7 +5186,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -5210,7 +5210,7 @@
           {
             "Name": "TheNewsAPI",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "9 7 * * *",
             "BaseUrl": "https://api.thenewsapi.com/v1/news",
             "AuthType": "QueryParameter",
             "AuthParamName": "api_token",
@@ -5246,7 +5246,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -5268,7 +5268,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -5298,7 +5298,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -5334,7 +5334,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -5358,7 +5358,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -5382,7 +5382,7 @@
           {
             "Name": "TheNewsAPI",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "9 7 * * *",
             "BaseUrl": "https://api.thenewsapi.com/v1/news",
             "AuthType": "QueryParameter",
             "AuthParamName": "api_token",
@@ -5418,7 +5418,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -5440,7 +5440,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -5470,7 +5470,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -5506,7 +5506,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -5530,7 +5530,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -5554,7 +5554,7 @@
           {
             "Name": "TheNewsAPI",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "9 7 * * *",
             "BaseUrl": "https://api.thenewsapi.com/v1/news",
             "AuthType": "QueryParameter",
             "AuthParamName": "api_token",
@@ -5590,7 +5590,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -5612,7 +5612,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -5642,7 +5642,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -5678,7 +5678,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -5702,7 +5702,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -5726,7 +5726,7 @@
           {
             "Name": "TheNewsAPI",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "9 7 * * *",
             "BaseUrl": "https://api.thenewsapi.com/v1/news",
             "AuthType": "QueryParameter",
             "AuthParamName": "api_token",
@@ -5762,7 +5762,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -5784,7 +5784,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -5814,7 +5814,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -5850,7 +5850,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -5874,7 +5874,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -5898,7 +5898,7 @@
           {
             "Name": "TheNewsAPI",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "9 7 * * *",
             "BaseUrl": "https://api.thenewsapi.com/v1/news",
             "AuthType": "QueryParameter",
             "AuthParamName": "api_token",
@@ -5934,7 +5934,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -5956,7 +5956,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -5986,7 +5986,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -6022,7 +6022,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -6046,7 +6046,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -6070,7 +6070,7 @@
           {
             "Name": "TheNewsAPI",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "9 7 * * *",
             "BaseUrl": "https://api.thenewsapi.com/v1/news",
             "AuthType": "QueryParameter",
             "AuthParamName": "api_token",
@@ -6106,7 +6106,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -6128,7 +6128,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -6158,7 +6158,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -6194,7 +6194,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -6218,7 +6218,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -6242,7 +6242,7 @@
           {
             "Name": "TheNewsAPI",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "9 7 * * *",
             "BaseUrl": "https://api.thenewsapi.com/v1/news",
             "AuthType": "QueryParameter",
             "AuthParamName": "api_token",
@@ -6278,7 +6278,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -6300,7 +6300,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -6330,7 +6330,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -6366,7 +6366,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -6390,7 +6390,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -6414,7 +6414,7 @@
           {
             "Name": "TheNewsAPI",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "9 7 * * *",
             "BaseUrl": "https://api.thenewsapi.com/v1/news",
             "AuthType": "QueryParameter",
             "AuthParamName": "api_token",
@@ -6450,7 +6450,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -6472,7 +6472,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -6502,7 +6502,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -6538,7 +6538,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -6562,7 +6562,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -6586,7 +6586,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -6608,7 +6608,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -6638,7 +6638,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -6674,7 +6674,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -6698,7 +6698,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -6722,7 +6722,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -6744,7 +6744,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -6774,7 +6774,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -6810,7 +6810,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -6834,7 +6834,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -6858,7 +6858,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -6880,7 +6880,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -6910,7 +6910,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -6946,7 +6946,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -6970,7 +6970,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -6994,7 +6994,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -7016,7 +7016,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -7046,7 +7046,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -7082,7 +7082,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -7106,7 +7106,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -7130,7 +7130,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -7152,7 +7152,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -7182,7 +7182,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -7218,7 +7218,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -7242,7 +7242,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -7266,7 +7266,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -7288,7 +7288,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -7318,7 +7318,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -7354,7 +7354,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -7378,7 +7378,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -7402,7 +7402,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -7424,7 +7424,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -7454,7 +7454,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -7490,7 +7490,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -7514,7 +7514,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -7538,7 +7538,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -7560,7 +7560,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -7590,7 +7590,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -7626,7 +7626,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -7650,7 +7650,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -7674,7 +7674,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -7696,7 +7696,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -7726,7 +7726,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -7762,7 +7762,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -7786,7 +7786,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -7810,7 +7810,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -7832,7 +7832,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -7862,7 +7862,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -7898,7 +7898,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -7922,7 +7922,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -7946,7 +7946,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -7968,7 +7968,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -7998,7 +7998,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -8034,7 +8034,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -8058,7 +8058,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -8082,7 +8082,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -8104,7 +8104,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -8134,7 +8134,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -8170,7 +8170,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -8194,7 +8194,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -8218,7 +8218,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -8240,7 +8240,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -8270,7 +8270,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -8306,7 +8306,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -8330,7 +8330,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -8354,7 +8354,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -8376,7 +8376,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -8406,7 +8406,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -8442,7 +8442,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -8466,7 +8466,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -8490,7 +8490,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -8512,7 +8512,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -8542,7 +8542,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -8578,7 +8578,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -8602,7 +8602,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -8626,7 +8626,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -8648,7 +8648,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -8678,7 +8678,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -8714,7 +8714,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -8738,7 +8738,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -8762,7 +8762,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -8784,7 +8784,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -8814,7 +8814,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -8850,7 +8850,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -8874,7 +8874,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -8898,7 +8898,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -8920,7 +8920,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -8950,7 +8950,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -8986,7 +8986,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -9010,7 +9010,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -9034,7 +9034,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -9056,7 +9056,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -9086,7 +9086,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -9122,7 +9122,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -9146,7 +9146,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -9170,7 +9170,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -9192,7 +9192,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -9222,7 +9222,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -9258,7 +9258,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -9282,7 +9282,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -9306,7 +9306,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -9328,7 +9328,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -9358,7 +9358,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -9394,7 +9394,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -9418,7 +9418,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -9442,7 +9442,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -9464,7 +9464,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -9494,7 +9494,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -9530,7 +9530,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -9554,7 +9554,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -9578,7 +9578,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -9600,7 +9600,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -9630,7 +9630,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -9666,7 +9666,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -9690,7 +9690,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -9714,7 +9714,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -9736,7 +9736,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -9766,7 +9766,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -9802,7 +9802,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -9826,7 +9826,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -9850,7 +9850,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -9872,7 +9872,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -9902,7 +9902,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -9938,7 +9938,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -9962,7 +9962,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -9986,7 +9986,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -10008,7 +10008,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -10038,7 +10038,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -10074,7 +10074,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -10098,7 +10098,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -10122,7 +10122,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -10144,7 +10144,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -10174,7 +10174,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -10210,7 +10210,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -10234,7 +10234,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -10258,7 +10258,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -10280,7 +10280,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -10310,7 +10310,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -10346,7 +10346,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -10370,7 +10370,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -10394,7 +10394,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -10416,7 +10416,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -10446,7 +10446,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -10482,7 +10482,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -10506,7 +10506,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -10530,7 +10530,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -10552,7 +10552,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -10582,7 +10582,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -10618,7 +10618,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -10642,7 +10642,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -10666,7 +10666,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -10688,7 +10688,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -10718,7 +10718,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -10754,7 +10754,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -10778,7 +10778,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -10802,7 +10802,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -10824,7 +10824,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -10854,7 +10854,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -10890,7 +10890,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -10914,7 +10914,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -10938,7 +10938,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -10960,7 +10960,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -10990,7 +10990,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -11026,7 +11026,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -11050,7 +11050,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -11074,7 +11074,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -11096,7 +11096,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -11126,7 +11126,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -11162,7 +11162,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -11186,7 +11186,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -11210,7 +11210,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -11232,7 +11232,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -11262,7 +11262,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -11298,7 +11298,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -11322,7 +11322,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -11346,7 +11346,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -11368,7 +11368,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -11398,7 +11398,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -11434,7 +11434,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -11458,7 +11458,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -11482,7 +11482,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -11504,7 +11504,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -11534,7 +11534,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -11570,7 +11570,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -11594,7 +11594,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -11618,7 +11618,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -11640,7 +11640,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -11670,7 +11670,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -11706,7 +11706,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -11730,7 +11730,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -11754,7 +11754,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -11776,7 +11776,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -11806,7 +11806,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -11842,7 +11842,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -11866,7 +11866,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -11890,7 +11890,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -11912,7 +11912,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -11942,7 +11942,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -11978,7 +11978,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -12002,7 +12002,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -12026,7 +12026,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -12048,7 +12048,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -12078,7 +12078,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -12114,7 +12114,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -12138,7 +12138,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -12162,7 +12162,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -12184,7 +12184,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -12214,7 +12214,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -12250,7 +12250,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -12274,7 +12274,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -12298,7 +12298,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -12320,7 +12320,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -12350,7 +12350,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -12386,7 +12386,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -12410,7 +12410,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -12434,7 +12434,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -12456,7 +12456,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -12486,7 +12486,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -12522,7 +12522,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -12546,7 +12546,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -12570,7 +12570,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -12592,7 +12592,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -12622,7 +12622,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -12658,7 +12658,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -12682,7 +12682,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -12706,7 +12706,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -12728,7 +12728,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -12758,7 +12758,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -12794,7 +12794,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -12818,7 +12818,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -12842,7 +12842,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -12864,7 +12864,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -12894,7 +12894,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -12930,7 +12930,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -12954,7 +12954,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -12978,7 +12978,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -13000,7 +13000,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -13030,7 +13030,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -13066,7 +13066,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -13090,7 +13090,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -13114,7 +13114,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -13136,7 +13136,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -13166,7 +13166,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -13202,7 +13202,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -13226,7 +13226,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -13250,7 +13250,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -13272,7 +13272,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -13302,7 +13302,7 @@
           {
             "Name": "NewsApiOrg",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "17 3 * * *",
             "BaseUrl": "https://newsapi.org/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -13338,7 +13338,7 @@
           {
             "Name": "GNews",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "23 4 * * *",
             "BaseUrl": "https://gnews.io/api/v4",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -13362,7 +13362,7 @@
           {
             "Name": "NewsDataIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "31 5 * * *",
             "BaseUrl": "https://newsdata.io/api/1",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -13386,7 +13386,7 @@
           {
             "Name": "EventRegistry",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "42 6 * * *",
             "BaseUrl": "https://eventregistry.org/api/v1/article/getArticles",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey (ignored - EventRegistryProvider is a custom implementation that puts the key in the POST body itself, still read from NewsApiKeys:EventRegistry)",
@@ -13408,7 +13408,7 @@
           {
             "Name": "GDELT",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "8 * * * *",
             "BaseUrl": "https://api.gdeltproject.org/api/v2/doc",
             "AuthType": "None",
             "AuthParamName": "",
@@ -13438,7 +13438,7 @@
           {
             "Name": "GoogleFactCheck",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "51 * * * *",
             "BaseUrl": "https://factchecktools.googleapis.com/v1alpha1",
             "AuthType": "QueryParameter",
             "AuthParamName": "key",
@@ -13460,7 +13460,7 @@
           {
             "Name": "FinancialModelingPrep",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "59 * * * *",
             "BaseUrl": "https://financialmodelingprep.com/stable",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -13481,7 +13481,7 @@
           {
             "Name": "AlphaVantage",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "15 */2 * * *",
             "BaseUrl": "https://www.alphavantage.co",
             "AuthType": "QueryParameter",
             "AuthParamName": "apikey",
@@ -13503,7 +13503,7 @@
           {
             "Name": "Finnhub",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "7 * * * *",
             "BaseUrl": "https://finnhub.io/api/v1",
             "AuthType": "QueryParameter",
             "AuthParamName": "token",
@@ -13524,7 +13524,7 @@
           {
             "Name": "PolygonIo",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "21 * * * *",
             "BaseUrl": "https://api.polygon.io/v2",
             "AuthType": "QueryParameter",
             "AuthParamName": "apiKey",
@@ -13546,7 +13546,7 @@
           {
             "Name": "YouTubeDataApi",
             "Enabled": true,
-            "Cron": "*/20 * * * *",
+            "Cron": "29 * * * *",
             "BaseUrl": "https://www.googleapis.com/youtube/v3",
             "AuthType": "QueryParameter",
             "AuthParamName": "key",

@@ -180,6 +180,12 @@ _ = Task.Run(async () =>
         // Seeds ProviderSchedule (RSS + API) from appsettings before either registrar below reads
         // it, so a brand-new provider is represented in the database from its very first startup.
         await HangfireRecurringJobRegistrar.SeedProviderSchedulesAsync(app.Services, startupLogger);
+
+        // Moves any already-seeded ProviderSchedule document still on the legacy */20 * * * *
+        // cron onto its provider's new, researched cron - must run before both registrars below so
+        // they read the upgraded value, not the stale one.
+        await HangfireRecurringJobRegistrar.UpgradeLegacyProviderCronsAsync(app.Services, startupLogger);
+
         await HangfireRecurringJobRegistrar.RegisterNewsCrawlerRecurringJobsAsync(app.Services, startupLogger);
         HangfireRecurringJobRegistrar.RegisterRawResponseCleanupRecurringJob(app.Services, startupLogger);
         await HangfireRecurringJobRegistrar.SeedAndRegisterDynamicFeedRecurringJobsAsync(app.Services, startupLogger);
