@@ -339,51 +339,6 @@ public class NewsApiProvidersTests
     }
 
     [Fact]
-    public async Task WorldNewsApiProvider_ParsesArticles_UsesHeaderAuthNotQueryParam()
-    {
-        // No apiKey/x-api-key in the URL itself - proves HttpHeader auth doesn't leak into the query string.
-        const string url = "https://api.worldnewsapi.com/search-news?text=India";
-        const string json = """
-            {
-              "available": 1,
-              "news": [
-                {
-                  "id": 42,
-                  "title": "World News Headline",
-                  "text": "World News body",
-                  "summary": "World News summary",
-                  "url": "https://example.com/worldnews-1",
-                  "image": "https://example.com/worldnews.jpg",
-                  "publish_date": "2026-07-01 04:00:00",
-                  "authors": ["World News Author"],
-                  "language": "en",
-                  "category": "politics",
-                  "source_country": "in"
-                }
-              ]
-            }
-            """;
-
-        var options = SingleEndpointOptions(
-            WorldNewsApiProvider.ProviderName, "https://api.worldnewsapi.com", "x-api-key",
-            "SearchNews", "search-news", ("text", "India"), ApiAuthType.HttpHeader);
-
-        var provider = new WorldNewsApiProvider(
-            new StubHttpClientFactory(new StubHttpMessageHandler(new Dictionary<string, string> { [url] = json })),
-            ConfigWithKey(WorldNewsApiProvider.ProviderName),
-            NullLogger<WorldNewsApiProvider>.Instance);
-
-        var results = await provider.FetchAllEndpointsAsync(options, CancellationToken.None);
-
-        var result = Assert.Single(results);
-        Assert.True(result.Success);
-        var article = Assert.Single(result.Articles);
-        Assert.Equal("World News Headline", article.Title);
-        Assert.Equal("42", article.OriginalGuid);
-        Assert.Equal("World News Author", article.Author);
-    }
-
-    [Fact]
     public async Task FetchAllEndpointsAsync_NoApiKeyConfigured_ReturnsUnsuccessfulResultInsteadOfThrowing()
     {
         var options = SingleEndpointOptions(

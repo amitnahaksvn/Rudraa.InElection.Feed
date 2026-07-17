@@ -448,7 +448,7 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddSingleton<ProviderScheduleSeeder>();
 
         // The JSON news-API pipeline (NewsAPI.org, GNews, TheNewsAPI, Currents, Mediastack,
-        // NewsData.io, WorldNewsAPI) - one shared named HttpClient (same reasoning as
+        // NewsData.io) - one shared named HttpClient (same reasoning as
         // DynamicFeedClient above: one DI registration, not one per provider, so a new provider
         // never needs a code change to its HttpClient) with the same Polly transient-error retry.
         // Per-provider timeout is enforced by BaseNewsApiProvider's own linked
@@ -467,7 +467,6 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddSingleton<INewsApiProvider, CurrentsApiProvider>();
         services.AddSingleton<INewsApiProvider, MediastackProvider>();
         services.AddSingleton<INewsApiProvider, NewsDataIoProvider>();
-        services.AddSingleton<INewsApiProvider, WorldNewsApiProvider>();
         services.AddSingleton<INewsApiProvider, ApiTubeProvider>();
         services.AddSingleton<INewsApiProvider, NewscatcherApiProvider>();
         services.AddSingleton<INewsApiProvider, GdeltProvider>();

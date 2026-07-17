@@ -30,7 +30,7 @@ internal static class JsonElementExtensions
                 : null;
     }
 
-    /// <summary>First non-empty string out of a JSON array property, e.g. NewsData.io's <c>creator</c>/WorldNewsAPI's <c>authors</c>.</summary>
+    /// <summary>First non-empty string out of a JSON array property, e.g. NewsData.io's <c>creator</c>/AlphaVantage's <c>authors</c>.</summary>
     public static string? GetFirstStringInArrayOrNull(this JsonElement element, string propertyName) =>
         element.ValueKind == JsonValueKind.Object &&
         element.TryGetProperty(propertyName, out var value) &&

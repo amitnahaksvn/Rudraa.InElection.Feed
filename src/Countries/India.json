@@ -5651,41 +5651,6 @@
         ]
       },
       {
-        "Name": "WorldNewsAPI",
-        "Enabled": false,
-        "Cron": "*/20 * * * *",
-        "BaseUrl": "https://api.worldnewsapi.com",
-        "AuthType": "HttpHeader",
-        "AuthParamName": "bb2d8ebf168249efb85edf27adef61aa",
-        "TimeoutSeconds": 30,
-        "Endpoints": [
-          {
-            "Name": "SearchNews",
-            "Endpoint": "search-news",
-            "QueryParameters": {
-              "text": "India politics",
-              "language": "en",
-              "source-countries": "in",
-              "number": "25"
-            },
-            "Category": "Politics",
-            "Language": "en",
-            "Enabled": true
-          },
-          {
-            "Name": "TopNews",
-            "Endpoint": "top-news",
-            "QueryParameters": {
-              "source-country": "in",
-              "language": "en"
-            },
-            "Category": "General",
-            "Language": "en",
-            "Enabled": true
-          }
-        ]
-      },
-      {
         "Name": "EventRegistry",
         "Enabled": true,
         "Cron": "*/20 * * * *",
