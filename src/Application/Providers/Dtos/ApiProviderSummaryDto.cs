@@ -1,6 +1,7 @@
 namespace Application.Providers.Dtos;
 
-public sealed record ApiEndpointSummaryDto(string Name, string Endpoint, string Category, string Language, bool Enabled);
+/// <summary><see cref="Url"/> is the provider's <c>BaseUrl</c> joined with this endpoint's own <c>Endpoint</c> path - the actual URL a fetch hits, computed once here rather than making every consumer join <see cref="ApiProviderSummaryDto.BaseUrl"/> and <see cref="Endpoint"/> itself.</summary>
+public sealed record ApiEndpointSummaryDto(string Name, string Endpoint, string Url, string Category, string Language, bool Enabled);
 
 /// <summary>
 /// One JSON news-API provider flattened for the Provider Management page - <see cref="Enabled"/>

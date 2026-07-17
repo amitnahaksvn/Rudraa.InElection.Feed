@@ -22,6 +22,7 @@ export interface RssProviderSummary {
 export interface ApiEndpointSummary {
   name: string;
   endpoint: string;
+  url: string;
   category: string;
   language: string;
   enabled: boolean;

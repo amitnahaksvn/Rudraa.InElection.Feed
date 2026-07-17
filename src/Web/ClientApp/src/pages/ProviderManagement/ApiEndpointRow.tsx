@@ -42,7 +42,7 @@ export function ApiEndpointRow({
         </Button>
       </Stack>
       <Typography variant="caption" color="text.secondary" sx={{ wordBreak: 'break-all' }}>
-        {endpoint.endpoint}
+        {endpoint.url}
       </Typography>
       {testEndpoint.isError && (
         <Typography variant="body2" color="error">

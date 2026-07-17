@@ -39,9 +39,24 @@ public sealed class GetApiProvidersQueryHandler : IRequestHandler<GetApiProvider
                     provider.BaseUrl,
                     provider.AuthType.ToString(),
                     BuildDescription(provider),
-                    provider.Endpoints.Select(e => new ApiEndpointSummaryDto(e.Name, e.Endpoint, e.Category, e.Language, e.Enabled)).ToList());
+                    provider.Endpoints
+                        .Select(e => new ApiEndpointSummaryDto(e.Name, e.Endpoint, BuildEndpointUrl(provider.BaseUrl, e.Endpoint), e.Category, e.Language, e.Enabled))
+                        .ToList());
             }))
             .ToList();
+    }
+
+    // Same join `BaseNewsApiProvider.BuildRequestUrl` uses at fetch time (Infrastructure isn't
+    // referenceable from here, so this mirrors it rather than reusing it) - minus query
+    // parameters/auth, since this is display-only and must never risk leaking an API key.
+    // EventRegistryProvider's one endpoint configures an empty Endpoint (it's POST-body driven,
+    // not path-driven - see its own doc comment) and just uses BaseUrl as-is; an empty path here
+    // falls through to that same bare-BaseUrl result rather than appending a trailing slash.
+    private static string BuildEndpointUrl(string baseUrl, string endpoint)
+    {
+        var trimmedBase = baseUrl.TrimEnd('/');
+        var trimmedPath = endpoint.Trim('/');
+        return trimmedPath.Length == 0 ? trimmedBase : $"{trimmedBase}/{trimmedPath}";
     }
 
     // Same reasoning as GetRssProvidersQueryHandler's own BuildDescription - computed from the

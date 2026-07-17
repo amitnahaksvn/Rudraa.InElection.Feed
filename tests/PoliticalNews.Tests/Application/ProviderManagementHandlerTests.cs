@@ -123,6 +123,9 @@ public class ProviderManagementHandlerTests
         Assert.Equal(2, newsApiOrg.Endpoints.Count);
         Assert.Equal("QueryParameter", newsApiOrg.AuthType);
         Assert.Contains("1 of 2 endpoints enabled", newsApiOrg.Description);
+
+        var everything = newsApiOrg.Endpoints.Single(e => e.Name == "Everything");
+        Assert.Equal("https://newsapi.org/v2/everything", everything.Url);
     }
 
     [Fact]
