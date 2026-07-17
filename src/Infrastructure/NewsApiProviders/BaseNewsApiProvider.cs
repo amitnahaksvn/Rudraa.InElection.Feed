@@ -18,7 +18,7 @@ namespace Infrastructure.NewsApiProviders;
 /// </summary>
 public abstract class BaseNewsApiProvider : INewsApiProvider
 {
-    /// <summary>Single shared named HttpClient for every news-API provider (see registration in InfrastructureServiceCollectionExtensions) - a per-endpoint timeout is enforced below via a linked CancellationTokenSource, same pattern as DynamicFeedIngestionService.</summary>
+    /// <summary>Single shared named HttpClient for every news-API provider (see registration in InfrastructureServiceCollectionExtensions) - a 2-minute per-attempt timeout plus a 3-retry/5-10-20-minute-backoff Polly policy are both configured there, not per-call here.</summary>
     public const string HttpClientName = "NewsApiClient";
 
     private readonly IHttpClientFactory _httpClientFactory;
@@ -78,21 +78,24 @@ public abstract class BaseNewsApiProvider : INewsApiProvider
             };
         }
 
-        using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        timeoutCts.CancelAfter(TimeSpan.FromSeconds(options.TimeoutSeconds));
-
+        // No per-endpoint timeout wrapping this call (unlike most other fetches in this codebase) -
+        // deliberately, so the HttpClient's own Polly retry policy (InfrastructureServiceCollectionExtensions,
+        // 3 attempts with 5/10/20-minute gaps) gets the chance to actually run to completion instead
+        // of being cut off after a short, fixed TimeoutSeconds. Each individual attempt is still
+        // bounded by client.Timeout (2 minutes); cancellationToken (host shutdown) is the only thing
+        // that can cut the whole retry sequence short.
         string? responseBody = null;
         try
         {
             var client = _httpClientFactory.CreateClient(HttpClientName);
             using var request = BuildRequest(options, endpoint, apiKey);
 
-            using var response = await client.SendAsync(request, timeoutCts.Token);
+            using var response = await client.SendAsync(request, cancellationToken);
             httpStatusCode = (int)response.StatusCode;
             // Body read before the status check throws, not after, so a non-2xx response's body
             // (a JSON error payload, a rate-limit message) is still captured for
             // diagnostics/the monitoring-alert email instead of being discarded.
-            responseBody = await response.Content.ReadAsStringAsync(timeoutCts.Token);
+            responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
             response.EnsureSuccessStatusCode();
 
             var json = responseBody;
@@ -118,9 +121,9 @@ public abstract class BaseNewsApiProvider : INewsApiProvider
         catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
         {
             // Same reasoning as BaseRssProvider/DynamicFeedIngestionService: a stray
-            // OperationCanceledException from the per-endpoint timeout above (not our caller's own
-            // token) is a dead/rate-limited/slow API, not a real shutdown request, and must be
-            // recorded as a failed run rather than crash the host.
+            // OperationCanceledException from client.Timeout (already exhausted the Polly retry
+            // policy's 3 attempts by this point) is a dead/rate-limited/slow API, not a real
+            // shutdown request, and must be recorded as a failed run rather than crash the host.
             _logger.LogError(ex, "Failed to fetch/parse news API endpoint {Provider}/{Endpoint}", options.Name, endpoint.Name);
             return new ApiFetchResult
             {

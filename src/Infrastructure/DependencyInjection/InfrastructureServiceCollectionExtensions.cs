@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Polly;
@@ -450,16 +451,43 @@ public static class InfrastructureServiceCollectionExtensions
         // The JSON news-API pipeline (NewsAPI.org, GNews, TheNewsAPI, Currents, Mediastack,
         // NewsData.io, WorldNewsAPI) - one shared named HttpClient (same reasoning as
         // DynamicFeedClient above: one DI registration, not one per provider, so a new provider
-        // never needs a code change to its HttpClient) with the same Polly transient-error retry.
-        // Per-provider timeout is enforced by BaseNewsApiProvider's own linked
-        // CancellationTokenSource from NewsApiProviderOptions.TimeoutSeconds.
+        // never needs a code change to its HttpClient). client.Timeout bounds every individual
+        // request attempt (including each retry) to 2 minutes - and, since HandleTransientHttpError()
+        // alone doesn't treat a client.Timeout-triggered TaskCanceledException as retryable
+        // (it only catches HttpRequestException/5xx/408), Or<TaskCanceledException>() is added
+        // explicitly so a slow/hanging provider actually gets retried instead of failing outright
+        // on its first timeout. Retry gaps are deliberately much longer than every other HttpClient
+        // in this file (seconds-based exponential elsewhere) - these external news APIs are the
+        // ones actually observed to rate-limit/error under quick retries, so this backs off 5 min,
+        // then 10 min, then 20 min across 3 attempts (a worst case of up to ~41 minutes - 3x2min
+        // timeouts plus the 35 minutes of gaps - before a single endpoint fetch gives up and is
+        // recorded as failed). BaseNewsApiProvider/EventRegistryProvider/RedditProvider all pass
+        // the caller's own cancellationToken straight through with no shorter per-endpoint timeout
+        // of their own, specifically so this policy's retries aren't cut off prematurely.
         services.AddHttpClient(BaseNewsApiProvider.HttpClientName, client =>
         {
             client.Timeout = TimeSpan.FromMinutes(2);
             client.DefaultRequestHeaders.UserAgent.ParseAdd(BrowserUserAgent);
-        }).AddPolicyHandler(HttpPolicyExtensions
-            .HandleTransientHttpError()
-            .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+        }).AddPolicyHandler((serviceProvider, _) =>
+        {
+            // Retries 1 and 2 are expected/routine for a flaky external API and log at Warning,
+            // never Error - each concrete provider's own catch block (BaseNewsApiProvider/
+            // EventRegistryProvider/RedditProvider) already logs a single Error, but only once,
+            // after this policy's 3rd and final retry has also failed and the exception propagates
+            // out - so "only log Error on the 3rd try" falls out of that existing behaviour once
+            // this policy stops throwing on retries 1-2 silently and instead logs them as warnings.
+            var retryLogger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Infrastructure.NewsApiRetryPolicy");
+            return HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .Or<TaskCanceledException>()
+                .WaitAndRetryAsync(
+                    3,
+                    retryAttempt => TimeSpan.FromMinutes(Math.Pow(2, retryAttempt - 1) * 5),
+                    onRetry: (outcome, delay, retryAttempt, _) => retryLogger.LogWarning(
+                        outcome.Exception,
+                        "News API request failed (attempt {RetryAttempt}/3) - retrying in {Delay}. HTTP status: {StatusCode}",
+                        retryAttempt, delay, outcome.Result?.StatusCode));
+        });
 
         services.AddSingleton<INewsApiProvider, NewsApiOrgProvider>();
         services.AddSingleton<INewsApiProvider, GNewsProvider>();

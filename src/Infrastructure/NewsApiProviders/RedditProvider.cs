@@ -93,24 +93,25 @@ public sealed class RedditProvider : INewsApiProvider
             };
         }
 
-        using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        timeoutCts.CancelAfter(TimeSpan.FromSeconds(options.TimeoutSeconds));
-
+        // No per-endpoint timeout wrapping this call - same reasoning as
+        // BaseNewsApiProvider.FetchEndpointAsync: lets the shared HttpClient's Polly retry policy
+        // (3 attempts, 5/10/20-minute gaps) actually run to completion instead of being cut off
+        // after a short, fixed TimeoutSeconds. Each attempt is still bounded by client.Timeout.
         string? responseBody = null;
         try
         {
             var clientId = credentials[..separatorIndex];
             var clientSecret = credentials[(separatorIndex + 1)..];
-            var accessToken = await GetAccessTokenAsync(clientId, clientSecret, timeoutCts.Token);
+            var accessToken = await GetAccessTokenAsync(clientId, clientSecret, cancellationToken);
 
             var client = _httpClientFactory.CreateClient(BaseNewsApiProvider.HttpClientName);
             using var request = new HttpRequestMessage(HttpMethod.Get, url);
             request.Headers.UserAgent.ParseAdd(UserAgent);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-            using var response = await client.SendAsync(request, timeoutCts.Token);
+            using var response = await client.SendAsync(request, cancellationToken);
             httpStatusCode = (int)response.StatusCode;
-            responseBody = await response.Content.ReadAsStringAsync(timeoutCts.Token);
+            responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
             response.EnsureSuccessStatusCode();
 
             var articles = ParseArticles(responseBody, endpoint);

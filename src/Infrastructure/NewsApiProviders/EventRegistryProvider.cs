@@ -79,9 +79,10 @@ public sealed class EventRegistryProvider : INewsApiProvider
             };
         }
 
-        using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        timeoutCts.CancelAfter(TimeSpan.FromSeconds(options.TimeoutSeconds));
-
+        // No per-endpoint timeout wrapping this call - same reasoning as
+        // BaseNewsApiProvider.FetchEndpointAsync: lets the shared HttpClient's Polly retry policy
+        // (3 attempts, 5/10/20-minute gaps) actually run to completion instead of being cut off
+        // after a short, fixed TimeoutSeconds. Each attempt is still bounded by client.Timeout.
         try
         {
             var body = new Dictionary<string, object?>(StringComparer.Ordinal)
@@ -101,13 +102,13 @@ public sealed class EventRegistryProvider : INewsApiProvider
             var client = _httpClientFactory.CreateClient(BaseNewsApiProvider.HttpClientName);
             using var request = new HttpRequestMessage(HttpMethod.Post, url) { Content = JsonContent.Create(body) };
 
-            using var response = await client.SendAsync(request, timeoutCts.Token);
+            using var response = await client.SendAsync(request, cancellationToken);
             httpStatusCode = (int)response.StatusCode;
             // Body read before the status check throws, not after, so a non-2xx response's body
             // (a JSON error payload, a rate-limit message) is still captured for
             // diagnostics/the monitoring-alert email instead of being discarded - same reasoning
             // as BaseNewsApiProvider.FetchEndpointAsync.
-            responseBody = await response.Content.ReadAsStringAsync(timeoutCts.Token);
+            responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
             response.EnsureSuccessStatusCode();
 
             var articles = ParseArticles(responseBody, endpoint);
