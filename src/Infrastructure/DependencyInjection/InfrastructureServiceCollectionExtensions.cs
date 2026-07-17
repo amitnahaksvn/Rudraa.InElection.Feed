@@ -448,7 +448,7 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddSingleton<ProviderScheduleSeeder>();
 
         // The JSON news-API pipeline (NewsAPI.org, GNews, TheNewsAPI, Currents, Mediastack,
-        // NewsData.io) - one shared named HttpClient (same reasoning as
+        // NewsData.io, WorldNewsAPI) - one shared named HttpClient (same reasoning as
         // DynamicFeedClient above: one DI registration, not one per provider, so a new provider
         // never needs a code change to its HttpClient) with the same Polly transient-error retry.
         // Per-provider timeout is enforced by BaseNewsApiProvider's own linked
@@ -467,25 +467,23 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddSingleton<INewsApiProvider, CurrentsApiProvider>();
         services.AddSingleton<INewsApiProvider, MediastackProvider>();
         services.AddSingleton<INewsApiProvider, NewsDataIoProvider>();
+        services.AddSingleton<INewsApiProvider, WorldNewsApiProvider>();
         services.AddSingleton<INewsApiProvider, ApiTubeProvider>();
-        services.AddSingleton<INewsApiProvider, NewscatcherApiProvider>();
         services.AddSingleton<INewsApiProvider, GdeltProvider>();
         services.AddSingleton<INewsApiProvider, SerpApiGoogleNewsProvider>();
         services.AddSingleton<INewsApiProvider, GuardianProvider>();
-        services.AddSingleton<INewsApiProvider, DataGovInProvider>();
         // Custom INewsApiProvider implementation (not BaseNewsApiProvider - see its own doc
         // comments): Event Registry needs a POST+JSON body.
         services.AddSingleton<INewsApiProvider, EventRegistryProvider>();
         // Government/legislative JSON-API providers, verified against a user-supplied publisher
         // list - each maps a status-update record (a bill's latest stage, a candidate filing, a
-        // fact-check claim) onto NormalizedArticle rather than a written story, same "not a story
-        // but still article-shaped" reasoning as DataGovIn above.
+        // fact-check claim) onto NormalizedArticle rather than a written story - "not a story but
+        // still article-shaped" reasoning shared by all four.
         services.AddSingleton<INewsApiProvider, UkParliamentBillsProvider>();
         services.AddSingleton<INewsApiProvider, FecProvider>();
         services.AddSingleton<INewsApiProvider, CongressGovProvider>();
         services.AddSingleton<INewsApiProvider, GoogleFactCheckProvider>();
         // More JSON-API providers, verified against a user-supplied publisher list.
-        services.AddSingleton<INewsApiProvider, WebzIoProvider>();
         services.AddSingleton<INewsApiProvider, ApContentApiProvider>();
         services.AddSingleton<INewsApiProvider, NyTimesApiProvider>();
         services.AddSingleton<INewsApiProvider, ProPublicaCongressApiProvider>();

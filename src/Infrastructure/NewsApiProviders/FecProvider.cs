@@ -9,8 +9,8 @@ namespace Infrastructure.NewsApiProviders;
 /// <summary>
 /// FEC/Federal Election Commission API (api.open.fec.gov/v1) - query param api_key. Curl-verified
 /// live and returning real data even against the public rate-limited DEMO_KEY (real production
-/// use needs a free key from https://api.data.gov/signup/, same "the free/demo tier works for
-/// verification, swap in a real key before relying on it" situation as most providers here). Each
+/// use needs a free key from https://api.data.gov/signup/, same "DEMO_KEY works for verification,
+/// swap in a real key before relying on it" situation as WorldNewsAPI's trial tier). Each
 /// "article" here is a candidate filing record, not a written story - there is no natural
 /// title/body split, so the candidate's name plus office/party stands in for both.
 /// </summary>

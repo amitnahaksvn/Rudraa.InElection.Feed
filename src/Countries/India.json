@@ -5651,6 +5651,41 @@
         ]
       },
       {
+        "Name": "WorldNewsAPI",
+        "Enabled": false,
+        "Cron": "*/20 * * * *",
+        "BaseUrl": "https://api.worldnewsapi.com",
+        "AuthType": "HttpHeader",
+        "AuthParamName": "x-api-key",
+        "TimeoutSeconds": 30,
+        "Endpoints": [
+          {
+            "Name": "SearchNews",
+            "Endpoint": "search-news",
+            "QueryParameters": {
+              "text": "India politics",
+              "language": "en",
+              "source-countries": "in",
+              "number": "25"
+            },
+            "Category": "Politics",
+            "Language": "en",
+            "Enabled": true
+          },
+          {
+            "Name": "TopNews",
+            "Endpoint": "top-news",
+            "QueryParameters": {
+              "source-country": "in",
+              "language": "en"
+            },
+            "Category": "General",
+            "Language": "en",
+            "Enabled": true
+          }
+        ]
+      },
+      {
         "Name": "EventRegistry",
         "Enabled": true,
         "Cron": "*/20 * * * *",
@@ -5667,40 +5702,6 @@
               "lang": "eng"
             },
             "Category": "Politics",
-            "Language": "en",
-            "Enabled": true
-          }
-        ]
-      },
-      {
-        "Name": "NewscatcherAPI",
-        "Enabled": true,
-        "Cron": "*/20 * * * *",
-        "BaseUrl": "https://v3-api.newscatcherapi.com/api",
-        "AuthType": "HttpHeader",
-        "AuthParamName": "x-api-token",
-        "TimeoutSeconds": 30,
-        "Endpoints": [
-          {
-            "Name": "Search",
-            "Endpoint": "search",
-            "QueryParameters": {
-              "q": "India politics",
-              "lang": "en",
-              "countries": "IN"
-            },
-            "Category": "Politics",
-            "Language": "en",
-            "Enabled": true
-          },
-          {
-            "Name": "LatestHeadlines",
-            "Endpoint": "latest_headlines",
-            "QueryParameters": {
-              "countries": "IN",
-              "lang": "en"
-            },
-            "Category": "General",
             "Language": "en",
             "Enabled": true
           }
@@ -5803,50 +5804,6 @@
               "q": "India politics",
               "gl": "in",
               "hl": "en"
-            },
-            "Category": "Politics",
-            "Language": "en",
-            "Enabled": true
-          }
-        ]
-      },
-      {
-        "Name": "DataGovIn",
-        "Enabled": false,
-        "Cron": "*/20 * * * *",
-        "BaseUrl": "https://api.data.gov.in/resource",
-        "AuthType": "QueryParameter",
-        "AuthParamName": "api-key",
-        "TimeoutSeconds": 30,
-        "Endpoints": [
-          {
-            "Name": "Example",
-            "Endpoint": "REPLACE-WITH-REAL-RESOURCE-ID",
-            "QueryParameters": {
-              "format": "json",
-              "limit": "50"
-            },
-            "Category": "Government",
-            "Language": "en",
-            "Enabled": true
-          }
-        ]
-      },
-      {
-        "Name": "WebzIo",
-        "Enabled": true,
-        "Cron": "*/20 * * * *",
-        "BaseUrl": "https://api.webz.io",
-        "AuthType": "QueryParameter",
-        "AuthParamName": "token",
-        "TimeoutSeconds": 30,
-        "Endpoints": [
-          {
-            "Name": "NewsApiLite",
-            "Endpoint": "newsApiLite",
-            "QueryParameters": {
-              "q": "India politics",
-              "language": "english"
             },
             "Category": "Politics",
             "Language": "en",

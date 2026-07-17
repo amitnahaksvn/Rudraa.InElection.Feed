@@ -13,9 +13,9 @@ namespace Infrastructure.NewsApiProviders;
 /// failure), confirming the endpoint shape; there is no free tier (per the source list this
 /// provider was added from) - a key requires a paid AP Content API subscription via
 /// developer.ap.org. The response's <c>data.items[].item</c> nesting is AP's own documented
-/// shape; no real key was available while this was built, so - same "best-effort, confirm once
-/// enabled" caveat as <see cref="DataGovInProvider"/> - field names should be re-checked against
-/// a live response before relying on this in production.
+/// shape; no real key was available while this was built, so - a "best-effort, confirm once
+/// enabled" caveat - field names should be re-checked against a live response before relying on
+/// this in production.
 /// </summary>
 public sealed class ApContentApiProvider : BaseNewsApiProvider
 {

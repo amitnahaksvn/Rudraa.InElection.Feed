@@ -2,7 +2,7 @@ namespace Application.Options;
 
 /// <summary>
 /// Configuration block for a single JSON news-API provider (NewsAPI.org, GNews, TheNewsAPI,
-/// Currents, Mediastack, NewsData.io). Mirrors <see cref="RssProviderOptions"/>'s
+/// Currents, Mediastack, NewsData.io, WorldNewsAPI). Mirrors <see cref="RssProviderOptions"/>'s
 /// role for RSS feeds: everything about the request - base URL, auth, and the list of endpoints
 /// actually called - is data here, never hardcoded in a provider class. A provider can (and
 /// usually does) expose several endpoints (search vs top-headlines, latest vs search, ...) - see

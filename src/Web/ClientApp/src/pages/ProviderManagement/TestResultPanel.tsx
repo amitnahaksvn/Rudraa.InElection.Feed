@@ -1,10 +1,10 @@
 import Alert from '@mui/material/Alert';
-import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
 import { formatAbsoluteTime } from '../../utils/formatDate';
 import type { ProviderTestResult } from '../../api/providerTypes';
+import { RawResponseViewer } from './RawResponseViewer';
 
 export function TestResultPanel({ result, onClose }: { result: ProviderTestResult; onClose: () => void }) {
   return (
@@ -25,30 +25,7 @@ export function TestResultPanel({ result, onClose }: { result: ProviderTestResul
             {result.error}
           </Typography>
         )}
-        {result.rawResponseBody && (
-          <Stack gap={0.5}>
-            <Typography variant="caption" fontWeight={600} color="text.secondary">
-              Raw response
-            </Typography>
-            <Box
-              component="pre"
-              sx={{
-                m: 0,
-                p: 1,
-                maxHeight: 280,
-                overflow: 'auto',
-                bgcolor: 'action.hover',
-                borderRadius: 1,
-                fontSize: 12,
-                fontFamily: 'monospace',
-                whiteSpace: 'pre-wrap',
-                wordBreak: 'break-word',
-              }}
-            >
-              {result.rawResponseBody}
-            </Box>
-          </Stack>
-        )}
+        {result.rawResponseBody && <RawResponseViewer raw={result.rawResponseBody} />}
       </Stack>
     </Alert>
   );

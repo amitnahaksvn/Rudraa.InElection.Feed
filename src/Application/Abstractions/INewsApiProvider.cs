@@ -5,7 +5,7 @@ namespace Application.Abstractions;
 
 /// <summary>
 /// A single JSON news-API integration (NewsAPI.org, GNews, TheNewsAPI, Currents, Mediastack,
-/// NewsData.io). The <see cref="IRssProvider"/> counterpart for polled REST APIs -
+/// NewsData.io, WorldNewsAPI). The <see cref="IRssProvider"/> counterpart for polled REST APIs -
 /// implementations only know how to call their own endpoints and normalize each response; they
 /// never persist anything themselves.
 /// </summary>

@@ -4349,6 +4349,41 @@
             ]
           },
           {
+            "Name": "WorldNewsAPI",
+            "Enabled": false,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.worldnewsapi.com",
+            "AuthType": "HttpHeader",
+            "AuthParamName": "x-api-key",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "SearchNews",
+                "Endpoint": "search-news",
+                "QueryParameters": {
+                  "text": "UK politics",
+                  "language": "en",
+                  "source-countries": "gb",
+                  "number": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopNews",
+                "Endpoint": "top-news",
+                "QueryParameters": {
+                  "source-country": "gb",
+                  "language": "en"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
             "Name": "EventRegistry",
             "Enabled": true,
             "Cron": "*/20 * * * *",
@@ -4365,40 +4400,6 @@
                   "lang": "eng"
                 },
                 "Category": "Politics",
-                "Language": "en",
-                "Enabled": true
-              }
-            ]
-          },
-          {
-            "Name": "NewscatcherAPI",
-            "Enabled": true,
-            "Cron": "*/20 * * * *",
-            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
-            "AuthType": "HttpHeader",
-            "AuthParamName": "x-api-token",
-            "TimeoutSeconds": 30,
-            "Endpoints": [
-              {
-                "Name": "Search",
-                "Endpoint": "search",
-                "QueryParameters": {
-                  "q": "UK politics",
-                  "lang": "en",
-                  "countries": "GB"
-                },
-                "Category": "Politics",
-                "Language": "en",
-                "Enabled": true
-              },
-              {
-                "Name": "LatestHeadlines",
-                "Endpoint": "latest_headlines",
-                "QueryParameters": {
-                  "countries": "GB",
-                  "lang": "en"
-                },
-                "Category": "General",
                 "Language": "en",
                 "Enabled": true
               }
@@ -4467,28 +4468,6 @@
                   "q": "UK politics",
                   "gl": "uk",
                   "hl": "en"
-                },
-                "Category": "Politics",
-                "Language": "en",
-                "Enabled": true
-              }
-            ]
-          },
-          {
-            "Name": "WebzIo",
-            "Enabled": true,
-            "Cron": "*/20 * * * *",
-            "BaseUrl": "https://api.webz.io",
-            "AuthType": "QueryParameter",
-            "AuthParamName": "token",
-            "TimeoutSeconds": 30,
-            "Endpoints": [
-              {
-                "Name": "NewsApiLite",
-                "Endpoint": "newsApiLite",
-                "QueryParameters": {
-                  "q": "UK politics",
-                  "language": "english"
                 },
                 "Category": "Politics",
                 "Language": "en",
@@ -4730,6 +4709,41 @@
             ]
           },
           {
+            "Name": "WorldNewsAPI",
+            "Enabled": false,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.worldnewsapi.com",
+            "AuthType": "HttpHeader",
+            "AuthParamName": "x-api-key",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "SearchNews",
+                "Endpoint": "search-news",
+                "QueryParameters": {
+                  "text": "Canada politics",
+                  "language": "en",
+                  "source-countries": "ca",
+                  "number": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopNews",
+                "Endpoint": "top-news",
+                "QueryParameters": {
+                  "source-country": "ca",
+                  "language": "en"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
             "Name": "EventRegistry",
             "Enabled": true,
             "Cron": "*/20 * * * *",
@@ -4746,40 +4760,6 @@
                   "lang": "eng"
                 },
                 "Category": "Politics",
-                "Language": "en",
-                "Enabled": true
-              }
-            ]
-          },
-          {
-            "Name": "NewscatcherAPI",
-            "Enabled": true,
-            "Cron": "*/20 * * * *",
-            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
-            "AuthType": "HttpHeader",
-            "AuthParamName": "x-api-token",
-            "TimeoutSeconds": 30,
-            "Endpoints": [
-              {
-                "Name": "Search",
-                "Endpoint": "search",
-                "QueryParameters": {
-                  "q": "Canada politics",
-                  "lang": "en",
-                  "countries": "CA"
-                },
-                "Category": "Politics",
-                "Language": "en",
-                "Enabled": true
-              },
-              {
-                "Name": "LatestHeadlines",
-                "Endpoint": "latest_headlines",
-                "QueryParameters": {
-                  "countries": "CA",
-                  "lang": "en"
-                },
-                "Category": "General",
                 "Language": "en",
                 "Enabled": true
               }
@@ -4826,28 +4806,6 @@
                   "q": "Canada politics",
                   "gl": "ca",
                   "hl": "en"
-                },
-                "Category": "Politics",
-                "Language": "en",
-                "Enabled": true
-              }
-            ]
-          },
-          {
-            "Name": "WebzIo",
-            "Enabled": true,
-            "Cron": "*/20 * * * *",
-            "BaseUrl": "https://api.webz.io",
-            "AuthType": "QueryParameter",
-            "AuthParamName": "token",
-            "TimeoutSeconds": 30,
-            "Endpoints": [
-              {
-                "Name": "NewsApiLite",
-                "Endpoint": "newsApiLite",
-                "QueryParameters": {
-                  "q": "Canada politics",
-                  "language": "english"
                 },
                 "Category": "Politics",
                 "Language": "en",
@@ -5055,6 +5013,41 @@
             ]
           },
           {
+            "Name": "WorldNewsAPI",
+            "Enabled": false,
+            "Cron": "*/20 * * * *",
+            "BaseUrl": "https://api.worldnewsapi.com",
+            "AuthType": "HttpHeader",
+            "AuthParamName": "x-api-key",
+            "TimeoutSeconds": 30,
+            "Endpoints": [
+              {
+                "Name": "SearchNews",
+                "Endpoint": "search-news",
+                "QueryParameters": {
+                  "text": "Australia politics",
+                  "language": "en",
+                  "source-countries": "au",
+                  "number": "25"
+                },
+                "Category": "Politics",
+                "Language": "en",
+                "Enabled": true
+              },
+              {
+                "Name": "TopNews",
+                "Endpoint": "top-news",
+                "QueryParameters": {
+                  "source-country": "au",
+                  "language": "en"
+                },
+                "Category": "General",
+                "Language": "en",
+                "Enabled": true
+              }
+            ]
+          },
+          {
             "Name": "EventRegistry",
             "Enabled": true,
             "Cron": "*/20 * * * *",
@@ -5071,40 +5064,6 @@
                   "lang": "eng"
                 },
                 "Category": "Politics",
-                "Language": "en",
-                "Enabled": true
-              }
-            ]
-          },
-          {
-            "Name": "NewscatcherAPI",
-            "Enabled": true,
-            "Cron": "*/20 * * * *",
-            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
-            "AuthType": "HttpHeader",
-            "AuthParamName": "x-api-token",
-            "TimeoutSeconds": 30,
-            "Endpoints": [
-              {
-                "Name": "Search",
-                "Endpoint": "search",
-                "QueryParameters": {
-                  "q": "Australia politics",
-                  "lang": "en",
-                  "countries": "AU"
-                },
-                "Category": "Politics",
-                "Language": "en",
-                "Enabled": true
-              },
-              {
-                "Name": "LatestHeadlines",
-                "Endpoint": "latest_headlines",
-                "QueryParameters": {
-                  "countries": "AU",
-                  "lang": "en"
-                },
-                "Category": "General",
                 "Language": "en",
                 "Enabled": true
               }
@@ -5151,28 +5110,6 @@
                   "q": "Australia politics",
                   "gl": "au",
                   "hl": "en"
-                },
-                "Category": "Politics",
-                "Language": "en",
-                "Enabled": true
-              }
-            ]
-          },
-          {
-            "Name": "WebzIo",
-            "Enabled": true,
-            "Cron": "*/20 * * * *",
-            "BaseUrl": "https://api.webz.io",
-            "AuthType": "QueryParameter",
-            "AuthParamName": "token",
-            "TimeoutSeconds": 30,
-            "Endpoints": [
-              {
-                "Name": "NewsApiLite",
-                "Endpoint": "newsApiLite",
-                "QueryParameters": {
-                  "q": "Australia politics",
-                  "language": "english"
                 },
                 "Category": "Politics",
                 "Language": "en",
@@ -5301,29 +5238,6 @@
                   "limit": "25"
                 },
                 "Category": "General",
-                "Language": "en",
-                "Enabled": true
-              }
-            ]
-          },
-          {
-            "Name": "NewscatcherAPI",
-            "Enabled": true,
-            "Cron": "*/20 * * * *",
-            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
-            "AuthType": "HttpHeader",
-            "AuthParamName": "x-api-token",
-            "TimeoutSeconds": 30,
-            "Endpoints": [
-              {
-                "Name": "Search",
-                "Endpoint": "search",
-                "QueryParameters": {
-                  "q": "Germany politics",
-                  "lang": "en",
-                  "countries": "DE"
-                },
-                "Category": "Politics",
                 "Language": "en",
                 "Enabled": true
               }
@@ -5502,29 +5416,6 @@
             ]
           },
           {
-            "Name": "NewscatcherAPI",
-            "Enabled": true,
-            "Cron": "*/20 * * * *",
-            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
-            "AuthType": "HttpHeader",
-            "AuthParamName": "x-api-token",
-            "TimeoutSeconds": 30,
-            "Endpoints": [
-              {
-                "Name": "Search",
-                "Endpoint": "search",
-                "QueryParameters": {
-                  "q": "France politics",
-                  "lang": "en",
-                  "countries": "FR"
-                },
-                "Category": "Politics",
-                "Language": "en",
-                "Enabled": true
-              }
-            ]
-          },
-          {
             "Name": "EventRegistry",
             "Enabled": true,
             "Cron": "*/20 * * * *",
@@ -5691,29 +5582,6 @@
                   "limit": "25"
                 },
                 "Category": "General",
-                "Language": "en",
-                "Enabled": true
-              }
-            ]
-          },
-          {
-            "Name": "NewscatcherAPI",
-            "Enabled": true,
-            "Cron": "*/20 * * * *",
-            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
-            "AuthType": "HttpHeader",
-            "AuthParamName": "x-api-token",
-            "TimeoutSeconds": 30,
-            "Endpoints": [
-              {
-                "Name": "Search",
-                "Endpoint": "search",
-                "QueryParameters": {
-                  "q": "Japan politics",
-                  "lang": "en",
-                  "countries": "JP"
-                },
-                "Category": "Politics",
                 "Language": "en",
                 "Enabled": true
               }
@@ -5892,29 +5760,6 @@
             ]
           },
           {
-            "Name": "NewscatcherAPI",
-            "Enabled": true,
-            "Cron": "*/20 * * * *",
-            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
-            "AuthType": "HttpHeader",
-            "AuthParamName": "x-api-token",
-            "TimeoutSeconds": 30,
-            "Endpoints": [
-              {
-                "Name": "Search",
-                "Endpoint": "search",
-                "QueryParameters": {
-                  "q": "South Korea politics",
-                  "lang": "en",
-                  "countries": "KR"
-                },
-                "Category": "Politics",
-                "Language": "en",
-                "Enabled": true
-              }
-            ]
-          },
-          {
             "Name": "EventRegistry",
             "Enabled": true,
             "Cron": "*/20 * * * *",
@@ -6081,29 +5926,6 @@
                   "limit": "25"
                 },
                 "Category": "General",
-                "Language": "en",
-                "Enabled": true
-              }
-            ]
-          },
-          {
-            "Name": "NewscatcherAPI",
-            "Enabled": true,
-            "Cron": "*/20 * * * *",
-            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
-            "AuthType": "HttpHeader",
-            "AuthParamName": "x-api-token",
-            "TimeoutSeconds": 30,
-            "Endpoints": [
-              {
-                "Name": "Search",
-                "Endpoint": "search",
-                "QueryParameters": {
-                  "q": "Singapore politics",
-                  "lang": "en",
-                  "countries": "SG"
-                },
-                "Category": "Politics",
                 "Language": "en",
                 "Enabled": true
               }
@@ -6282,29 +6104,6 @@
             ]
           },
           {
-            "Name": "NewscatcherAPI",
-            "Enabled": true,
-            "Cron": "*/20 * * * *",
-            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
-            "AuthType": "HttpHeader",
-            "AuthParamName": "x-api-token",
-            "TimeoutSeconds": 30,
-            "Endpoints": [
-              {
-                "Name": "Search",
-                "Endpoint": "search",
-                "QueryParameters": {
-                  "q": "China politics",
-                  "lang": "en",
-                  "countries": "CN"
-                },
-                "Category": "Politics",
-                "Language": "en",
-                "Enabled": true
-              }
-            ]
-          },
-          {
             "Name": "EventRegistry",
             "Enabled": true,
             "Cron": "*/20 * * * *",
@@ -6477,29 +6276,6 @@
             ]
           },
           {
-            "Name": "NewscatcherAPI",
-            "Enabled": true,
-            "Cron": "*/20 * * * *",
-            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
-            "AuthType": "HttpHeader",
-            "AuthParamName": "x-api-token",
-            "TimeoutSeconds": 30,
-            "Endpoints": [
-              {
-                "Name": "Search",
-                "Endpoint": "search",
-                "QueryParameters": {
-                  "q": "Indonesia politics",
-                  "lang": "en",
-                  "countries": "ID"
-                },
-                "Category": "Politics",
-                "Language": "en",
-                "Enabled": true
-              }
-            ]
-          },
-          {
             "Name": "EventRegistry",
             "Enabled": true,
             "Cron": "*/20 * * * *",
@@ -6666,29 +6442,6 @@
                   "limit": "25"
                 },
                 "Category": "General",
-                "Language": "en",
-                "Enabled": true
-              }
-            ]
-          },
-          {
-            "Name": "NewscatcherAPI",
-            "Enabled": true,
-            "Cron": "*/20 * * * *",
-            "BaseUrl": "https://v3-api.newscatcherapi.com/api",
-            "AuthType": "HttpHeader",
-            "AuthParamName": "x-api-token",
-            "TimeoutSeconds": 30,
-            "Endpoints": [
-              {
-                "Name": "Search",
-                "Endpoint": "search",
-                "QueryParameters": {
-                  "q": "Thailand politics",
-                  "lang": "en",
-                  "countries": "TH"
-                },
-                "Category": "Politics",
                 "Language": "en",
                 "Enabled": true
               }

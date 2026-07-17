@@ -11,9 +11,9 @@ namespace Infrastructure.NewsApiProviders;
 /// is <c>{"results":[...], "status":"OK", "count":..., "next_url":...}</c>, per Polygon's own
 /// published API reference; this environment's egress policy blocks api.polygon.io outright (a
 /// network-layer 403 from the session's own proxy, not from Polygon), so - same "best-effort,
-/// confirm once enabled" caveat as <see cref="ApContentApiProvider"/>/<see cref="DataGovInProvider"/>
-/// - field names should be re-checked against a live response before relying on this in
-/// production. Free tier: 5 requests/minute, end-of-day data only.
+/// confirm once enabled" caveat as <see cref="ApContentApiProvider"/> - field names should be
+/// re-checked against a live response before relying on this in production. Free tier: 5
+/// requests/minute, end-of-day data only.
 /// </summary>
 public sealed class PolygonIoProvider : BaseNewsApiProvider
 {
