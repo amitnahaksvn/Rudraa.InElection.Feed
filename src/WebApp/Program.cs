@@ -155,13 +155,17 @@ app.MapFallbackToFile("/feed/{**slug}", "index.html");
 
 if (builder.Configuration.GetValue($"{ApiOptions.SectionName}:EnableHangfireDashboard", false))
 {
-    // No authorization filter - deliberately open, by request, after being warned this means
-    // anyone who reaches this URL can view job internals and trigger/delete jobs, not just view
-    // them (Hangfire's dashboard has no built-in auth of its own). Reads the shared Hangfire Mongo
-    // storage - shows every job from both RssService and ApiService here, in one place, even
-    // though WebApp itself never executes any of them. Weigh that against the convenience before
-    // re-enabling EnableHangfireDashboard on a public deployment.
-    app.UseHangfireDashboard("/hangfire");
+    // Deliberately open, by request, after being warned this means anyone who reaches this URL
+    // can view job internals and trigger/delete jobs, not just view them. Authorization must be
+    // set explicitly to an empty filter list - Hangfire.AspNetCore's own UseHangfireDashboard
+    // default (when no DashboardOptions is passed) is LocalRequestsOnlyAuthorizationFilter, which
+    // 401s any request that didn't originate from localhost - confirmed directly: this worked in
+    // every local/Aspire test during development (genuinely local requests) and was never caught
+    // until the first real remote request against an actual Azure deployment. Reads the shared
+    // Hangfire Mongo storage - shows every job from both RssService and ApiService here, in one
+    // place, even though WebApp itself never executes any of them. Weigh the open access against
+    // the convenience before re-enabling EnableHangfireDashboard on a public deployment.
+    app.UseHangfireDashboard("/hangfire", new DashboardOptions { Authorization = [] });
 }
 
 if (builder.Configuration.GetValue($"{ApiOptions.SectionName}:EnableErrorDashboard", false))
