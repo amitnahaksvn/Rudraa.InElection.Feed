@@ -343,8 +343,7 @@ public abstract partial class BaseRssProvider : IRssProvider
     }
 
     // Resolved once - null (falling back to a UTC offset above) only if the host's tzdata lacks
-    // this id, same "don't crash startup/parsing over a missing tzdata entry" fallback already used
-    // for RawResponseCleanupCron's Asia/Kolkata lookup.
+    // this id, so a missing tzdata entry never crashes startup/parsing.
     private static readonly TimeZoneInfo? NetherlandsTimeZone = ResolveNetherlandsTimeZone();
 
     private static TimeZoneInfo? ResolveNetherlandsTimeZone()

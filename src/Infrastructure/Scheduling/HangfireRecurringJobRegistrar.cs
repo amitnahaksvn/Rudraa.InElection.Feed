@@ -13,11 +13,10 @@ namespace Infrastructure.Scheduling;
 
 /// <summary>
 /// Registers every Hangfire recurring job (RSS providers, JSON news-API providers, Mongo-driven
-/// dynamic feeds, raw-response cleanup) against whichever host calls it at startup. Originally
-/// four local functions inside <c>Worker/Program.cs</c> - pulled out into Infrastructure so any
-/// host running the Hangfire server (today just <c>Web</c>, after Worker was retired in favor of
-/// running everything in one free-tier-friendly process) can register the exact same schedule
-/// with one call, instead of duplicating this logic per host.
+/// dynamic feeds and social-media sources) against whichever host calls it at startup. Originally
+/// local functions inside <c>Worker/Program.cs</c> - pulled out into Infrastructure so any host
+/// running the Hangfire server can register the exact same schedule with one call, instead of
+/// duplicating this logic per host.
 /// </summary>
 public static class HangfireRecurringJobRegistrar
 {
@@ -199,104 +198,6 @@ public static class HangfireRecurringJobRegistrar
             logger.LogWarning(ex, "Provider '{Provider}' has an unrecognized TimeZone '{TimeZone}' - falling back to UTC", providerName, timeZoneId);
             return TimeZoneInfo.Utc;
         }
-    }
-
-    public static void RegisterRawResponseCleanupRecurringJob(IServiceProvider services, ILogger logger)
-    {
-        var options = services.GetRequiredService<IOptions<NewsCrawlerOptions>>().Value;
-
-        if (string.IsNullOrWhiteSpace(options.RawResponseCleanupCron))
-        {
-            logger.LogWarning("NewsCrawler:RawResponseCleanupCron is not configured - no cleanup job registered");
-            return;
-        }
-
-        var recurringJobManager = services.GetRequiredService<IRecurringJobManager>();
-
-        // India Standard Time, not UTC: every provider/user of this app is India-focused, so a
-        // "5 AM" schedule with no explicit zone is assumed to mean 5 AM IST. Falls back to UTC rather
-        // than throwing (which would otherwise crash the whole host at startup) if the host's tzdata
-        // doesn't have this id for some reason - the job still runs daily, just at a different clock hour.
-        TimeZoneInfo timeZone;
-        try
-        {
-            timeZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Kolkata");
-        }
-        catch (Exception ex) when (ex is TimeZoneNotFoundException or InvalidTimeZoneException)
-        {
-            logger.LogWarning(ex, "Could not resolve time zone 'Asia/Kolkata' - falling back to UTC for the raw-response cleanup job");
-            timeZone = TimeZoneInfo.Utc;
-        }
-
-        recurringJobManager.AddOrUpdate<HangfireRawResponseCleanupExecutor>(
-            HangfireJobIds.RawResponseCleanup,
-            executor => executor.RunAsync(options.RawResponseRetention, null!, CancellationToken.None),
-            options.RawResponseCleanupCron,
-            RecurringJobOptionsFactory.Create(timeZone));
-
-        logger.LogInformation(
-            "Registered Hangfire recurring job '{JobId}' with cron '{Cron}' ({TimeZone}), retention {Retention}",
-            HangfireJobIds.RawResponseCleanup, options.RawResponseCleanupCron, timeZone.Id, options.RawResponseRetention);
-    }
-
-    /// <summary>
-    /// Registers the recurring job that batches every not-yet-emailed <c>ErrorLog</c> row into one
-    /// summary email (see <see cref="Application.Services.ErrorNotificationDispatchService"/>) -
-    /// independent of every crawl/API/dynamic-feed schedule, since errors are persisted immediately
-    /// wherever they occur and this job only decides when to actually email what's piled up.
-    /// </summary>
-    public static void RegisterErrorNotificationDispatchRecurringJob(IServiceProvider services, ILogger logger)
-    {
-        var options = services.GetRequiredService<IOptions<ErrorNotificationOptions>>().Value;
-
-        if (string.IsNullOrWhiteSpace(options.DispatchCron))
-        {
-            logger.LogWarning("ErrorNotification:DispatchCron is not configured - no dispatch job registered");
-            return;
-        }
-
-        var recurringJobManager = services.GetRequiredService<IRecurringJobManager>();
-
-        recurringJobManager.AddOrUpdate<HangfireErrorNotificationDispatchExecutor>(
-            HangfireJobIds.ErrorNotificationDispatch,
-            executor => executor.RunAsync(null!, CancellationToken.None),
-            options.DispatchCron,
-            RecurringJobOptionsFactory.Create(TimeZoneInfo.Utc));
-
-        logger.LogInformation(
-            "Registered Hangfire recurring job '{JobId}' with cron '{Cron}', max batch size {BatchSize}",
-            HangfireJobIds.ErrorNotificationDispatch, options.DispatchCron, options.MaxBatchSize);
-    }
-
-    /// <summary>
-    /// Registers the self-ping recurring job (see <see cref="HangfireKeepAliveExecutor"/>) that
-    /// keeps a free-tier host from spinning down due to inactivity. Always registered regardless
-    /// of whether a ping URL is actually configured - the executor itself no-ops harmlessly when
-    /// neither <c>KeepAlive:PingUrl</c> nor Render's own <c>RENDER_EXTERNAL_URL</c> is set (i.e.
-    /// local dev, docker-compose, the Aspire AppHost), so there's no need for this method to know
-    /// which environment it's running in.
-    /// </summary>
-    public static void RegisterKeepAliveRecurringJob(IServiceProvider services, ILogger logger)
-    {
-        var options = services.GetRequiredService<IOptions<KeepAliveOptions>>().Value;
-
-        if (string.IsNullOrWhiteSpace(options.Cron))
-        {
-            logger.LogWarning("KeepAlive:Cron is not configured - no self-ping job registered");
-            return;
-        }
-
-        var recurringJobManager = services.GetRequiredService<IRecurringJobManager>();
-        var jobId = HangfireJobIds.KeepAlivePing(options.AppName);
-
-        recurringJobManager.AddOrUpdate<HangfireKeepAliveExecutor>(
-            jobId,
-            executor => executor.RunAsync(null!, CancellationToken.None),
-            options.Cron,
-            RecurringJobOptionsFactory.Create(TimeZoneInfo.Utc));
-
-        logger.LogInformation(
-            "Registered Hangfire recurring job '{JobId}' with cron '{Cron}'", jobId, options.Cron);
     }
 
     /// <summary>

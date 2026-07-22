@@ -74,7 +74,7 @@ builder.Configuration.GetSection(HangfireOptions.SectionName).Bind(hangfireOptio
 // drift out of sync.
 var resolvedQueues = hangfireOptions.Queues is { Length: > 0 }
     ? hangfireOptions.Queues
-    : ["keepalive", "api", "social"];
+    : ["api", "social"];
 
 builder.Services.AddHangfireServer(options =>
 {
@@ -96,19 +96,6 @@ var app = builder.Build();
 // dispatcher (already running via AddHangfireServer above) picks up newly-registered jobs on its
 // own polling interval regardless of when this finishes.
 var startupLogger = app.Services.GetRequiredService<ILogger<Program>>();
-
-// Registered synchronously, in its own try/catch, deliberately outside the fire-and-forget block
-// below - this job's entire purpose is keeping the host from spinning down, so it shouldn't be
-// left unregistered just because an unrelated step throws first inside that same all-or-nothing
-// background task.
-try
-{
-    HangfireRecurringJobRegistrar.RegisterKeepAliveRecurringJob(app.Services, startupLogger);
-}
-catch (Exception ex)
-{
-    startupLogger.LogCritical(ex, "Failed to register the keep-alive self-ping recurring job");
-}
 
 _ = Task.Run(async () =>
 {
@@ -138,14 +125,13 @@ _ = Task.Run(async () =>
 
 // The entire HTTP surface this process exposes: /health and /alive (from ServiceDefaults) plus
 // its own Hangfire dashboard - no SPA, no read API, no Swagger, see WebApp for all of that.
-// /alive is also the self-ping target for HangfireKeepAliveExecutor's own recurring job,
-// registered above. Reads the same shared Hangfire Mongo storage as WebApp/RssService, so it
-// technically shows every job from all three processes, not just this one's own api/social/
-// keepalive queues - open by default (no config flag), same "deliberately open, by request"
-// reasoning as WebApp's own dashboard. Authorization must be set explicitly to an empty filter
-// list - Hangfire.AspNetCore's own UseHangfireDashboard default (when no DashboardOptions is
-// passed) is LocalRequestsOnlyAuthorizationFilter, which 401s any request that isn't from
-// localhost.
+// /alive is the target an external uptime-ping tool hits to keep this host from idling. Reads the
+// same shared Hangfire Mongo storage as WebApp/RssService, so it technically shows every job from
+// all three processes, not just this one's own api/social queues - open by default (no config
+// flag), same "deliberately open, by request" reasoning as WebApp's own dashboard. Authorization
+// must be set explicitly to an empty filter list - Hangfire.AspNetCore's own
+// UseHangfireDashboard default (when no DashboardOptions is passed) is
+// LocalRequestsOnlyAuthorizationFilter, which 401s any request that isn't from localhost.
 app.UseHangfireDashboard("/hangfire", new DashboardOptions { Authorization = [] });
 
 // The default "Recurring Jobs" page above still shows every job from all three processes (shared

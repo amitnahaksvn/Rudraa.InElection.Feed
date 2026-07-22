@@ -5,12 +5,10 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Polly;
 using Polly.Extensions.Http;
-using Resend;
 using Application.Abstractions;
 using Application.Options;
 using Application.Services;
 using Infrastructure.ArticleNormalizers;
-using Infrastructure.Email;
 using Infrastructure.Mongo;
 using Infrastructure.NewsApiProviders;
 using Infrastructure.Persistence;
@@ -75,33 +73,6 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddSingleton<IErrorLogRepository, ErrorLogRepository>();
         services.AddSingleton<ISocialMediaSourceRepository, SocialMediaSourceRepository>();
         services.AddSingleton<IProviderScheduleRepository, ProviderScheduleRepository>();
-        services.AddSingleton<IJobExecutionLogRepository, JobExecutionLogRepository>();
-        services.AddSingleton<JobExecutionLogger>();
-
-        // Monitoring-alert email, backed by the official Resend SDK. AddResend registers IResend
-        // as a typed HttpClient and returns the IHttpClientBuilder, so the same Polly
-        // transient-error retry used by every other external HTTP dependency in this method
-        // attaches here too - "not raw HttpClient" (Resend's SDK owns the request shape) without
-        // giving up the retry behaviour. ResendEmailService (not IResend directly) is what every
-        // caller depends on via IEmailService, so swapping providers later never touches a caller.
-        services
-            .AddOptions<EmailOptions>()
-            .Bind(configuration.GetSection(EmailOptions.SectionName))
-            .ValidateDataAnnotations()
-            .ValidateOnStart();
-
-        // EmailOptions.MaxRetryAttempts drives this retry count directly (read from raw
-        // configuration, not the bound EmailOptions instance, since DI registration happens before
-        // any options are actually resolved) - previously this was a hardcoded 3 regardless of
-        // what MaxRetryAttempts was configured to, making that setting a no-op.
-        var emailMaxRetryAttempts = configuration.GetValue($"{EmailOptions.SectionName}:{nameof(EmailOptions.MaxRetryAttempts)}", 3);
-        services
-            .AddResend(o => o.ApiToken = configuration[$"{EmailOptions.SectionName}:{nameof(EmailOptions.ApiKey)}"] ?? string.Empty)
-            .AddPolicyHandler(HttpPolicyExtensions
-                .HandleTransientHttpError()
-                .WaitAndRetryAsync(emailMaxRetryAttempts, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
-        services.AddSingleton<EmailTemplateBuilder>();
-        services.AddSingleton<IEmailService, ResendEmailService>();
 
         // IArticleNormalizer: per-provider content cleanup (stray whitespace, HTML entity
         // artifacts, etc.) applied by ArticlePersister right before persisting - see
@@ -540,16 +511,6 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddMemoryCache();
         services.AddSingleton<ICrawlJobStatusReader, HangfireCrawlJobStatusReader>();
         services.AddTransient<HangfireCrawlJobExecutor>();
-        services.AddTransient<HangfireRawResponseCleanupExecutor>();
-        services.AddTransient<HangfireErrorNotificationDispatchExecutor>();
-
-        services
-            .AddOptions<KeepAliveOptions>()
-            .Bind(configuration.GetSection(KeepAliveOptions.SectionName));
-        // Short timeout and no retry policy - a missed self-ping just tries again on its own next
-        // minute, so there's nothing worth retrying immediately for.
-        services.AddHttpClient("SelfPing", client => client.Timeout = TimeSpan.FromSeconds(15));
-        services.AddTransient<HangfireKeepAliveExecutor>();
 
         return services;
     }

@@ -31,19 +31,11 @@ public sealed class NewsCrawlerOptions
     public TimeSpan FeedTimeout { get; set; } = TimeSpan.FromSeconds(30);
 
     /// <summary>
-    /// How long raw RSS responses (<c>RssRawResponses</c>) are kept - enforced both passively by
-    /// a Mongo TTL index and actively by the scheduled job on <see cref="RawResponseCleanupCron"/>.
+    /// How long raw RSS responses (<c>RssRawResponses</c>) are kept - enforced by a Mongo TTL
+    /// index on <c>CreatedAt</c> (see <c>RssRawResponseRepository.EnsureIndexesAsync</c>).
     /// </summary>
     [Range(typeof(TimeSpan), "00:00:01", "365.00:00:00")]
     public TimeSpan RawResponseRetention { get; set; } = TimeSpan.FromDays(7);
-
-    /// <summary>
-    /// Standard 5-field cron expression for the recurring job that deletes raw responses older
-    /// than <see cref="RawResponseRetention"/>. Default: every day at 05:00 IST (falls back to UTC
-    /// only if the host's tzdata lacks the "Asia/Kolkata" id - see HangfireRecurringJobRegistrar).
-    /// </summary>
-    [Required]
-    public string RawResponseCleanupCron { get; set; } = "0 5 * * *";
 
     /// <summary>
     /// Master switch for persisting raw RSS responses to <c>RssRawResponses</c>. A provider only

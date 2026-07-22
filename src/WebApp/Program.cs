@@ -5,7 +5,6 @@ using Application.Options;
 using Infrastructure.DependencyInjection;
 using Infrastructure.Scheduling;
 using Application.Abstractions;
-using WebApp;
 using WebPlatform;
 using WebPlatform.Hubs;
 using WebPlatform.Infrastructure;
@@ -65,11 +64,6 @@ if (initDbOnly)
 builder.Services
     .AddOptions<ApiOptions>()
     .Bind(builder.Configuration.GetSection(ApiOptions.SectionName));
-builder.Services
-    .AddOptions<KeepAliveOptions>()
-    .Bind(builder.Configuration.GetSection(KeepAliveOptions.SectionName));
-builder.Services.AddHttpClient("SelfPing");
-builder.Services.AddHostedService<KeepAliveBackgroundService>();
 
 builder.Services.AddExceptionHandler<ProblemDetailsExceptionHandler>();
 builder.Services.AddProblemDetails();
@@ -146,7 +140,7 @@ app.MapGet("/", () => Results.Redirect("/feed")).ExcludeFromDescription();
 
 app.MapDefaultEndpoints();
 // Scans both this host's own executing assembly (CrawlTrigger, Providers) and the shared
-// WebPlatform assembly (News, ErrorLogs, JobReports, Crawl's status/history/report endpoints) for
+// WebPlatform assembly (News, ErrorLogs, Crawl's status/history/report endpoints) for
 // IEndpointGroup implementations - see WebApplicationExtensions.MapEndpoints's own doc comment.
 app.MapEndpoints(Assembly.GetExecutingAssembly(), typeof(IEndpointGroup).Assembly);
 app.MapHub<ErrorLogHub>("/hubs/errorlogs");
@@ -203,15 +197,6 @@ if (builder.Configuration.GetValue($"{ApiOptions.SectionName}:EnableCrawlReportD
     // other endpoint in this app); only the SPA page itself is gated here.
     app.MapFallbackToFile("/reports", "index.html");
     app.MapFallbackToFile("/reports/{**slug}", "index.html");
-}
-
-if (builder.Configuration.GetValue($"{ApiOptions.SectionName}:EnableJobReportDashboard", false))
-{
-    // Same "no built-in auth, off by default" trade-off as EnableCrawlReportDashboard above - the
-    // underlying api/job-reports endpoint stays mapped regardless (same always-on trust model as
-    // every other endpoint in this app); only the SPA page itself is gated here.
-    app.MapFallbackToFile("/job-reports", "index.html");
-    app.MapFallbackToFile("/job-reports/{**slug}", "index.html");
 }
 
 app.Run();
