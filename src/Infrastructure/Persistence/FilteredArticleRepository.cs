@@ -1,5 +1,6 @@
 using MongoDB.Driver;
 using Application.Abstractions;
+using Application.Models;
 using Domain.Entities;
 using Infrastructure.Mongo;
 
@@ -57,21 +58,59 @@ public sealed class FilteredArticleRepository : IFilteredArticleRepository
         await _collection.InsertOneAsync(article, options: null, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<FilteredArticle>> GetPagedAsync(int skip, int limit, CancellationToken cancellationToken) =>
+    public async Task<IReadOnlyList<FilteredArticle>> GetPagedAsync(FilteredArticleFilter filter, int skip, int limit, CancellationToken cancellationToken) =>
         await _collection
-            .Find(FilterDefinition<FilteredArticle>.Empty)
+            .Find(BuildFilter(filter))
             .SortByDescending(a => a.PulledAt)
             .Skip(skip)
             .Limit(limit)
             .ToListAsync(cancellationToken);
 
-    public Task<long> CountAsync(CancellationToken cancellationToken) =>
-        _collection.CountDocumentsAsync(FilterDefinition<FilteredArticle>.Empty, cancellationToken: cancellationToken);
+    public Task<long> CountAsync(FilteredArticleFilter filter, CancellationToken cancellationToken) =>
+        _collection.CountDocumentsAsync(BuildFilter(filter), cancellationToken: cancellationToken);
 
-    public async Task<bool> DeleteAsync(string id, CancellationToken cancellationToken)
+    private static FilterDefinition<FilteredArticle> BuildFilter(FilteredArticleFilter filter)
     {
-        var result = await _collection.DeleteOneAsync(a => a.Id == id, cancellationToken);
-        return result.DeletedCount > 0;
+        var builder = Builders<FilteredArticle>.Filter;
+        var clauses = new List<FilterDefinition<FilteredArticle>>();
+
+        if (!string.IsNullOrWhiteSpace(filter.Provider))
+        {
+            clauses.Add(builder.Eq(a => a.Provider, filter.Provider));
+        }
+
+        if (filter.SourceType is { } sourceType)
+        {
+            clauses.Add(builder.Eq(a => a.SourceType, sourceType));
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter.Category))
+        {
+            clauses.Add(builder.Eq(a => a.Category, filter.Category));
+        }
+
+        return clauses.Count == 0 ? FilterDefinition<FilteredArticle>.Empty : builder.And(clauses);
+    }
+
+    public async Task<IReadOnlyList<string>> GetDistinctProvidersAsync(CancellationToken cancellationToken)
+    {
+        var cursor = await _collection.DistinctAsync<string>("Provider", FilterDefinition<FilteredArticle>.Empty, cancellationToken: cancellationToken);
+        var providers = await cursor.ToListAsync(cancellationToken);
+        return providers.Where(p => !string.IsNullOrWhiteSpace(p)).OrderBy(p => p, StringComparer.OrdinalIgnoreCase).ToList();
+    }
+
+    public async Task<IReadOnlyList<string>> GetDistinctCategoriesAsync(CancellationToken cancellationToken)
+    {
+        var cursor = await _collection.DistinctAsync<string>("Category", FilterDefinition<FilteredArticle>.Empty, cancellationToken: cancellationToken);
+        var categories = await cursor.ToListAsync(cancellationToken);
+        return categories.Where(c => !string.IsNullOrWhiteSpace(c)).OrderBy(c => c, StringComparer.OrdinalIgnoreCase).ToList();
+    }
+
+    public async Task<long> DeleteManyAsync(IReadOnlyList<string> ids, CancellationToken cancellationToken)
+    {
+        var filter = Builders<FilteredArticle>.Filter.In(a => a.Id, ids);
+        var result = await _collection.DeleteManyAsync(filter, cancellationToken);
+        return result.DeletedCount;
     }
 
     public async Task EnsureIndexesAsync(CancellationToken cancellationToken)
@@ -81,7 +120,9 @@ public sealed class FilteredArticleRepository : IFilteredArticleRepository
             new(Builders<FilteredArticle>.IndexKeys.Descending(a => a.PulledAt),
                 new CreateIndexOptions { Name = "ix_filteredarticle_pulledat" }),
             new(Builders<FilteredArticle>.IndexKeys.Ascending(a => a.Provider),
-                new CreateIndexOptions { Name = "ix_filteredarticle_provider" })
+                new CreateIndexOptions { Name = "ix_filteredarticle_provider" }),
+            new(Builders<FilteredArticle>.IndexKeys.Ascending(a => a.Category),
+                new CreateIndexOptions { Name = "ix_filteredarticle_category" })
         };
 
         await _collection.Indexes.CreateManyAsync(models, cancellationToken);

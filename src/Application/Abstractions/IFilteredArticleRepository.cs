@@ -1,3 +1,4 @@
+using Application.Models;
 using Domain.Entities;
 
 namespace Application.Abstractions;
@@ -23,13 +24,20 @@ public interface IFilteredArticleRepository
         DateTimeOffset? publishedAt,
         CancellationToken cancellationToken);
 
-    /// <summary>Newest-first page of filtered rows.</summary>
-    Task<IReadOnlyList<FilteredArticle>> GetPagedAsync(int skip, int limit, CancellationToken cancellationToken);
+    /// <summary>Newest-first page of filtered rows matching <paramref name="filter"/>.</summary>
+    Task<IReadOnlyList<FilteredArticle>> GetPagedAsync(FilteredArticleFilter filter, int skip, int limit, CancellationToken cancellationToken);
 
-    Task<long> CountAsync(CancellationToken cancellationToken);
+    /// <summary>Total rows matching the same narrowing as <see cref="GetPagedAsync"/> (skip/limit are irrelevant here) - backs the admin page's pagination total.</summary>
+    Task<long> CountAsync(FilteredArticleFilter filter, CancellationToken cancellationToken);
 
-    /// <summary>Returns false when no row with that id exists.</summary>
-    Task<bool> DeleteAsync(string id, CancellationToken cancellationToken);
+    /// <summary>Every distinct <see cref="FilteredArticle.Provider"/> currently logged - backs the admin page's provider filter.</summary>
+    Task<IReadOnlyList<string>> GetDistinctProvidersAsync(CancellationToken cancellationToken);
+
+    /// <summary>Every distinct <see cref="FilteredArticle.Category"/> currently logged - backs the admin page's category filter.</summary>
+    Task<IReadOnlyList<string>> GetDistinctCategoriesAsync(CancellationToken cancellationToken);
+
+    /// <summary>Deletes one or more rows by id - backs both the admin page's per-row delete button and its multi-select bulk delete. Returns how many were actually found and deleted.</summary>
+    Task<long> DeleteManyAsync(IReadOnlyList<string> ids, CancellationToken cancellationToken);
 
     Task EnsureIndexesAsync(CancellationToken cancellationToken);
 }
