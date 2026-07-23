@@ -17,13 +17,13 @@ public sealed class FilteredArticles : IEndpointGroup
     {
         var group = groupBuilder.MapGroup("api/filtered-articles");
 
-        group.MapGet("", GetList);
+        group.MapGet("", GetFilteredArticles);
         group.MapDelete("{id}", Delete);
     }
 
     [EndpointSummary("List filtered articles")]
     [EndpointDescription("Paged, newest-first log of articles that were fetched but excluded because their Category wasn't in the political allowlist.")]
-    public static async Task<Ok<PagedResult<FilteredArticleDto>>> GetList(
+    public static async Task<Ok<PagedResult<FilteredArticleDto>>> GetFilteredArticles(
         ISender sender,
         IOptions<ApiOptions> apiOptions,
         int page,
