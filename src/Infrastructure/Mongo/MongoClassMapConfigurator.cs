@@ -50,6 +50,9 @@ public static class MongoClassMapConfigurator
         // which BsonType it's configured to *write* going forward.
         BsonSerializer.RegisterSerializer(typeof(CrawlPipeline), new EnumSerializer<CrawlPipeline>(BsonType.String));
 
+        // Same reasoning again - "QueryParameter"/"HttpHeader"/"None" readable directly in Mongo.
+        BsonSerializer.RegisterSerializer(typeof(ApiAuthType), new EnumSerializer<ApiAuthType>(BsonType.String));
+
         BsonClassMap.RegisterClassMap<NewsArticle>(cm =>
         {
             cm.AutoMap();
@@ -111,6 +114,18 @@ public static class MongoClassMapConfigurator
         });
 
         BsonClassMap.RegisterClassMap<FilteredArticle>(cm =>
+        {
+            cm.AutoMap();
+            cm.MapIdMember(x => x.Id).SetIdGenerator(StringObjectIdGenerator.Instance);
+        });
+
+        BsonClassMap.RegisterClassMap<CrawlCountry>(cm =>
+        {
+            cm.AutoMap();
+            cm.MapIdMember(x => x.Id).SetIdGenerator(StringObjectIdGenerator.Instance);
+        });
+
+        BsonClassMap.RegisterClassMap<CrawlFeed>(cm =>
         {
             cm.AutoMap();
             cm.MapIdMember(x => x.Id).SetIdGenerator(StringObjectIdGenerator.Instance);

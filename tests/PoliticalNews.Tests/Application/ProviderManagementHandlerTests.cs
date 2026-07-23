@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Options;
 using Moq;
 using Application.Abstractions;
 using Application.Models;
@@ -7,92 +6,54 @@ using Application.Providers.Commands.TestApiEndpoint;
 using Application.Providers.Commands.TestRssFeed;
 using Application.Providers.Queries.GetApiProviders;
 using Application.Providers.Queries.GetRssProviders;
+using Domain.Entities;
 using Domain.Enums;
 
 namespace PoliticalNews.Tests.Application;
 
 public class ProviderManagementHandlerTests
 {
-    // Empty by default - both handlers fall back to each provider's own file-configured
-    // Enabled/Cron when no ProviderSchedule document exists yet.
-    private static Mock<IProviderScheduleRepository> BuildScheduleRepo()
+    private static Mock<ICrawlCountryRepository> BuildCountryRepo(CrawlPipeline pipeline, params CrawlCountry[] countries)
     {
-        var scheduleRepo = new Mock<IProviderScheduleRepository>();
-        scheduleRepo
-            .Setup(s => s.GetAllAsync(It.IsAny<CrawlPipeline>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync([]);
-        return scheduleRepo;
+        var repo = new Mock<ICrawlCountryRepository>();
+        repo.Setup(c => c.GetAllAsync(pipeline, It.IsAny<CancellationToken>())).ReturnsAsync(countries);
+        return repo;
     }
 
-    private static NewsCrawlerOptions BuildRssOptions() => new()
+    private static Mock<ICrawlFeedRepository> BuildFeedRepo(CrawlPipeline pipeline, params CrawlFeed[] feeds)
     {
-        Countries =
-        [
-            new CountryOptions
-            {
-                Name = "India",
-                Enabled = true,
-                Providers =
-                [
-                    new RssProviderOptions
-                    {
-                        Name = "AajTak",
-                        Enabled = true,
-                        Cron = "*/5 * * * *",
-                        Feeds =
-                        [
-                            new RssFeedOptions { Name = "Home", Url = "https://aajtak.in/rss?id=home", Category = "General", Language = "hi", Enabled = true },
-                            new RssFeedOptions { Name = "Cricket", Url = "https://tak.live/cricket-tak/rssfeed.xml", Category = "Sports", Language = "hi", Enabled = false },
-                        ],
-                    },
-                ],
-            },
-            new CountryOptions
-            {
-                Name = "United Kingdom",
-                Enabled = false,
-                Providers =
-                [
-                    new RssProviderOptions { Name = "BBCNews", Enabled = true, Cron = "0 * * * *", Feeds = [new RssFeedOptions { Name = "TopStories", Url = "https://feeds.bbci.co.uk/top.xml", Category = "General", Language = "en", Enabled = true }] },
-                ],
-            },
-        ],
-    };
+        var repo = new Mock<ICrawlFeedRepository>();
+        repo.Setup(f => f.GetAllAsync(pipeline, It.IsAny<CancellationToken>())).ReturnsAsync(feeds);
+        return repo;
+    }
 
-    private static NewsApiCrawlerOptions BuildApiOptions() => new()
+    private static Mock<IProviderScheduleRepository> BuildScheduleRepo(CrawlPipeline pipeline, params ProviderSchedule[] schedules)
     {
-        Countries =
-        [
-            new NewsApiCountryOptions
-            {
-                Name = "India",
-                Enabled = true,
-                Providers =
-                [
-                    new NewsApiProviderOptions
-                    {
-                        Name = "NewsApiOrg",
-                        Enabled = true,
-                        Cron = "0 * * * *",
-                        BaseUrl = "https://newsapi.org/v2",
-                        AuthType = ApiAuthType.QueryParameter,
-                        AuthParamName = "apiKey",
-                        TimeoutSeconds = 30,
-                        Endpoints =
-                        [
-                            new NewsApiEndpointOptions { Name = "Everything", Endpoint = "everything", Category = "General", Language = "en", Enabled = true, QueryParameters = new Dictionary<string, string> { ["q"] = "India politics" } },
-                            new NewsApiEndpointOptions { Name = "TopHeadlines", Endpoint = "top-headlines", Category = "General", Language = "en", Enabled = false },
-                        ],
-                    },
-                ],
-            },
-        ],
-    };
+        var repo = new Mock<IProviderScheduleRepository>();
+        repo.Setup(s => s.GetAllAsync(pipeline, It.IsAny<CancellationToken>())).ReturnsAsync(schedules);
+        return repo;
+    }
 
     [Fact]
     public async Task GetRssProvidersQueryHandler_FlattensCountriesAndFoldsInCountryEnabled()
     {
-        var handler = new GetRssProvidersQueryHandler(Options.Create(BuildRssOptions()), BuildScheduleRepo().Object);
+        var countries = BuildCountryRepo(
+            CrawlPipeline.Rss,
+            new CrawlCountry { Name = "India", Enabled = true, Pipeline = CrawlPipeline.Rss },
+            new CrawlCountry { Name = "United Kingdom", Enabled = false, Pipeline = CrawlPipeline.Rss });
+
+        var schedules = BuildScheduleRepo(
+            CrawlPipeline.Rss,
+            new ProviderSchedule { Provider = "AajTak", Country = "India", Enabled = true, Cron = "*/5 * * * *", TimeZone = "UTC" },
+            new ProviderSchedule { Provider = "BBCNews", Country = "United Kingdom", Enabled = true, Cron = "0 * * * *", TimeZone = "UTC" });
+
+        var feeds = BuildFeedRepo(
+            CrawlPipeline.Rss,
+            new CrawlFeed { Id = "feed-home", Provider = "AajTak", Name = "Home", Url = "https://aajtak.in/rss?id=home", Category = "General", Language = "hi", Enabled = true },
+            new CrawlFeed { Id = "feed-cricket", Provider = "AajTak", Name = "Cricket", Url = "https://tak.live/cricket-tak/rssfeed.xml", Category = "Sports", Language = "hi", Enabled = false },
+            new CrawlFeed { Id = "feed-top", Provider = "BBCNews", Name = "TopStories", Url = "https://feeds.bbci.co.uk/top.xml", Category = "General", Language = "en", Enabled = true });
+
+        var handler = new GetRssProvidersQueryHandler(countries.Object, schedules.Object, feeds.Object);
 
         var result = await handler.Handle(new GetRssProvidersQuery(), CancellationToken.None);
 
@@ -113,7 +74,31 @@ public class ProviderManagementHandlerTests
     [Fact]
     public async Task GetApiProvidersQueryHandler_FlattensCountriesAndFoldsInCountryEnabled()
     {
-        var handler = new GetApiProvidersQueryHandler(Options.Create(BuildApiOptions()), BuildScheduleRepo().Object);
+        var countries = BuildCountryRepo(
+            CrawlPipeline.Api,
+            new CrawlCountry { Name = "India", Enabled = true, Pipeline = CrawlPipeline.Api });
+
+        var schedules = BuildScheduleRepo(
+            CrawlPipeline.Api,
+            new ProviderSchedule
+            {
+                Provider = "NewsApiOrg",
+                Country = "India",
+                Enabled = true,
+                Cron = "0 * * * *",
+                TimeZone = "UTC",
+                BaseUrl = "https://newsapi.org/v2",
+                AuthType = ApiAuthType.QueryParameter,
+                AuthParamName = "apiKey",
+                TimeoutSeconds = 30,
+            });
+
+        var feeds = BuildFeedRepo(
+            CrawlPipeline.Api,
+            new CrawlFeed { Id = "ep-everything", Provider = "NewsApiOrg", Name = "Everything", Url = "everything", Category = "General", Language = "en", Enabled = true, QueryParameters = new Dictionary<string, string> { ["q"] = "India politics" } },
+            new CrawlFeed { Id = "ep-top", Provider = "NewsApiOrg", Name = "TopHeadlines", Url = "top-headlines", Category = "General", Language = "en", Enabled = false });
+
+        var handler = new GetApiProvidersQueryHandler(countries.Object, schedules.Object, feeds.Object);
 
         var result = await handler.Handle(new GetApiProvidersQuery(), CancellationToken.None);
 
@@ -131,6 +116,11 @@ public class ProviderManagementHandlerTests
     [Fact]
     public async Task TestRssFeedCommandHandler_Success_MapsFeedFetchResultToDto()
     {
+        var feeds = new Mock<ICrawlFeedRepository>();
+        feeds
+            .Setup(f => f.GetByIdAsync("feed-home", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new CrawlFeed { Id = "feed-home", Provider = "AajTak", Name = "Home", Url = "https://aajtak.in/rss?id=home", Category = "General", Language = "hi", Enabled = true });
+
         var provider = new Mock<IRssProvider>();
         provider.Setup(p => p.Name).Returns("AajTak");
         provider
@@ -149,8 +139,8 @@ public class ProviderManagementHandlerTests
                 },
             ]);
 
-        var handler = new TestRssFeedCommandHandler([provider.Object], Options.Create(BuildRssOptions()));
-        var result = await handler.Handle(new TestRssFeedCommand("India", "AajTak", "https://aajtak.in/rss?id=home"), CancellationToken.None);
+        var handler = new TestRssFeedCommandHandler([provider.Object], feeds.Object);
+        var result = await handler.Handle(new TestRssFeedCommand("feed-home"), CancellationToken.None);
 
         Assert.True(result.Success);
         Assert.Equal(200, result.HttpStatusCode);
@@ -163,8 +153,13 @@ public class ProviderManagementHandlerTests
     [Fact]
     public async Task TestRssFeedCommandHandler_UnknownProvider_ReturnsNotFoundResult()
     {
-        var handler = new TestRssFeedCommandHandler([], Options.Create(BuildRssOptions()));
-        var result = await handler.Handle(new TestRssFeedCommand("India", "DoesNotExist", "https://example.com/rss"), CancellationToken.None);
+        var feeds = new Mock<ICrawlFeedRepository>();
+        feeds
+            .Setup(f => f.GetByIdAsync("feed-orphan", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new CrawlFeed { Id = "feed-orphan", Provider = "DoesNotExist", Name = "Home", Url = "https://example.com/rss", Category = "General", Language = "en", Enabled = true });
+
+        var handler = new TestRssFeedCommandHandler([], feeds.Object);
+        var result = await handler.Handle(new TestRssFeedCommand("feed-orphan"), CancellationToken.None);
 
         Assert.False(result.Success);
         Assert.NotNull(result.Error);
@@ -173,11 +168,16 @@ public class ProviderManagementHandlerTests
     [Fact]
     public async Task TestRssFeedCommandHandler_UnknownFeed_ReturnsNotFoundResult()
     {
+        var feeds = new Mock<ICrawlFeedRepository>();
+        feeds
+            .Setup(f => f.GetByIdAsync("does-not-exist", It.IsAny<CancellationToken>()))
+            .ReturnsAsync((CrawlFeed?)null);
+
         var provider = new Mock<IRssProvider>();
         provider.Setup(p => p.Name).Returns("AajTak");
 
-        var handler = new TestRssFeedCommandHandler([provider.Object], Options.Create(BuildRssOptions()));
-        var result = await handler.Handle(new TestRssFeedCommand("India", "AajTak", "https://not-configured.example/rss"), CancellationToken.None);
+        var handler = new TestRssFeedCommandHandler([provider.Object], feeds.Object);
+        var result = await handler.Handle(new TestRssFeedCommand("does-not-exist"), CancellationToken.None);
 
         Assert.False(result.Success);
         Assert.NotNull(result.Error);
@@ -187,6 +187,27 @@ public class ProviderManagementHandlerTests
     [Fact]
     public async Task TestApiEndpointCommandHandler_Success_MapsApiFetchResultToDtoAndPassesOnlyRequestedEndpoint()
     {
+        var feeds = new Mock<ICrawlFeedRepository>();
+        feeds
+            .Setup(f => f.GetByIdAsync("ep-everything", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new CrawlFeed { Id = "ep-everything", Provider = "NewsApiOrg", Name = "Everything", Url = "everything", Category = "General", Language = "en", Enabled = true, QueryParameters = new Dictionary<string, string> { ["q"] = "India politics" } });
+
+        var schedules = new Mock<IProviderScheduleRepository>();
+        schedules
+            .Setup(s => s.GetAsync(CrawlPipeline.Api, "NewsApiOrg", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ProviderSchedule
+            {
+                Provider = "NewsApiOrg",
+                Country = "India",
+                Enabled = true,
+                Cron = "0 * * * *",
+                TimeZone = "UTC",
+                BaseUrl = "https://newsapi.org/v2",
+                AuthType = ApiAuthType.QueryParameter,
+                AuthParamName = "apiKey",
+                TimeoutSeconds = 30,
+            });
+
         var provider = new Mock<INewsApiProvider>();
         provider.Setup(p => p.Name).Returns("NewsApiOrg");
         provider
@@ -205,8 +226,8 @@ public class ProviderManagementHandlerTests
                 },
             ]);
 
-        var handler = new TestApiEndpointCommandHandler([provider.Object], Options.Create(BuildApiOptions()));
-        var result = await handler.Handle(new TestApiEndpointCommand("India", "NewsApiOrg", "Everything"), CancellationToken.None);
+        var handler = new TestApiEndpointCommandHandler([provider.Object], feeds.Object, schedules.Object);
+        var result = await handler.Handle(new TestApiEndpointCommand("ep-everything"), CancellationToken.None);
 
         Assert.True(result.Success);
         Assert.Equal(200, result.HttpStatusCode);
@@ -218,11 +239,18 @@ public class ProviderManagementHandlerTests
     [Fact]
     public async Task TestApiEndpointCommandHandler_UnknownEndpoint_ReturnsNotFoundResult()
     {
+        var feeds = new Mock<ICrawlFeedRepository>();
+        feeds
+            .Setup(f => f.GetByIdAsync("does-not-exist", It.IsAny<CancellationToken>()))
+            .ReturnsAsync((CrawlFeed?)null);
+
+        var schedules = new Mock<IProviderScheduleRepository>();
+
         var provider = new Mock<INewsApiProvider>();
         provider.Setup(p => p.Name).Returns("NewsApiOrg");
 
-        var handler = new TestApiEndpointCommandHandler([provider.Object], Options.Create(BuildApiOptions()));
-        var result = await handler.Handle(new TestApiEndpointCommand("India", "NewsApiOrg", "DoesNotExist"), CancellationToken.None);
+        var handler = new TestApiEndpointCommandHandler([provider.Object], feeds.Object, schedules.Object);
+        var result = await handler.Handle(new TestApiEndpointCommand("does-not-exist"), CancellationToken.None);
 
         Assert.False(result.Success);
         Assert.NotNull(result.Error);

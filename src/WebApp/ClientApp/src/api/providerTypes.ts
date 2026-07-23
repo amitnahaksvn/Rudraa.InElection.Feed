@@ -2,6 +2,7 @@
 // generation in this project yet).
 
 export interface RssFeedSummary {
+  id: string;
   name: string;
   url: string;
   category: string;
@@ -15,11 +16,13 @@ export interface RssProviderSummary {
   enabled: boolean;
   cron: string;
   timeZone: string;
+  saveRawResponses: boolean;
   description: string;
   feeds: RssFeedSummary[];
 }
 
 export interface ApiEndpointSummary {
+  id: string;
   name: string;
   endpoint: string;
   url: string;
@@ -36,6 +39,8 @@ export interface ApiProviderSummary {
   timeZone: string;
   baseUrl: string;
   authType: string;
+  authParamName: string;
+  timeoutSeconds: number;
   description: string;
   endpoints: ApiEndpointSummary[];
 }
@@ -59,4 +64,23 @@ export interface ProviderSchedule {
   enabled: boolean;
   cron: string;
   timeZone: string;
+}
+
+export interface Country {
+  id: string;
+  pipeline: CrawlPipelineName;
+  name: string;
+  enabled: boolean;
+}
+
+export interface CrawlFeed {
+  id: string;
+  provider: string;
+  name: string;
+  url: string;
+  category: string;
+  language: string;
+  enabled: boolean;
+  defaultImageUrl: string | null;
+  queryParameters: Record<string, string> | null;
 }

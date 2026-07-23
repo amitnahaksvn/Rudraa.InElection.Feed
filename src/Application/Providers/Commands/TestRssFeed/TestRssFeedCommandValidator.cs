@@ -6,8 +6,6 @@ public sealed class TestRssFeedCommandValidator : AbstractValidator<TestRssFeedC
 {
     public TestRssFeedCommandValidator()
     {
-        RuleFor(c => c.Country).NotEmpty();
-        RuleFor(c => c.Provider).NotEmpty();
-        RuleFor(c => c.FeedUrl).NotEmpty();
+        RuleFor(c => c.FeedId).NotEmpty();
     }
 }

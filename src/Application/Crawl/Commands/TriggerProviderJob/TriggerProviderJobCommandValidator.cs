@@ -1,32 +1,26 @@
 using FluentValidation;
-using Microsoft.Extensions.Options;
-using Application.Options;
+using Application.Abstractions;
 using Domain.Enums;
 
 namespace Application.Crawl.Commands.TriggerProviderJob;
 
 public sealed class TriggerProviderJobCommandValidator : AbstractValidator<TriggerProviderJobCommand>
 {
-    public TriggerProviderJobCommandValidator(IOptions<NewsCrawlerOptions> rssOptions, IOptions<NewsApiCrawlerOptions> apiOptions)
+    public TriggerProviderJobCommandValidator(ICrawlCountryRepository countries, IProviderScheduleRepository schedules)
     {
-        var triggerableRssProviders = rssOptions.Value.Countries
-            .Where(c => c.Enabled)
-            .SelectMany(c => c.Providers)
-            .Where(p => p.Enabled && !string.IsNullOrWhiteSpace(p.Cron))
-            .Select(p => p.Name)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-        var triggerableApiProviders = apiOptions.Value.Countries
-            .Where(c => c.Enabled)
-            .SelectMany(c => c.Providers)
-            .Where(p => p.Enabled && !string.IsNullOrWhiteSpace(p.Cron))
-            .Select(p => p.Name)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
         RuleFor(c => c.Provider)
             .NotEmpty()
-            .Must((command, provider) =>
-                (command.Pipeline == CrawlPipeline.Api ? triggerableApiProviders : triggerableRssProviders).Contains(provider))
+            .MustAsync(async (command, provider, cancellationToken) =>
+            {
+                var schedule = await schedules.GetAsync(command.Pipeline, provider, cancellationToken);
+                if (schedule is null || !schedule.Enabled || string.IsNullOrWhiteSpace(schedule.Cron))
+                {
+                    return false;
+                }
+
+                var country = await countries.GetByNameAsync(command.Pipeline, schedule.Country, cancellationToken);
+                return country is { Enabled: true };
+            })
             .WithMessage(c => $"'{c.Provider}' is not an enabled {c.Pipeline} provider with a scheduled recurring job.");
     }
 }

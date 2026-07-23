@@ -14,9 +14,11 @@ import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
+import PublicIcon from '@mui/icons-material/Public';
 import { useApiProviders } from './useApiProviders';
 import { ApiProviderCard } from './ApiProviderCard';
 import { CountryGroupHeader } from './CountryGroupHeader';
+import { CountriesManagerDialog } from './CountriesManagerDialog';
 import type { ApiProviderSummary } from '../../api/providerTypes';
 
 type StatusFilter = 'all' | 'enabled' | 'disabled';
@@ -26,6 +28,7 @@ export function ApiProvidersTab() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [collapsedCountries, setCollapsedCountries] = useState<Set<string>>(new Set());
+  const [countriesDialogOpen, setCountriesDialogOpen] = useState(false);
 
   const filtered = useMemo(() => {
     if (!data) return [];
@@ -119,6 +122,9 @@ export function ApiProvidersTab() {
         </ToggleButtonGroup>
 
         <Stack direction="row" alignItems="center" gap={1.5}>
+          <Button size="small" startIcon={<PublicIcon fontSize="small" />} onClick={() => setCountriesDialogOpen(true)}>
+            Manage countries
+          </Button>
           {groupedByCountry.length > 0 && (
             <Button
               size="small"
@@ -160,6 +166,8 @@ export function ApiProvidersTab() {
           </Stack>
         );
       })}
+
+      <CountriesManagerDialog pipeline="Api" open={countriesDialogOpen} onClose={() => setCountriesDialogOpen(false)} />
     </Stack>
   );
 }

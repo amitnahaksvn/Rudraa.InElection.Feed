@@ -53,4 +53,12 @@ public sealed class MongoDbOptions
     /// <summary>Log of articles excluded by the political-category allowlist - see <c>Domain.Entities.FilteredArticle</c>/<c>Application.Options.NewsFilterOptions</c>.</summary>
     [Required]
     public string FilteredArticlesCollection { get; set; } = "FilteredArticles";
+
+    /// <summary>Database-backed country-level provider grouping/Enabled flag - see <c>Domain.Entities.CrawlCountry</c>.</summary>
+    [Required]
+    public string CrawlCountriesCollection { get; set; } = "CrawlCountries";
+
+    /// <summary>Database-backed RSS feed / JSON-API endpoint catalog - see <c>Domain.Entities.CrawlFeed</c>.</summary>
+    [Required]
+    public string CrawlFeedsCollection { get; set; } = "CrawlFeeds";
 }

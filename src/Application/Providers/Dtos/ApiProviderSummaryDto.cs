@@ -1,13 +1,15 @@
 namespace Application.Providers.Dtos;
 
 /// <summary><see cref="Url"/> is the provider's <c>BaseUrl</c> joined with this endpoint's own <c>Endpoint</c> path - the actual URL a fetch hits, computed once here rather than making every consumer join <see cref="ApiProviderSummaryDto.BaseUrl"/> and <see cref="Endpoint"/> itself.</summary>
-public sealed record ApiEndpointSummaryDto(string Name, string Endpoint, string Url, string Category, string Language, bool Enabled);
+public sealed record ApiEndpointSummaryDto(string Id, string Name, string Endpoint, string Url, string Category, string Language, bool Enabled);
 
 /// <summary>
 /// One JSON news-API provider flattened for the Provider Management page - <see cref="Enabled"/>
 /// already folds in the owning country's own flag, same reasoning as
 /// <see cref="RssProviderSummaryDto"/>. <see cref="Enabled"/>/<see cref="Cron"/>/
-/// <see cref="TimeZone"/> reflect the live, database-backed <c>ProviderSchedule</c> the same way.
+/// <see cref="TimeZone"/>/<see cref="BaseUrl"/>/<see cref="AuthType"/>/<see cref="AuthParamName"/>/
+/// <see cref="TimeoutSeconds"/> all reflect the live, database-backed <c>ProviderSchedule</c>
+/// catalog record.
 /// </summary>
 public sealed record ApiProviderSummaryDto(
     string Country,
@@ -17,5 +19,7 @@ public sealed record ApiProviderSummaryDto(
     string TimeZone,
     string BaseUrl,
     string AuthType,
+    string AuthParamName,
+    int TimeoutSeconds,
     string Description,
     IReadOnlyList<ApiEndpointSummaryDto> Endpoints);

@@ -8,15 +8,19 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import SaveIcon from '@mui/icons-material/Save';
-import { updateProviderSchedule } from '../../api/providers';
+import { updateProviderSchedule, type UpdateProviderScheduleFields } from '../../api/providers';
 import type { CrawlPipelineName } from '../../api/providerTypes';
 
 export interface ScheduleEditorProps {
   pipeline: CrawlPipelineName;
   provider: string;
+  country: string;
   enabled: boolean;
   cron: string;
   timeZone: string;
+  // Everything else UpdateProviderScheduleCommand needs to avoid resetting fields this editor
+  // doesn't itself expose - passed straight through unchanged on every save.
+  otherFields: Omit<UpdateProviderScheduleFields, 'pipeline' | 'provider' | 'country' | 'enabled' | 'cron' | 'timeZone'>;
 }
 
 /**
@@ -26,7 +30,7 @@ export interface ScheduleEditorProps {
  * so a server-side change (e.g. from another tab) resets this component's local draft state
  * instead of silently going stale.
  */
-export function ScheduleEditor({ pipeline, provider, enabled, cron, timeZone }: ScheduleEditorProps) {
+export function ScheduleEditor({ pipeline, provider, country, enabled, cron, timeZone, otherFields }: ScheduleEditorProps) {
   const queryClient = useQueryClient();
   const listQueryKey = [pipeline === 'Api' ? 'apiProviders' : 'rssProviders'];
 
@@ -35,7 +39,7 @@ export function ScheduleEditor({ pipeline, provider, enabled, cron, timeZone }: 
 
   const mutation = useMutation({
     mutationFn: (vars: { enabled: boolean; cron: string; timeZone: string }) =>
-      updateProviderSchedule(pipeline, provider, vars.enabled, vars.cron, vars.timeZone),
+      updateProviderSchedule({ pipeline, provider, country, ...vars, ...otherFields }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: listQueryKey }),
   });
 

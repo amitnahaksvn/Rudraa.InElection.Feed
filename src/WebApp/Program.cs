@@ -18,6 +18,12 @@ using Scalar.AspNetCore;
 // creation.
 var initDbOnly = args.Contains("--init-db", StringComparer.OrdinalIgnoreCase);
 
+// `dotnet run --project src/WebApp -- --migrate-catalog` runs CrawlCatalogMigrationSeeder once
+// and exits - only WebApp loads both NewsCrawler and NewsApiCrawler config trees (see the
+// SplitCountryConfigLoader call below), so this is the one host that can migrate both pipelines
+// in a single invocation.
+var migrateCatalogOnly = args.Contains("--migrate-catalog", StringComparer.OrdinalIgnoreCase);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Unlike RssService/ApiService (which each load only their own pipeline's config), WebApp loads
@@ -58,6 +64,12 @@ builder.Services.AddSharedHangfireStorage(mongoConnectionString, mongoDatabaseNa
 if (initDbOnly)
 {
     await InitDbRunner.RunAsync(builder.Services);
+    return;
+}
+
+if (migrateCatalogOnly)
+{
+    await MigrateCatalogRunner.RunAsync(builder.Services);
     return;
 }
 

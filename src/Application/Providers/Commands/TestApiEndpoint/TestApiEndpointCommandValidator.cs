@@ -6,8 +6,6 @@ public sealed class TestApiEndpointCommandValidator : AbstractValidator<TestApiE
 {
     public TestApiEndpointCommandValidator()
     {
-        RuleFor(c => c.Country).NotEmpty();
-        RuleFor(c => c.Provider).NotEmpty();
-        RuleFor(c => c.EndpointName).NotEmpty();
+        RuleFor(c => c.EndpointId).NotEmpty();
     }
 }

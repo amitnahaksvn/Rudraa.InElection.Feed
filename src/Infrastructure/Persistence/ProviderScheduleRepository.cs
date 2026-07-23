@@ -41,14 +41,18 @@ public sealed class ProviderScheduleRepository : IProviderScheduleRepository
             .SetOnInsert(s => s.Enabled, schedule.Enabled)
             .SetOnInsert(s => s.Cron, schedule.Cron)
             .SetOnInsert(s => s.TimeZone, schedule.TimeZone)
+            .SetOnInsert(s => s.SaveRawResponses, schedule.SaveRawResponses)
+            .SetOnInsert(s => s.BaseUrl, schedule.BaseUrl)
+            .SetOnInsert(s => s.AuthType, schedule.AuthType)
+            .SetOnInsert(s => s.AuthParamName, schedule.AuthParamName)
+            .SetOnInsert(s => s.TimeoutSeconds, schedule.TimeoutSeconds)
             .SetOnInsert(s => s.UpdatedAt, schedule.UpdatedAt);
 
         return _collection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true }, cancellationToken);
     }
 
     // Same Id-on-insert reasoning as SeedIfMissingAsync above - this upsert can also be the very
-    // first write for a provider (e.g. a user edits a schedule in the brief window before startup
-    // seeding reaches it).
+    // first write for a provider (e.g. a user adds a brand-new provider from the UI).
     public Task UpsertAsync(ProviderSchedule schedule, CancellationToken cancellationToken)
     {
         var filter = BuildKeyFilter(schedule.Pipeline, schedule.Provider);
@@ -58,9 +62,40 @@ public sealed class ProviderScheduleRepository : IProviderScheduleRepository
             .Set(s => s.Enabled, schedule.Enabled)
             .Set(s => s.Cron, schedule.Cron)
             .Set(s => s.TimeZone, schedule.TimeZone)
+            .Set(s => s.SaveRawResponses, schedule.SaveRawResponses)
+            .Set(s => s.BaseUrl, schedule.BaseUrl)
+            .Set(s => s.AuthType, schedule.AuthType)
+            .Set(s => s.AuthParamName, schedule.AuthParamName)
+            .Set(s => s.TimeoutSeconds, schedule.TimeoutSeconds)
             .Set(s => s.UpdatedAt, schedule.UpdatedAt);
 
         return _collection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true }, cancellationToken);
+    }
+
+    public async Task BackfillCatalogFieldsAsync(
+        CrawlPipeline pipeline,
+        string provider,
+        bool saveRawResponses,
+        string? baseUrl,
+        ApiAuthType? authType,
+        string? authParamName,
+        int? timeoutSeconds,
+        CancellationToken cancellationToken)
+    {
+        var update = Builders<ProviderSchedule>.Update
+            .Set(s => s.SaveRawResponses, saveRawResponses)
+            .Set(s => s.BaseUrl, baseUrl)
+            .Set(s => s.AuthType, authType)
+            .Set(s => s.AuthParamName, authParamName)
+            .Set(s => s.TimeoutSeconds, timeoutSeconds);
+
+        await _collection.UpdateOneAsync(BuildKeyFilter(pipeline, provider), update, cancellationToken: cancellationToken);
+    }
+
+    public async Task<bool> DeleteAsync(CrawlPipeline pipeline, string provider, CancellationToken cancellationToken)
+    {
+        var result = await _collection.DeleteOneAsync(BuildKeyFilter(pipeline, provider), cancellationToken);
+        return result.DeletedCount > 0;
     }
 
     private static FilterDefinition<ProviderSchedule> BuildKeyFilter(CrawlPipeline pipeline, string provider) =>

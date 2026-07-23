@@ -1,10 +1,10 @@
-namespace Application.Options;
+namespace Domain.Enums;
 
 /// <summary>
 /// How a news-API provider's key is attached to a request - kept configurable per provider since
-/// the 7 providers under <see cref="NewsApiCrawlerOptions"/> split roughly evenly between the two
-/// (e.g. NewsAPI.org/GNews/TheNewsAPI/Currents/Mediastack/NewsData.io use a query parameter;
-/// WorldNewsAPI prefers an <c>x-api-key</c> header) rather than being a per-provider code branch.
+/// they split roughly evenly between the two (e.g. NewsAPI.org/GNews/TheNewsAPI/Currents/
+/// Mediastack/NewsData.io use a query parameter; WorldNewsAPI prefers an <c>x-api-key</c> header)
+/// rather than being a per-provider code branch.
 /// </summary>
 public enum ApiAuthType
 {

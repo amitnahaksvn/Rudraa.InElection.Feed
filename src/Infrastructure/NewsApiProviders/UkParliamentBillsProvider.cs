@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Application.Models;
 using Application.Options;
+using Domain.Enums;
 
 namespace Infrastructure.NewsApiProviders;
 

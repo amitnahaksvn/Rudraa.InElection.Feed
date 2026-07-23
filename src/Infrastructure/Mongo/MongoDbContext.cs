@@ -28,6 +28,8 @@ public sealed class MongoDbContext
         SocialMediaSources = Database.GetCollection<SocialMediaSource>(settings.SocialMediaSourcesCollection);
         ProviderSchedules = Database.GetCollection<ProviderSchedule>(settings.ProviderSchedulesCollection);
         FilteredArticles = Database.GetCollection<FilteredArticle>(settings.FilteredArticlesCollection);
+        CrawlCountries = Database.GetCollection<CrawlCountry>(settings.CrawlCountriesCollection);
+        CrawlFeeds = Database.GetCollection<CrawlFeed>(settings.CrawlFeedsCollection);
     }
 
     public IMongoClient Client { get; }
@@ -60,4 +62,10 @@ public sealed class MongoDbContext
 
     /// <summary>Log of politically-irrelevant articles excluded at persist time - see <see cref="Application.Options.MongoDbOptions.FilteredArticlesCollection"/>.</summary>
     public IMongoCollection<FilteredArticle> FilteredArticles { get; }
+
+    /// <summary>Database-backed country-level provider grouping - see <see cref="Application.Options.MongoDbOptions.CrawlCountriesCollection"/>.</summary>
+    public IMongoCollection<CrawlCountry> CrawlCountries { get; }
+
+    /// <summary>Database-backed feed/endpoint catalog - see <see cref="Application.Options.MongoDbOptions.CrawlFeedsCollection"/>.</summary>
+    public IMongoCollection<CrawlFeed> CrawlFeeds { get; }
 }

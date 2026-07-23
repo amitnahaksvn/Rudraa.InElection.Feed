@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type SyntheticEvent } from 'react';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -6,16 +6,30 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogActions from '@mui/material/DialogActions';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { ProviderLogo } from './ProviderLogo';
 import { ApiEndpointRow } from './ApiEndpointRow';
 import { ScheduleEditor } from './ScheduleEditor';
+import { ApiEndpointFormDialog } from './ApiEndpointFormDialog';
+import { useDeleteProvider } from './useDeleteProvider';
 import { getDomainFromUrl } from '../../utils/providerVisuals';
 import type { ApiProviderSummary } from '../../api/providerTypes';
 
 export function ApiProviderCard({ provider }: { provider: ApiProviderSummary }) {
   const [expanded, setExpanded] = useState(false);
+  const [addEndpointOpen, setAddEndpointOpen] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const deleteProvider = useDeleteProvider('Api');
   const domain = useMemo(() => getDomainFromUrl(provider.baseUrl), [provider.baseUrl]);
+
+  const stop = (e: SyntheticEvent) => e.stopPropagation();
 
   return (
     <Accordion
@@ -47,6 +61,9 @@ export function ApiProviderCard({ provider }: { provider: ApiProviderSummary }) 
                 variant="outlined"
                 label={`${provider.endpoints.length} endpoint${provider.endpoints.length === 1 ? '' : 's'}`}
               />
+              <IconButton size="small" aria-label="Delete provider" onClick={(e) => { stop(e); setConfirmDeleteOpen(true); }}>
+                <DeleteOutlineIcon fontSize="small" />
+              </IconButton>
             </Stack>
             <Typography variant="body2" color="text.secondary">
               {provider.description}
@@ -60,22 +77,51 @@ export function ApiProviderCard({ provider }: { provider: ApiProviderSummary }) 
               key={`${provider.enabled}-${provider.cron}-${provider.timeZone}`}
               pipeline="Api"
               provider={provider.name}
+              country={provider.country}
               enabled={provider.enabled}
               cron={provider.cron}
               timeZone={provider.timeZone}
+              otherFields={{
+                baseUrl: provider.baseUrl,
+                authType: provider.authType,
+                authParamName: provider.authParamName,
+                timeoutSeconds: provider.timeoutSeconds,
+              }}
             />
           </Stack>
         </Stack>
       </AccordionSummary>
       <AccordionDetails sx={{ bgcolor: 'action.hover' }}>
         {expanded && (
-          <Stack divider={<Divider />} gap={1.5}>
-            {provider.endpoints.map((endpoint) => (
-              <ApiEndpointRow key={endpoint.name} country={provider.country} providerName={provider.name} endpoint={endpoint} />
-            ))}
+          <Stack gap={1.5}>
+            <Stack divider={<Divider />} gap={1.5}>
+              {provider.endpoints.map((endpoint) => (
+                <ApiEndpointRow key={endpoint.id} providerName={provider.name} endpoint={endpoint} />
+              ))}
+            </Stack>
+            <Button size="small" startIcon={<AddIcon fontSize="small" />} onClick={(e) => { stop(e); setAddEndpointOpen(true); }} sx={{ alignSelf: 'flex-start' }}>
+              Add endpoint
+            </Button>
           </Stack>
         )}
       </AccordionDetails>
+
+      <ApiEndpointFormDialog open={addEndpointOpen} provider={provider.name} onClose={() => setAddEndpointOpen(false)} />
+
+      <Dialog open={confirmDeleteOpen} onClose={() => setConfirmDeleteOpen(false)}>
+        <DialogTitle>Delete provider "{provider.name}" and its recurring job?</DialogTitle>
+        <DialogActions>
+          <Button onClick={() => setConfirmDeleteOpen(false)}>Cancel</Button>
+          <Button
+            color="error"
+            variant="contained"
+            disabled={deleteProvider.isPending}
+            onClick={() => deleteProvider.mutate(provider.name, { onSuccess: () => setConfirmDeleteOpen(false) })}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Accordion>
   );
 }

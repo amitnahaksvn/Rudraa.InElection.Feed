@@ -11,13 +11,15 @@ using Domain.Enums;
 namespace Application.Services;
 
 /// <summary>
-/// Coordinates a full news-API crawl run: for every enabled provider in configuration, calls its
-/// endpoint via <see cref="INewsApiProvider"/>, then deduplicates and persists the normalized
-/// articles via <see cref="INewsArticleRepository"/> (the same repository/dedup path RSS uses).
-/// The <see cref="NewsCrawlerOrchestrator"/> counterpart for JSON APIs - deliberately a separate
-/// orchestrator/lock-namespace/options-section rather than folded into the RSS one, since the two
-/// fetch shapes (a list of feeds per provider vs a single rate-limited endpoint per provider)
-/// don't share a request loop even though they share everything downstream of "normalized article".
+/// Coordinates a full news-API crawl run: for every enabled country/provider/endpoint
+/// (database-backed - see <see cref="ICrawlCountryRepository"/>/<see cref="IProviderScheduleRepository"/>/
+/// <see cref="ICrawlFeedRepository"/>), calls its endpoint via <see cref="INewsApiProvider"/>, then
+/// deduplicates and persists the normalized articles via <see cref="INewsArticleRepository"/> (the
+/// same repository/dedup path RSS uses). The <see cref="NewsCrawlerOrchestrator"/> counterpart for
+/// JSON APIs - deliberately a separate orchestrator/lock-namespace/options-section rather than
+/// folded into the RSS one, since the two fetch shapes (a list of feeds per provider vs a single
+/// rate-limited endpoint per provider) don't share a request loop even though they share
+/// everything downstream of "normalized article".
 /// </summary>
 public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
 {
@@ -28,7 +30,9 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
     private readonly ICrawlLockRepository _lockRepository;
     private readonly IErrorLogRepository _errorLogRepository;
     private readonly IHostEnvironment _hostEnvironment;
+    private readonly ICrawlCountryRepository _countryRepository;
     private readonly IProviderScheduleRepository _scheduleRepository;
+    private readonly ICrawlFeedRepository _feedRepository;
     private readonly IEnumerable<IArticleNormalizer> _normalizers;
     private readonly NewsApiCrawlerOptions _options;
     private readonly NewsFilterOptions _newsFilterOptions;
@@ -43,7 +47,9 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
         ICrawlLockRepository lockRepository,
         IErrorLogRepository errorLogRepository,
         IHostEnvironment hostEnvironment,
+        ICrawlCountryRepository countryRepository,
         IProviderScheduleRepository scheduleRepository,
+        ICrawlFeedRepository feedRepository,
         IEnumerable<IArticleNormalizer> normalizers,
         IOptions<NewsApiCrawlerOptions> options,
         IOptions<NewsFilterOptions> newsFilterOptions,
@@ -56,7 +62,9 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
         _lockRepository = lockRepository;
         _errorLogRepository = errorLogRepository;
         _hostEnvironment = hostEnvironment;
+        _countryRepository = countryRepository;
         _scheduleRepository = scheduleRepository;
+        _feedRepository = feedRepository;
         _normalizers = normalizers;
         _options = options.Value;
         _newsFilterOptions = newsFilterOptions.Value;
@@ -71,21 +79,25 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
     public Task<CrawlHistory> RunCrawlAsync(IReadOnlyCollection<string> providerNames, CancellationToken cancellationToken) =>
         RunCrawlAsync(p => providerNames.Contains(p.Name, StringComparer.OrdinalIgnoreCase), cancellationToken);
 
-    /// <summary>One provider together with the country group it was configured under - <see cref="NewsApiCrawlerOptions.Countries"/> is the source of truth, this is just the flattened-for-iteration shape, same pattern as <see cref="NewsCrawlerOrchestrator"/>'s own <c>CountryProvider</c>.</summary>
+    /// <summary>One provider together with the country group it belongs to - the database is the source of truth, this is just the flattened-for-iteration shape, same pattern as <see cref="NewsCrawlerOrchestrator"/>'s own <c>CountryProvider</c>.</summary>
     private readonly record struct CountryProvider(string Country, NewsApiProviderOptions Provider);
 
     private async Task<CrawlHistory> RunCrawlAsync(Func<NewsApiProviderOptions, bool>? providerFilter, CancellationToken cancellationToken)
     {
-        // ProviderSchedule (database) is the live source of truth for whether a provider is
-        // enabled - see NewsCrawlerOrchestrator's own identical comment for why the file's Enabled
-        // is only a fallback now, not the source of truth.
-        var schedules = await _scheduleRepository.GetAllAsync(CrawlPipeline.Api, cancellationToken);
-        var scheduleByProvider = schedules.ToDictionary(s => s.Provider, StringComparer.OrdinalIgnoreCase);
+        var countries = await _countryRepository.GetAllAsync(CrawlPipeline.Api, cancellationToken);
+        var enabledCountryNames = new HashSet<string>(
+            countries.Where(c => c.Enabled).Select(c => c.Name), StringComparer.OrdinalIgnoreCase);
 
-        var candidates = _options.Countries
-            .Where(c => c.Enabled)
-            .SelectMany(c => c.Providers.Select(p => new CountryProvider(c.Name, p)))
-            .Where(cp => IsEnabled(cp.Provider, scheduleByProvider) && (providerFilter is null || providerFilter(cp.Provider)))
+        var schedules = await _scheduleRepository.GetAllAsync(CrawlPipeline.Api, cancellationToken);
+        var endpoints = await _feedRepository.GetAllAsync(CrawlPipeline.Api, cancellationToken);
+        var endpointsByProvider = endpoints
+            .GroupBy(e => e.Provider, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => (IReadOnlyList<CrawlFeed>)g.ToList(), StringComparer.OrdinalIgnoreCase);
+
+        var candidates = schedules
+            .Where(s => s.Enabled && enabledCountryNames.Contains(s.Country))
+            .Select(s => new CountryProvider(s.Country, BuildProviderOptions(s, endpointsByProvider)))
+            .Where(cp => providerFilter is null || providerFilter(cp.Provider))
             .ToList();
 
         var lockedProviders = await ProviderLockCoordinator.AcquireAsync(
@@ -118,8 +130,33 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
 
     private string ProviderLockName(string providerName) => $"{_options.LockName}:{providerName}";
 
-    private static bool IsEnabled(NewsApiProviderOptions provider, IReadOnlyDictionary<string, ProviderSchedule> schedules) =>
-        schedules.TryGetValue(provider.Name, out var schedule) ? schedule.Enabled : provider.Enabled;
+    private static NewsApiProviderOptions BuildProviderOptions(ProviderSchedule schedule, IReadOnlyDictionary<string, IReadOnlyList<CrawlFeed>> endpointsByProvider)
+    {
+        endpointsByProvider.TryGetValue(schedule.Provider, out var providerEndpoints);
+
+        return new NewsApiProviderOptions
+        {
+            Name = schedule.Provider,
+            Enabled = schedule.Enabled,
+            Cron = schedule.Cron,
+            BaseUrl = schedule.BaseUrl ?? string.Empty,
+            AuthType = schedule.AuthType ?? Domain.Enums.ApiAuthType.QueryParameter,
+            AuthParamName = schedule.AuthParamName ?? "apiKey",
+            TimeoutSeconds = schedule.TimeoutSeconds ?? 120,
+            Endpoints = (providerEndpoints ?? [])
+                .Where(e => e.Enabled)
+                .Select(e => new NewsApiEndpointOptions
+                {
+                    Name = e.Name,
+                    Endpoint = e.Url,
+                    QueryParameters = e.QueryParameters ?? [],
+                    Category = e.Category,
+                    Language = e.Language,
+                    Enabled = e.Enabled
+                })
+                .ToList()
+        };
+    }
 
     private async Task<CrawlHistory> RunLockedAsync(IReadOnlyList<CountryProvider> lockedProviders, CancellationToken cancellationToken)
     {

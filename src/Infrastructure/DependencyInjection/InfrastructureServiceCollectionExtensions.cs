@@ -76,6 +76,8 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddSingleton<ISocialMediaSourceRepository, SocialMediaSourceRepository>();
         services.AddSingleton<IProviderScheduleRepository, ProviderScheduleRepository>();
         services.AddSingleton<IFilteredArticleRepository, FilteredArticleRepository>();
+        services.AddSingleton<ICrawlCountryRepository, CrawlCountryRepository>();
+        services.AddSingleton<ICrawlFeedRepository, CrawlFeedRepository>();
 
         // Monitoring-alert email, backed by the official Resend SDK. AddResend registers IResend
         // as a typed HttpClient and returns the IHttpClientBuilder, so the same Polly
@@ -446,6 +448,7 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddTransient<HangfireSocialMediaJobExecutor>();
 
         services.AddSingleton<ProviderScheduleSeeder>();
+        services.AddSingleton<CrawlCatalogMigrationSeeder>();
 
         // The JSON news-API pipeline (NewsAPI.org, GNews, TheNewsAPI, Currents, Mediastack,
         // NewsData.io, WorldNewsAPI) - one shared named HttpClient (same reasoning as

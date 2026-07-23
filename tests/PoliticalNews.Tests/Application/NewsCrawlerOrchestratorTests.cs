@@ -12,56 +12,34 @@ namespace PoliticalNews.Tests.Application;
 
 public class NewsCrawlerOrchestratorTests
 {
-    private static NewsCrawlerOptions BuildOptions(params string[] feedNames) => new()
+    private static NewsCrawlerOptions BuildScalarOptions(bool saveRawResponses = true) => new()
     {
         BatchSize = 100,
-        Countries =
-        [
-            new CountryOptions
-            {
-                Name = "India",
-                Enabled = true,
-                Providers =
-                [
-                    new RssProviderOptions
-                    {
-                        Name = "AajTak",
-                        Enabled = true,
-                        Feeds = feedNames
-                            .Select(name => new RssFeedOptions { Name = name, Url = $"https://example.com/{name}", Category = "General", Enabled = true })
-                            .ToList()
-                    }
-                ]
-            }
-        ]
+        SaveRawResponses = saveRawResponses,
     };
 
-    private static NewsCrawlerOptions BuildTwoProviderOptions() => new()
+    private static CrawlCountry BuildCountry(string name = "India", bool enabled = true) =>
+        new() { Name = name, Enabled = enabled, Pipeline = CrawlPipeline.Rss };
+
+    private static ProviderSchedule BuildSchedule(string provider, string country = "India", bool enabled = true, bool saveRawResponses = true) => new()
     {
-        BatchSize = 100,
-        Countries =
-        [
-            new CountryOptions
-            {
-                Name = "India",
-                Enabled = true,
-                Providers =
-                [
-                    new RssProviderOptions
-                    {
-                        Name = "AajTak",
-                        Enabled = true,
-                        Feeds = [new RssFeedOptions { Name = "Home", Url = "https://example.com/Home", Category = "General", Enabled = true }]
-                    },
-                    new RssProviderOptions
-                    {
-                        Name = "ABPNews",
-                        Enabled = true,
-                        Feeds = [new RssFeedOptions { Name = "Home", Url = "https://example.com/ABPHome", Category = "General", Enabled = true }]
-                    }
-                ]
-            }
-        ]
+        Provider = provider,
+        Country = country,
+        Enabled = enabled,
+        Cron = "*/5 * * * *",
+        TimeZone = "UTC",
+        SaveRawResponses = saveRawResponses,
+    };
+
+    private static CrawlFeed BuildFeed(string provider, string name, string url) => new()
+    {
+        Id = $"feed-{provider}-{name}",
+        Provider = provider,
+        Name = name,
+        Url = url,
+        Category = "General",
+        Language = "hi",
+        Enabled = true,
     };
 
     private static NormalizedArticle BuildArticle(string url, string title = "Headline") => new()
@@ -100,16 +78,25 @@ public class NewsCrawlerOrchestratorTests
 
     private static Mock<IRssRawResponseRepository> BuildRawResponseRepo() => new();
 
-    // Empty by default - every test falls back to the RssProviderOptions.Enabled it already sets
-    // up, exercising the "no ProviderSchedule document yet" path (the seeder hasn't reached this
-    // provider yet, e.g. right after a fresh appsettings.json addition).
-    private static Mock<IProviderScheduleRepository> BuildScheduleRepo()
+    private static Mock<ICrawlCountryRepository> BuildCountryRepo(params CrawlCountry[] countries)
     {
-        var scheduleRepo = new Mock<IProviderScheduleRepository>();
-        scheduleRepo
-            .Setup(s => s.GetAllAsync(It.IsAny<CrawlPipeline>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync([]);
-        return scheduleRepo;
+        var repo = new Mock<ICrawlCountryRepository>();
+        repo.Setup(c => c.GetAllAsync(CrawlPipeline.Rss, It.IsAny<CancellationToken>())).ReturnsAsync(countries);
+        return repo;
+    }
+
+    private static Mock<IProviderScheduleRepository> BuildScheduleRepo(params ProviderSchedule[] schedules)
+    {
+        var repo = new Mock<IProviderScheduleRepository>();
+        repo.Setup(s => s.GetAllAsync(CrawlPipeline.Rss, It.IsAny<CancellationToken>())).ReturnsAsync(schedules);
+        return repo;
+    }
+
+    private static Mock<ICrawlFeedRepository> BuildFeedRepo(params CrawlFeed[] feeds)
+    {
+        var repo = new Mock<ICrawlFeedRepository>();
+        repo.Setup(f => f.GetAllAsync(CrawlPipeline.Rss, It.IsAny<CancellationToken>())).ReturnsAsync(feeds);
+        return repo;
     }
 
     [Fact]
@@ -141,9 +128,11 @@ public class NewsCrawlerOrchestratorTests
             rawResponseRepo.Object,
             Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
-            BuildScheduleRepo().Object,
+            BuildCountryRepo(BuildCountry()).Object,
+            BuildScheduleRepo(BuildSchedule("AajTak")).Object,
+            BuildFeedRepo(BuildFeed("AajTak", "Home", "https://example.com/Home")).Object,
             [],
-            Options.Create(BuildOptions("Home")),
+            Options.Create(BuildScalarOptions()),
             Options.Create(new NewsFilterOptions()),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 
@@ -185,9 +174,11 @@ public class NewsCrawlerOrchestratorTests
             rawResponseRepo.Object,
             errorLogRepo.Object,
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
-            BuildScheduleRepo().Object,
+            BuildCountryRepo(BuildCountry()).Object,
+            BuildScheduleRepo(BuildSchedule("AajTak")).Object,
+            BuildFeedRepo(BuildFeed("AajTak", "Home", "https://example.com/Home")).Object,
             [],
-            Options.Create(BuildOptions("Home")),
+            Options.Create(BuildScalarOptions()),
             Options.Create(new NewsFilterOptions()),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 
@@ -233,9 +224,11 @@ public class NewsCrawlerOrchestratorTests
             BuildRawResponseRepo().Object,
             Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
-            BuildScheduleRepo().Object,
+            BuildCountryRepo(BuildCountry()).Object,
+            BuildScheduleRepo(BuildSchedule("AajTak")).Object,
+            BuildFeedRepo(BuildFeed("AajTak", "Home", "https://example.com/Home")).Object,
             [],
-            Options.Create(BuildOptions("Home")),
+            Options.Create(BuildScalarOptions()),
             Options.Create(new NewsFilterOptions()),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 
@@ -268,9 +261,11 @@ public class NewsCrawlerOrchestratorTests
             BuildRawResponseRepo().Object,
             Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
-            BuildScheduleRepo().Object,
+            BuildCountryRepo(BuildCountry()).Object,
+            BuildScheduleRepo(BuildSchedule("AajTak")).Object,
+            BuildFeedRepo(BuildFeed("AajTak", "Home", "https://example.com/Home")).Object,
             [],
-            Options.Create(BuildOptions("Home")),
+            Options.Create(BuildScalarOptions()),
             Options.Create(new NewsFilterOptions()),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 
@@ -290,9 +285,6 @@ public class NewsCrawlerOrchestratorTests
         var articleRepo = new Mock<INewsArticleRepository>();
         var historyRepo = new Mock<ICrawlHistoryRepository>();
 
-        var options = BuildOptions("Home");
-        options.Countries[0].Enabled = false;
-
         var orchestrator = new NewsCrawlerOrchestrator(
             [provider.Object],
             articleRepo.Object,
@@ -302,9 +294,11 @@ public class NewsCrawlerOrchestratorTests
             BuildRawResponseRepo().Object,
             Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
-            BuildScheduleRepo().Object,
+            BuildCountryRepo(BuildCountry(enabled: false)).Object,
+            BuildScheduleRepo(BuildSchedule("AajTak")).Object,
+            BuildFeedRepo(BuildFeed("AajTak", "Home", "https://example.com/Home")).Object,
             [],
-            Options.Create(options),
+            Options.Create(BuildScalarOptions()),
             Options.Create(new NewsFilterOptions()),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 
@@ -346,9 +340,13 @@ public class NewsCrawlerOrchestratorTests
             BuildRawResponseRepo().Object,
             Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
-            BuildScheduleRepo().Object,
+            BuildCountryRepo(BuildCountry()).Object,
+            BuildScheduleRepo(BuildSchedule("AajTak"), BuildSchedule("ABPNews")).Object,
+            BuildFeedRepo(
+                BuildFeed("AajTak", "Home", "https://example.com/Home"),
+                BuildFeed("ABPNews", "Home", "https://example.com/ABPHome")).Object,
             [],
-            Options.Create(BuildTwoProviderOptions()),
+            Options.Create(BuildScalarOptions()),
             Options.Create(new NewsFilterOptions()),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 
@@ -397,9 +395,13 @@ public class NewsCrawlerOrchestratorTests
             BuildRawResponseRepo().Object,
             Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
-            BuildScheduleRepo().Object,
+            BuildCountryRepo(BuildCountry()).Object,
+            BuildScheduleRepo(BuildSchedule("AajTak"), BuildSchedule("ABPNews")).Object,
+            BuildFeedRepo(
+                BuildFeed("AajTak", "Home", "https://example.com/Home"),
+                BuildFeed("ABPNews", "Home", "https://example.com/ABPHome")).Object,
             [],
-            Options.Create(BuildTwoProviderOptions()),
+            Options.Create(BuildScalarOptions()),
             Options.Create(new NewsFilterOptions()),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 
@@ -440,10 +442,6 @@ public class NewsCrawlerOrchestratorTests
 
         var rawResponseRepo = BuildRawResponseRepo();
 
-        var options = BuildOptions("Home");
-        options.SaveRawResponses = globalSave;
-        options.Countries[0].Providers[0].SaveRawResponses = providerSave;
-
         var orchestrator = new NewsCrawlerOrchestrator(
             [provider.Object],
             articleRepo.Object,
@@ -453,9 +451,11 @@ public class NewsCrawlerOrchestratorTests
             rawResponseRepo.Object,
             Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
-            BuildScheduleRepo().Object,
+            BuildCountryRepo(BuildCountry()).Object,
+            BuildScheduleRepo(BuildSchedule("AajTak", saveRawResponses: providerSave)).Object,
+            BuildFeedRepo(BuildFeed("AajTak", "Home", "https://example.com/Home")).Object,
             [],
-            Options.Create(options),
+            Options.Create(BuildScalarOptions(saveRawResponses: globalSave)),
             Options.Create(new NewsFilterOptions()),
             NullLogger<NewsCrawlerOrchestrator>.Instance);
 

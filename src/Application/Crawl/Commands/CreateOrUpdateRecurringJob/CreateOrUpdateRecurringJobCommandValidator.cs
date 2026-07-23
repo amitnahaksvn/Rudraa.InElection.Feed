@@ -1,33 +1,27 @@
 using Cronos;
 using FluentValidation;
-using Microsoft.Extensions.Options;
-using Application.Options;
+using Application.Abstractions;
 using Domain.Enums;
 
 namespace Application.Crawl.Commands.CreateOrUpdateRecurringJob;
 
 public sealed class CreateOrUpdateRecurringJobCommandValidator : AbstractValidator<CreateOrUpdateRecurringJobCommand>
 {
-    public CreateOrUpdateRecurringJobCommandValidator(IOptions<NewsCrawlerOptions> rssOptions, IOptions<NewsApiCrawlerOptions> apiOptions)
+    public CreateOrUpdateRecurringJobCommandValidator(ICrawlCountryRepository countries, IProviderScheduleRepository schedules)
     {
-        var enabledRssProviders = rssOptions.Value.Countries
-            .Where(c => c.Enabled)
-            .SelectMany(c => c.Providers)
-            .Where(p => p.Enabled)
-            .Select(p => p.Name)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-        var enabledApiProviders = apiOptions.Value.Countries
-            .Where(c => c.Enabled)
-            .SelectMany(c => c.Providers)
-            .Where(p => p.Enabled)
-            .Select(p => p.Name)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
         RuleFor(c => c.JobName)
             .NotEmpty()
-            .Must((command, name) =>
-                (command.Pipeline == CrawlPipeline.Api ? enabledApiProviders : enabledRssProviders).Contains(name))
+            .MustAsync(async (command, name, cancellationToken) =>
+            {
+                var schedule = await schedules.GetAsync(command.Pipeline, name, cancellationToken);
+                if (schedule is null || !schedule.Enabled)
+                {
+                    return false;
+                }
+
+                var country = await countries.GetByNameAsync(command.Pipeline, schedule.Country, cancellationToken);
+                return country is { Enabled: true };
+            })
             .WithMessage(c => $"'{c.JobName}' is not an enabled {c.Pipeline} provider - configure it first.");
 
         RuleFor(c => c.Cron)

@@ -1,57 +1,65 @@
 using Mediator;
-using Microsoft.Extensions.Options;
 using Application.Abstractions;
-using Application.Options;
 using Application.Providers.Dtos;
+using Domain.Entities;
 using Domain.Enums;
 
 namespace Application.Providers.Queries.GetApiProviders;
 
-/// <summary>Every configured JSON news-API provider (across every country), flattened for the Provider Management page's "APIs" tab. Enabled/Cron/TimeZone come from the live, database-backed <c>ProviderSchedule</c> when one exists, falling back to <c>NewsApiCrawler</c> config otherwise.</summary>
+/// <summary>Every configured JSON news-API provider (across every country), flattened for the Provider Management page's "APIs" tab. Fully database-backed - see <see cref="ICrawlCountryRepository"/>/<see cref="IProviderScheduleRepository"/>/<see cref="ICrawlFeedRepository"/>.</summary>
 public sealed record GetApiProvidersQuery : IRequest<IReadOnlyList<ApiProviderSummaryDto>>;
 
 public sealed class GetApiProvidersQueryHandler : IRequestHandler<GetApiProvidersQuery, IReadOnlyList<ApiProviderSummaryDto>>
 {
-    private readonly IOptions<NewsApiCrawlerOptions> _options;
+    private readonly ICrawlCountryRepository _countries;
     private readonly IProviderScheduleRepository _schedules;
+    private readonly ICrawlFeedRepository _feeds;
 
-    public GetApiProvidersQueryHandler(IOptions<NewsApiCrawlerOptions> options, IProviderScheduleRepository schedules)
+    public GetApiProvidersQueryHandler(ICrawlCountryRepository countries, IProviderScheduleRepository schedules, ICrawlFeedRepository feeds)
     {
-        _options = options;
+        _countries = countries;
         _schedules = schedules;
+        _feeds = feeds;
     }
 
     public async ValueTask<IReadOnlyList<ApiProviderSummaryDto>> Handle(GetApiProvidersQuery request, CancellationToken cancellationToken)
     {
-        var schedules = await _schedules.GetAllAsync(CrawlPipeline.Api, cancellationToken);
-        var scheduleByProvider = schedules.ToDictionary(s => s.Provider, StringComparer.OrdinalIgnoreCase);
+        var countries = await _countries.GetAllAsync(CrawlPipeline.Api, cancellationToken);
+        var countryEnabledByName = countries.ToDictionary(c => c.Name, c => c.Enabled, StringComparer.OrdinalIgnoreCase);
 
-        return _options.Value.Countries
-            .SelectMany(country => country.Providers.Select(provider =>
-            {
-                scheduleByProvider.TryGetValue(provider.Name, out var schedule);
-                return new ApiProviderSummaryDto(
-                    country.Name,
-                    provider.Name,
-                    country.Enabled && (schedule?.Enabled ?? provider.Enabled),
-                    schedule?.Cron ?? provider.Cron,
-                    schedule?.TimeZone ?? "UTC",
-                    provider.BaseUrl,
-                    provider.AuthType.ToString(),
-                    BuildDescription(provider),
-                    provider.Endpoints
-                        .Select(e => new ApiEndpointSummaryDto(e.Name, e.Endpoint, BuildEndpointUrl(provider.BaseUrl, e.Endpoint), e.Category, e.Language, e.Enabled))
-                        .ToList());
-            }))
-            .ToList();
+        var schedules = await _schedules.GetAllAsync(CrawlPipeline.Api, cancellationToken);
+        var endpoints = await _feeds.GetAllAsync(CrawlPipeline.Api, cancellationToken);
+        var endpointsByProvider = endpoints
+            .GroupBy(e => e.Provider, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
+
+        return schedules.Select(schedule =>
+        {
+            endpointsByProvider.TryGetValue(schedule.Provider, out var providerEndpoints);
+            providerEndpoints ??= [];
+            var countryEnabled = countryEnabledByName.TryGetValue(schedule.Country, out var enabled) && enabled;
+            var baseUrl = schedule.BaseUrl ?? string.Empty;
+
+            return new ApiProviderSummaryDto(
+                schedule.Country,
+                schedule.Provider,
+                countryEnabled && schedule.Enabled,
+                schedule.Cron,
+                schedule.TimeZone,
+                baseUrl,
+                (schedule.AuthType ?? Domain.Enums.ApiAuthType.QueryParameter).ToString(),
+                schedule.AuthParamName ?? "apiKey",
+                schedule.TimeoutSeconds ?? 120,
+                BuildDescription(providerEndpoints),
+                providerEndpoints
+                    .Select(e => new ApiEndpointSummaryDto(e.Id, e.Name, e.Url, BuildEndpointUrl(baseUrl, e.Url), e.Category, e.Language, e.Enabled))
+                    .ToList());
+        }).ToList();
     }
 
     // Same join `BaseNewsApiProvider.BuildRequestUrl` uses at fetch time (Infrastructure isn't
     // referenceable from here, so this mirrors it rather than reusing it) - minus query
     // parameters/auth, since this is display-only and must never risk leaking an API key.
-    // EventRegistryProvider's one endpoint configures an empty Endpoint (it's POST-body driven,
-    // not path-driven - see its own doc comment) and just uses BaseUrl as-is; an empty path here
-    // falls through to that same bare-BaseUrl result rather than appending a trailing slash.
     private static string BuildEndpointUrl(string baseUrl, string endpoint)
     {
         var trimmedBase = baseUrl.TrimEnd('/');
@@ -61,10 +69,10 @@ public sealed class GetApiProvidersQueryHandler : IRequestHandler<GetApiProvider
 
     // Same reasoning as GetRssProvidersQueryHandler's own BuildDescription - computed from the
     // endpoint list rather than hand-written per provider, so it can't go stale.
-    private static string BuildDescription(NewsApiProviderOptions provider)
+    private static string BuildDescription(IReadOnlyList<CrawlFeed> endpoints)
     {
-        var enabledCount = provider.Endpoints.Count(e => e.Enabled);
-        var categories = provider.Endpoints
+        var enabledCount = endpoints.Count(e => e.Enabled);
+        var categories = endpoints
             .Select(e => e.Category)
             .Where(c => !string.IsNullOrWhiteSpace(c))
             .Distinct()
@@ -72,7 +80,7 @@ public sealed class GetApiProvidersQueryHandler : IRequestHandler<GetApiProvider
             .ToList();
 
         var categoryText = categories.Count > 0 ? $" covering {string.Join(", ", categories)}" : string.Empty;
-        var endpointWord = provider.Endpoints.Count == 1 ? "endpoint" : "endpoints";
-        return $"{enabledCount} of {provider.Endpoints.Count} {endpointWord} enabled{categoryText}.";
+        var endpointWord = endpoints.Count == 1 ? "endpoint" : "endpoints";
+        return $"{enabledCount} of {endpoints.Count} {endpointWord} enabled{categoryText}.";
     }
 }

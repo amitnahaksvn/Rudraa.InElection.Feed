@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using Application.Options;
+using Domain.Enums;
 using Infrastructure.NewsApiProviders;
 using PoliticalNews.Tests.TestSupport;
 

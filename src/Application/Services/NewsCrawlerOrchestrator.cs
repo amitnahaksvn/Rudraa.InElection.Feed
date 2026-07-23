@@ -11,8 +11,10 @@ using Domain.Enums;
 namespace Application.Services;
 
 /// <summary>
-/// Coordinates a full crawl run: for every enabled provider/feed in configuration, fetches and
-/// normalizes articles via <see cref="IRssProvider"/>, then deduplicates and persists them via
+/// Coordinates a full crawl run: for every enabled country/provider/feed (database-backed - see
+/// <see cref="ICrawlCountryRepository"/>/<see cref="IProviderScheduleRepository"/>/
+/// <see cref="ICrawlFeedRepository"/>), fetches and normalizes articles via
+/// <see cref="IRssProvider"/>, then deduplicates and persists them via
 /// <see cref="INewsArticleRepository"/>. Contains no MongoDB or HTTP/XML specifics itself.
 /// </summary>
 public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
@@ -25,7 +27,9 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
     private readonly IRssRawResponseRepository _rawResponseRepository;
     private readonly IErrorLogRepository _errorLogRepository;
     private readonly IHostEnvironment _hostEnvironment;
+    private readonly ICrawlCountryRepository _countryRepository;
     private readonly IProviderScheduleRepository _scheduleRepository;
+    private readonly ICrawlFeedRepository _feedRepository;
     private readonly IEnumerable<IArticleNormalizer> _normalizers;
     private readonly NewsCrawlerOptions _options;
     private readonly NewsFilterOptions _newsFilterOptions;
@@ -41,7 +45,9 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
         IRssRawResponseRepository rawResponseRepository,
         IErrorLogRepository errorLogRepository,
         IHostEnvironment hostEnvironment,
+        ICrawlCountryRepository countryRepository,
         IProviderScheduleRepository scheduleRepository,
+        ICrawlFeedRepository feedRepository,
         IEnumerable<IArticleNormalizer> normalizers,
         IOptions<NewsCrawlerOptions> options,
         IOptions<NewsFilterOptions> newsFilterOptions,
@@ -55,7 +61,9 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
         _rawResponseRepository = rawResponseRepository;
         _errorLogRepository = errorLogRepository;
         _hostEnvironment = hostEnvironment;
+        _countryRepository = countryRepository;
         _scheduleRepository = scheduleRepository;
+        _feedRepository = feedRepository;
         _normalizers = normalizers;
         _options = options.Value;
         _newsFilterOptions = newsFilterOptions.Value;
@@ -79,23 +87,25 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
     public Task<CrawlHistory> RunCrawlAsync(IReadOnlyCollection<string> providerNames, CancellationToken cancellationToken) =>
         RunCrawlAsync(p => providerNames.Contains(p.Name, StringComparer.OrdinalIgnoreCase), cancellationToken);
 
-    /// <summary>One provider together with the country group it was configured under - <see cref="NewsCrawlerOptions.Countries"/> is the source of truth, this is just the flattened-for-iteration shape.</summary>
+    /// <summary>One provider together with the country group it belongs to - the database (<see cref="ICrawlCountryRepository"/>/<see cref="IProviderScheduleRepository"/>/<see cref="ICrawlFeedRepository"/>) is the source of truth, this is just the flattened-for-iteration shape.</summary>
     private readonly record struct CountryProvider(string Country, RssProviderOptions Provider);
 
     private async Task<CrawlHistory> RunCrawlAsync(Func<RssProviderOptions, bool>? providerFilter, CancellationToken cancellationToken)
     {
-        // ProviderSchedule (database) is the live source of truth for whether a provider is
-        // enabled - NewsCrawler.appsettings.json's own Enabled is only the fallback for a provider
-        // ProviderScheduleSeeder hasn't bootstrapped a schedule document for yet (a brief window
-        // right after a brand-new provider is added to the file, before the next startup's seed
-        // pass reaches it).
-        var schedules = await _scheduleRepository.GetAllAsync(CrawlPipeline.Rss, cancellationToken);
-        var scheduleByProvider = schedules.ToDictionary(s => s.Provider, StringComparer.OrdinalIgnoreCase);
+        var countries = await _countryRepository.GetAllAsync(CrawlPipeline.Rss, cancellationToken);
+        var enabledCountryNames = new HashSet<string>(
+            countries.Where(c => c.Enabled).Select(c => c.Name), StringComparer.OrdinalIgnoreCase);
 
-        var candidates = _options.Countries
-            .Where(c => c.Enabled)
-            .SelectMany(c => c.Providers.Select(p => new CountryProvider(c.Name, p)))
-            .Where(cp => IsEnabled(cp.Provider, scheduleByProvider) && (providerFilter is null || providerFilter(cp.Provider)))
+        var schedules = await _scheduleRepository.GetAllAsync(CrawlPipeline.Rss, cancellationToken);
+        var feeds = await _feedRepository.GetAllAsync(CrawlPipeline.Rss, cancellationToken);
+        var feedsByProvider = feeds
+            .GroupBy(f => f.Provider, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => (IReadOnlyList<CrawlFeed>)g.ToList(), StringComparer.OrdinalIgnoreCase);
+
+        var candidates = schedules
+            .Where(s => s.Enabled && enabledCountryNames.Contains(s.Country))
+            .Select(s => new CountryProvider(s.Country, BuildProviderOptions(s, feedsByProvider)))
+            .Where(cp => providerFilter is null || providerFilter(cp.Provider))
             .ToList();
 
         var lockedProviders = await ProviderLockCoordinator.AcquireAsync(
@@ -128,8 +138,30 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
 
     private string ProviderLockName(string providerName) => $"{_options.LockName}:{providerName}";
 
-    private static bool IsEnabled(RssProviderOptions provider, IReadOnlyDictionary<string, ProviderSchedule> schedules) =>
-        schedules.TryGetValue(provider.Name, out var schedule) ? schedule.Enabled : provider.Enabled;
+    private static RssProviderOptions BuildProviderOptions(ProviderSchedule schedule, IReadOnlyDictionary<string, IReadOnlyList<CrawlFeed>> feedsByProvider)
+    {
+        feedsByProvider.TryGetValue(schedule.Provider, out var providerFeeds);
+
+        return new RssProviderOptions
+        {
+            Name = schedule.Provider,
+            Enabled = schedule.Enabled,
+            Cron = schedule.Cron,
+            SaveRawResponses = schedule.SaveRawResponses,
+            Feeds = (providerFeeds ?? [])
+                .Where(f => f.Enabled)
+                .Select(f => new RssFeedOptions
+                {
+                    Name = f.Name,
+                    Url = f.Url,
+                    Category = f.Category,
+                    Language = f.Language,
+                    Enabled = f.Enabled,
+                    DefaultImageUrl = f.DefaultImageUrl
+                })
+                .ToList()
+        };
+    }
 
     private async Task<CrawlHistory> RunLockedAsync(IReadOnlyList<CountryProvider> lockedProviders, CancellationToken cancellationToken)
     {

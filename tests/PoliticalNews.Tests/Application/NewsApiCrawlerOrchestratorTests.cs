@@ -12,34 +12,38 @@ namespace PoliticalNews.Tests.Application;
 
 /// <summary>
 /// Mirrors <see cref="NewsCrawlerOrchestratorTests"/>'s own Countries-behavior coverage, for the
-/// <see cref="NewsApiCrawlerOrchestrator"/> counterpart added when <see cref="NewsApiCrawlerOptions"/>
-/// gained the same <see cref="NewsApiCountryOptions"/> grouping RSS already had.
+/// <see cref="NewsApiCrawlerOrchestrator"/> counterpart added when the API pipeline gained the
+/// same database-backed <see cref="ICrawlCountryRepository"/>/<see cref="ICrawlFeedRepository"/>
+/// grouping RSS already had.
 /// </summary>
 public class NewsApiCrawlerOrchestratorTests
 {
-    private static NewsApiCrawlerOptions BuildOptions() => new()
+    private static NewsApiCrawlerOptions BuildScalarOptions() => new() { BatchSize = 100 };
+
+    private static CrawlCountry BuildCountry(bool enabled = true) =>
+        new() { Name = "United States", Enabled = enabled, Pipeline = CrawlPipeline.Api };
+
+    private static ProviderSchedule BuildSchedule(bool enabled = true) => new()
     {
-        BatchSize = 100,
-        Countries =
-        [
-            new NewsApiCountryOptions
-            {
-                Name = "United States",
-                Enabled = true,
-                Providers =
-                [
-                    new NewsApiProviderOptions
-                    {
-                        Name = "FEC",
-                        Enabled = true,
-                        BaseUrl = "https://api.open.fec.gov/v1",
-                        AuthType = ApiAuthType.QueryParameter,
-                        AuthParamName = "api_key",
-                        Endpoints = [new NewsApiEndpointOptions { Name = "Candidates", Endpoint = "candidates/", Enabled = true }]
-                    }
-                ]
-            }
-        ]
+        Provider = "FEC",
+        Country = "United States",
+        Enabled = enabled,
+        Cron = "0 * * * *",
+        TimeZone = "UTC",
+        BaseUrl = "https://api.open.fec.gov/v1",
+        AuthType = ApiAuthType.QueryParameter,
+        AuthParamName = "api_key",
+    };
+
+    private static CrawlFeed BuildEndpointFeed() => new()
+    {
+        Id = "feed-fec-candidates",
+        Provider = "FEC",
+        Name = "Candidates",
+        Url = "candidates/",
+        Category = "Politics",
+        Language = "en",
+        Enabled = true,
     };
 
     private static NormalizedArticle BuildArticle(string url) => new()
@@ -74,15 +78,25 @@ public class NewsApiCrawlerOrchestratorTests
         return lockRepo;
     }
 
-    // Empty by default - falls back to the NewsApiProviderOptions.Enabled each test already sets
-    // up, exercising the "no ProviderSchedule document yet" path.
-    private static Mock<IProviderScheduleRepository> BuildScheduleRepo()
+    private static Mock<ICrawlCountryRepository> BuildCountryRepo(CrawlCountry country)
     {
-        var scheduleRepo = new Mock<IProviderScheduleRepository>();
-        scheduleRepo
-            .Setup(s => s.GetAllAsync(It.IsAny<CrawlPipeline>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync([]);
-        return scheduleRepo;
+        var repo = new Mock<ICrawlCountryRepository>();
+        repo.Setup(c => c.GetAllAsync(CrawlPipeline.Api, It.IsAny<CancellationToken>())).ReturnsAsync([country]);
+        return repo;
+    }
+
+    private static Mock<IProviderScheduleRepository> BuildScheduleRepo(ProviderSchedule schedule)
+    {
+        var repo = new Mock<IProviderScheduleRepository>();
+        repo.Setup(s => s.GetAllAsync(CrawlPipeline.Api, It.IsAny<CancellationToken>())).ReturnsAsync([schedule]);
+        return repo;
+    }
+
+    private static Mock<ICrawlFeedRepository> BuildFeedRepo(CrawlFeed feed)
+    {
+        var repo = new Mock<ICrawlFeedRepository>();
+        repo.Setup(f => f.GetAllAsync(CrawlPipeline.Api, It.IsAny<CancellationToken>())).ReturnsAsync([feed]);
+        return repo;
     }
 
     [Fact]
@@ -111,9 +125,11 @@ public class NewsApiCrawlerOrchestratorTests
             BuildAcquiredLockRepo().Object,
             Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
-            BuildScheduleRepo().Object,
+            BuildCountryRepo(BuildCountry()).Object,
+            BuildScheduleRepo(BuildSchedule()).Object,
+            BuildFeedRepo(BuildEndpointFeed()).Object,
             [],
-            Options.Create(BuildOptions()),
+            Options.Create(BuildScalarOptions()),
             Options.Create(new NewsFilterOptions()),
             NullLogger<NewsApiCrawlerOrchestrator>.Instance);
 
@@ -135,9 +151,6 @@ public class NewsApiCrawlerOrchestratorTests
         var articleRepo = new Mock<INewsArticleRepository>();
         var historyRepo = new Mock<ICrawlHistoryRepository>();
 
-        var options = BuildOptions();
-        options.Countries[0].Enabled = false;
-
         var orchestrator = new NewsApiCrawlerOrchestrator(
             [provider.Object],
             articleRepo.Object,
@@ -146,9 +159,11 @@ public class NewsApiCrawlerOrchestratorTests
             BuildAcquiredLockRepo().Object,
             Mock.Of<IErrorLogRepository>(),
             new PoliticalNews.Tests.TestSupport.FakeHostEnvironment(),
-            BuildScheduleRepo().Object,
+            BuildCountryRepo(BuildCountry(enabled: false)).Object,
+            BuildScheduleRepo(BuildSchedule()).Object,
+            BuildFeedRepo(BuildEndpointFeed()).Object,
             [],
-            Options.Create(options),
+            Options.Create(BuildScalarOptions()),
             Options.Create(new NewsFilterOptions()),
             NullLogger<NewsApiCrawlerOrchestrator>.Instance);
 

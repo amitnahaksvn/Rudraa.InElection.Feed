@@ -1,32 +1,36 @@
-using Microsoft.Extensions.Options;
 using Moq;
 using Application.Abstractions;
 using Application.Crawl.Commands.TriggerProviderJob;
-using Application.Options;
+using Domain.Entities;
 using Domain.Enums;
 
 namespace PoliticalNews.Tests.Application;
 
 public class TriggerProviderJobCommandTests
 {
-    private static NewsCrawlerOptions BuildOptions() => new()
+    private static Mock<ICrawlCountryRepository> BuildCountryRepo()
     {
-        Countries =
-        [
-            new CountryOptions
-            {
-                Name = "India",
-                Enabled = true,
-                Providers =
-                [
-                    new RssProviderOptions { Name = "AajTak", Enabled = true, Cron = "*/5 * * * *" },
-                    new RssProviderOptions { Name = "ABPNews", Enabled = true, Cron = "*/5 * * * *" },
-                    new RssProviderOptions { Name = "Disabled", Enabled = false, Cron = "*/5 * * * *" },
-                    new RssProviderOptions { Name = "NoCron", Enabled = true, Cron = "" }
-                ]
-            }
-        ]
-    };
+        var repo = new Mock<ICrawlCountryRepository>();
+        repo.Setup(c => c.GetByNameAsync(CrawlPipeline.Rss, "India", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new CrawlCountry { Name = "India", Enabled = true, Pipeline = CrawlPipeline.Rss });
+        return repo;
+    }
+
+    private static Mock<IProviderScheduleRepository> BuildScheduleRepo()
+    {
+        var repo = new Mock<IProviderScheduleRepository>();
+        repo.Setup(s => s.GetAsync(CrawlPipeline.Rss, "AajTak", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ProviderSchedule { Provider = "AajTak", Country = "India", Enabled = true, Cron = "*/5 * * * *" });
+        repo.Setup(s => s.GetAsync(CrawlPipeline.Rss, "ABPNews", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ProviderSchedule { Provider = "ABPNews", Country = "India", Enabled = true, Cron = "*/5 * * * *" });
+        repo.Setup(s => s.GetAsync(CrawlPipeline.Rss, "Disabled", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ProviderSchedule { Provider = "Disabled", Country = "India", Enabled = false, Cron = "*/5 * * * *" });
+        repo.Setup(s => s.GetAsync(CrawlPipeline.Rss, "NoCron", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ProviderSchedule { Provider = "NoCron", Country = "India", Enabled = true, Cron = "" });
+        repo.Setup(s => s.GetAsync(CrawlPipeline.Rss, "NoSuchProvider", It.IsAny<CancellationToken>()))
+            .ReturnsAsync((ProviderSchedule?)null);
+        return repo;
+    }
 
     [Fact]
     public async Task Handle_TriggersJobAndReturnsProviderAndJobId()
@@ -50,11 +54,11 @@ public class TriggerProviderJobCommandTests
     [InlineData("NoCron", false)]
     [InlineData("NoSuchProvider", false)]
     [InlineData("", false)]
-    public void Validator_OnlyAcceptsEnabledProvidersWithACron(string provider, bool expectedValid)
+    public async Task Validator_OnlyAcceptsEnabledProvidersWithACron(string provider, bool expectedValid)
     {
-        var validator = new TriggerProviderJobCommandValidator(Options.Create(BuildOptions()), Options.Create(new NewsApiCrawlerOptions()));
+        var validator = new TriggerProviderJobCommandValidator(BuildCountryRepo().Object, BuildScheduleRepo().Object);
 
-        var result = validator.Validate(new TriggerProviderJobCommand(CrawlPipeline.Rss, provider));
+        var result = await validator.ValidateAsync(new TriggerProviderJobCommand(CrawlPipeline.Rss, provider));
 
         Assert.Equal(expectedValid, result.IsValid);
     }
