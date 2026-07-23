@@ -17,12 +17,17 @@ namespace Application.Services;
 /// Also where the political-category allowlist (<see cref="NewsFilterOptions"/>) is enforced - an
 /// article whose <see cref="NormalizedArticle.Category"/> doesn't match is diverted into
 /// <see cref="IFilteredArticleRepository"/> instead of becoming a real <see cref="NewsArticle"/>.
+/// Either way, an article is checked against <see cref="IArticleFingerprintRepository"/> exactly
+/// once, before that category decision is even made - a story already fingerprinted under either
+/// collection is dropped up front, so a non-political story re-seen on every crawl tick is never
+/// re-logged into FilteredArticles (which, unlike NewsArticles, has no dedup of its own otherwise).
 /// </summary>
 internal static class ArticlePersister
 {
     public static async Task<int> PersistAsync(
         INewsArticleRepository articleRepository,
         IFilteredArticleRepository filteredArticleRepository,
+        IArticleFingerprintRepository fingerprintRepository,
         IEnumerable<NormalizedArticle> articles,
         IEnumerable<IArticleNormalizer> normalizers,
         NewsFilterOptions filterOptions,
@@ -41,6 +46,17 @@ internal static class ArticlePersister
 
             var now = DateTimeOffset.UtcNow;
             var cleanedSummary = DescriptionNormalizer.Clean(normalized.Summary);
+            var hash = ArticleHasher.ComputeHash(normalized.Title, normalized.PublishedAt);
+
+            // Checked once, up front, against the fingerprint collection both persistence paths
+            // below share (see this class's own doc comment) - before either becoming a real
+            // NewsArticle or a FilteredArticle is even decided.
+            var duplicate = await fingerprintRepository.FindDuplicateAsync(normalized.Url, normalized.OriginalGuid, hash, cancellationToken);
+            if (duplicate is not null)
+            {
+                logger.LogDebug("Duplicate skipped: {Title} ({Url})", normalized.Title, normalized.Url);
+                continue;
+            }
 
             // Plain allowlist match against Category - no AI/ML, deliberately. An excluded article
             // isn't dropped silently: it's recorded in FilteredArticles so what's being filtered
@@ -57,6 +73,10 @@ internal static class ArticlePersister
                         SourceType = normalized.SourceType,
                         PulledAt = now
                     },
+                    normalized.Url,
+                    normalized.OriginalGuid,
+                    hash,
+                    normalized.PublishedAt,
                     cancellationToken);
 
                 logger.LogDebug(
@@ -71,7 +91,7 @@ internal static class ArticlePersister
             // (confirmed live against AmarUjala's own feed: an item dated ~11.5 hours into the
             // future). A story can never be validly recorded as published after the moment this
             // crawl actually saw it, so that's the clamp - not an attempt to guess the "true"
-            // publish time, which isn't recoverable from a wrong source timestamp. Hash below
+            // publish time, which isn't recoverable from a wrong source timestamp. Hash above
             // deliberately uses the raw, unclamped normalized.PublishedAt - clamping against `now`
             // would make the hash drift on every crawl of the same still-future-dated story instead
             // of staying a stable dedup signature.
@@ -99,7 +119,7 @@ internal static class ArticlePersister
                 UpdatedAt = now,
                 Tags = normalized.Tags,
                 Source = normalized.Source,
-                Hash = ArticleHasher.ComputeHash(normalized.Title, normalized.PublishedAt),
+                Hash = hash,
                 IsActive = true
             };
 

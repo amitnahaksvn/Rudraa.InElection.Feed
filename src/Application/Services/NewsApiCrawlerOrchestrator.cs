@@ -26,6 +26,7 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
     private readonly IEnumerable<INewsApiProvider> _providers;
     private readonly INewsArticleRepository _articleRepository;
     private readonly IFilteredArticleRepository _filteredArticleRepository;
+    private readonly IArticleFingerprintRepository _fingerprintRepository;
     private readonly ICrawlHistoryRepository _historyRepository;
     private readonly ICrawlLockRepository _lockRepository;
     private readonly IErrorLogRepository _errorLogRepository;
@@ -43,6 +44,7 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
         IEnumerable<INewsApiProvider> providers,
         INewsArticleRepository articleRepository,
         IFilteredArticleRepository filteredArticleRepository,
+        IArticleFingerprintRepository fingerprintRepository,
         ICrawlHistoryRepository historyRepository,
         ICrawlLockRepository lockRepository,
         IErrorLogRepository errorLogRepository,
@@ -58,6 +60,7 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
         _providers = providers;
         _articleRepository = articleRepository;
         _filteredArticleRepository = filteredArticleRepository;
+        _fingerprintRepository = fingerprintRepository;
         _historyRepository = historyRepository;
         _lockRepository = lockRepository;
         _errorLogRepository = errorLogRepository;
@@ -237,6 +240,7 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
                     var inserted = await ArticlePersister.PersistAsync(
                         _articleRepository,
                         _filteredArticleRepository,
+                        _fingerprintRepository,
                         result.Articles.Take(_options.BatchSize).Select(a => a with { Country = country }),
                         _normalizers,
                         _newsFilterOptions,

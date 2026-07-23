@@ -22,6 +22,7 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
     private readonly IEnumerable<IRssProvider> _providers;
     private readonly INewsArticleRepository _articleRepository;
     private readonly IFilteredArticleRepository _filteredArticleRepository;
+    private readonly IArticleFingerprintRepository _fingerprintRepository;
     private readonly ICrawlHistoryRepository _historyRepository;
     private readonly ICrawlLockRepository _lockRepository;
     private readonly IRssRawResponseRepository _rawResponseRepository;
@@ -40,6 +41,7 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
         IEnumerable<IRssProvider> providers,
         INewsArticleRepository articleRepository,
         IFilteredArticleRepository filteredArticleRepository,
+        IArticleFingerprintRepository fingerprintRepository,
         ICrawlHistoryRepository historyRepository,
         ICrawlLockRepository lockRepository,
         IRssRawResponseRepository rawResponseRepository,
@@ -56,6 +58,7 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
         _providers = providers;
         _articleRepository = articleRepository;
         _filteredArticleRepository = filteredArticleRepository;
+        _fingerprintRepository = fingerprintRepository;
         _historyRepository = historyRepository;
         _lockRepository = lockRepository;
         _rawResponseRepository = rawResponseRepository;
@@ -319,5 +322,5 @@ public sealed class NewsCrawlerOrchestrator : INewsCrawlerService
     private Task<int> PersistArticlesAsync(
         IEnumerable<NormalizedArticle> articles,
         CancellationToken cancellationToken) =>
-        ArticlePersister.PersistAsync(_articleRepository, _filteredArticleRepository, articles, _normalizers, _newsFilterOptions, _logger, cancellationToken);
+        ArticlePersister.PersistAsync(_articleRepository, _filteredArticleRepository, _fingerprintRepository, articles, _normalizers, _newsFilterOptions, _logger, cancellationToken);
 }

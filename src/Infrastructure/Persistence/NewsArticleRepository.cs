@@ -30,25 +30,10 @@ public sealed class NewsArticleRepository : INewsArticleRepository
     /// </summary>
     public async Task<ArticleUpsertOutcome> UpsertAsync(NewsArticle article, CancellationToken cancellationToken)
     {
-        var existing = await _fingerprints.FindByUrlAsync(article.Url, cancellationToken);
-
-        existing ??= !string.IsNullOrEmpty(article.OriginalGuid)
-            ? await _fingerprints.FindByOriginalGuidAsync(article.OriginalGuid, cancellationToken)
-            : null;
-
-        if (existing is not null)
-        {
-            return ArticleUpsertOutcome.DuplicateSkipped;
-        }
-
-        var byHash = await _fingerprints.FindByHashAsync(article.Hash, cancellationToken);
-        if (byHash is not null)
-        {
-            // Same story (Title + PublishedAt) already stored under a different Url/guid.
-            return ArticleUpsertOutcome.DuplicateSkipped;
-        }
-
-        return await InsertAsync(article, cancellationToken);
+        var existing = await _fingerprints.FindDuplicateAsync(article.Url, article.OriginalGuid, article.Hash, cancellationToken);
+        return existing is not null
+            ? ArticleUpsertOutcome.DuplicateSkipped
+            : await InsertAsync(article, cancellationToken);
     }
 
     /// <summary>

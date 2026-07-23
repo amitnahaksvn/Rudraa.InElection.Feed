@@ -26,6 +26,19 @@ public sealed class ArticleFingerprintRepository : IArticleFingerprintRepository
     public Task<ArticleFingerprint?> FindByHashAsync(string hash, CancellationToken cancellationToken) =>
         _collection.Find(f => f.Hash == hash).FirstOrDefaultAsync(cancellationToken)!;
 
+    public async Task<ArticleFingerprint?> FindDuplicateAsync(string url, string? originalGuid, string hash, CancellationToken cancellationToken)
+    {
+        var existing = await FindByUrlAsync(url, cancellationToken);
+
+        existing ??= !string.IsNullOrEmpty(originalGuid)
+            ? await FindByOriginalGuidAsync(originalGuid, cancellationToken)
+            : null;
+
+        existing ??= await FindByHashAsync(hash, cancellationToken);
+
+        return existing;
+    }
+
     public Task InsertAsync(ArticleFingerprint fingerprint, CancellationToken cancellationToken) =>
         _collection.InsertOneAsync(fingerprint, options: null, cancellationToken);
 

@@ -25,6 +25,7 @@ public sealed class SocialMediaIngestionService : ISocialMediaIngestionService
     private readonly IEnumerable<ISocialPlatformFetcher> _fetchers;
     private readonly INewsArticleRepository _articleRepository;
     private readonly IFilteredArticleRepository _filteredArticleRepository;
+    private readonly IArticleFingerprintRepository _fingerprintRepository;
     private readonly ICrawlHistoryRepository _historyRepository;
     private readonly IErrorLogRepository _errorLogRepository;
     private readonly IHostEnvironment _hostEnvironment;
@@ -37,6 +38,7 @@ public sealed class SocialMediaIngestionService : ISocialMediaIngestionService
         IEnumerable<ISocialPlatformFetcher> fetchers,
         INewsArticleRepository articleRepository,
         IFilteredArticleRepository filteredArticleRepository,
+        IArticleFingerprintRepository fingerprintRepository,
         ICrawlHistoryRepository historyRepository,
         IErrorLogRepository errorLogRepository,
         IHostEnvironment hostEnvironment,
@@ -48,6 +50,7 @@ public sealed class SocialMediaIngestionService : ISocialMediaIngestionService
         _fetchers = fetchers;
         _articleRepository = articleRepository;
         _filteredArticleRepository = filteredArticleRepository;
+        _fingerprintRepository = fingerprintRepository;
         _historyRepository = historyRepository;
         _errorLogRepository = errorLogRepository;
         _hostEnvironment = hostEnvironment;
@@ -101,6 +104,7 @@ public sealed class SocialMediaIngestionService : ISocialMediaIngestionService
             var inserted = await ArticlePersister.PersistAsync(
                 _articleRepository,
                 _filteredArticleRepository,
+                _fingerprintRepository,
                 articles.Select(a => a with { Country = source.Country }),
                 _normalizers,
                 _newsFilterOptions,
