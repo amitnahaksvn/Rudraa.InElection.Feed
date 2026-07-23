@@ -1,5 +1,4 @@
 using Domain.Entities;
-using Domain.Enums;
 
 namespace Application.FilteredArticles.Dtos;
 
@@ -10,7 +9,7 @@ public sealed record FilteredArticleDto(
     string Title,
     string? Summary,
     string Category,
-    ArticleSourceType SourceType,
+    string SourceType,
     DateTimeOffset PulledAt)
 {
     public static FilteredArticleDto FromDomain(FilteredArticle article) => new(
@@ -19,6 +18,6 @@ public sealed record FilteredArticleDto(
         article.Title,
         article.Summary,
         article.Category,
-        article.SourceType,
+        article.SourceType.ToString(),
         article.PulledAt);
 }
