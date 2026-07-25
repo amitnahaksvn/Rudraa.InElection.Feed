@@ -47,16 +47,6 @@ public sealed class GetArticleVolumeReportQueryHandler : IRequestHandler<GetArti
 
         var sourceType = request.Pipeline == CrawlPipeline.Api ? ArticleSourceType.Api : ArticleSourceType.Rss;
 
-        var counts = await _fingerprints.GetDailyProviderCountsAsync(sourceType, from, to, cancellationToken);
-        if (selectedProviders is not null)
-        {
-            counts = counts.Where(c => selectedProviders.Contains(c.Provider)).ToList();
-        }
-
-        var countsByProvider = counts
-            .GroupBy(c => c.Provider, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(g => g.Key, g => g.Sum(c => c.Count), StringComparer.OrdinalIgnoreCase);
-
         // Same "configured provider list" source of truth GetCrawlReportQuery uses - enabled
         // providers under an enabled country by default, or exactly the caller's explicit
         // selection (including disabled ones) when given. Deduplicated to bare provider name since
@@ -72,7 +62,20 @@ public sealed class GetArticleVolumeReportQueryHandler : IRequestHandler<GetArti
                 : s.Enabled && enabledCountryNames.Contains(s.Country))
             .Select(s => s.Provider)
             .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList();
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        // Always scoped to configuredProviders - whether that came from an explicit selection or
+        // the enabled-only default - so TotalArticles/ProviderTimeSeries/Providers never disagree
+        // with each other. Without this, a provider disabled after it already had real articles
+        // (or a fully retired provider name with no schedule row left at all) would still count
+        // toward the total while being invisible in the breakdown below - confusing, not merely
+        // incomplete.
+        var counts = await _fingerprints.GetDailyProviderCountsAsync(sourceType, from, to, cancellationToken);
+        counts = counts.Where(c => configuredProviders.Contains(c.Provider)).ToList();
+
+        var countsByProvider = counts
+            .GroupBy(c => c.Provider, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.Sum(c => c.Count), StringComparer.OrdinalIgnoreCase);
 
         var providerRows = configuredProviders
             .Select(p => new ArticleVolumeProviderDto(p, countsByProvider.GetValueOrDefault(p)))
