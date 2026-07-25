@@ -56,8 +56,8 @@ public static class InfrastructureServiceCollectionExtensions
             // Aspire (and the ASP.NET Core convention in general) injects resource connection
             // strings under ConnectionStrings:<name> - e.g. AppHost.cs's "mongodb" resource
             // becomes ConnectionStrings__mongodb. When present it wins over MongoDb:ConnectionString,
-            // so the same code runs unchanged whether launched via the Aspire AppHost, plain
-            // `dotnet run`, or docker-compose.
+            // so the same code runs unchanged whether launched via the Aspire AppHost or plain
+            // `dotnet run`.
             .PostConfigure(options => options.ConnectionString = ResolveMongoConnectionString(configuration, options.ConnectionString))
             .ValidateDataAnnotations()
             .ValidateOnStart();

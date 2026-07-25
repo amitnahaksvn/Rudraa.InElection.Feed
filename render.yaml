@@ -33,7 +33,7 @@ services:
       - key: DOTNET_ENVIRONMENT
         value: Production
       # TLS terminates at Render's edge; the container only ever sees plain HTTP (see each
-      # Program.cs's UseHttpsRedirection comment) - matches docker-compose.yml's services.
+      # Program.cs's UseHttpsRedirection comment).
       - key: ASPNETCORE_URLS
         value: http://+:8080
       - key: Api__EnableHangfireDashboard

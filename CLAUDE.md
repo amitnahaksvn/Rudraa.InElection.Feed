@@ -20,12 +20,9 @@ dotnet run --project src/Worker
 # Run the read/query API standalone (Minimal API endpoints dispatch through Mediator)
 dotnet run --project src/Web
 
-# Run everything together via the Aspire AppHost (local Mongo container + Web + Worker,
-# with the Aspire dashboard for logs/traces/metrics) - requires Docker running
+# Run everything together via the Aspire AppHost (Web + Worker, with the Aspire dashboard for
+# logs/traces/metrics) - no Docker needed locally; Mongo is a real connection string (e.g. Atlas)
 dotnet run --project src/AppHost
-
-# Or without Aspire/Docker at all
-docker compose up --build
 ```
 
 Real credentials (e.g. an Atlas connection string) belong in user-secrets, never in
@@ -35,7 +32,6 @@ dotnet user-secrets set "MongoDb:ConnectionString" "mongodb+srv://..." --project
 dotnet user-secrets set "MongoDb:DatabaseName" "SomeDbName" --project src/Worker
 # repeat --project src/Web if running Web standalone (outside the AppHost)
 # for the AppHost itself: dotnet user-secrets set "ConnectionStrings:mongodb" "mongodb+srv://..." --project src/AppHost
-#                          dotnet user-secrets set "UseLocalMongo" "false" --project src/AppHost
 ```
 MongoDB database names cannot contain `.` (or `/ \ " $ * < > : | ?` / spaces) - this rejects a
 name copy-pasted straight from a domain-style string like `Foo.Bar`.
@@ -179,7 +175,7 @@ shared file, matching the same env-var-wins convention already used for `MongoDb
 `PostConfigure` overrides it with `ConnectionStrings:mongodb` when present. That second key is
 what the Aspire AppHost (`AppHost/AppHost.cs`) injects automatically via
 `WithReference(...)`, so the exact same `Infrastructure`/`Web`/`Worker` code runs unchanged
-whether launched through the AppHost, plain `dotnet run`, or docker-compose. `AddInfrastructure()`
+whether launched through the AppHost or plain `dotnet run`. `AddInfrastructure()`
 also registers `MongoIndexInitializerHostedService` (in `Infrastructure/Mongo`, shared by both
 hosts) - it runs on startup before either host starts serving, creating every collection/index
 automatically the first time either process connects to a brand-new database.
@@ -188,10 +184,9 @@ automatically the first time either process connects to a brand-new database.
 `Web` and `Worker` and adds OpenTelemetry tracing/metrics/logging, default health checks, service
 discovery, and HTTP resilience via one `builder.AddServiceDefaults()` call. `Web` additionally
 calls `app.MapDefaultEndpoints()` to expose `/health` and `/alive` (Worker has no HTTP listener,
-so it only gets the telemetry/resilience side). `AppHost/AppHost.cs`'s `UseLocalMongo` toggle
-picks between an Aspire-managed local Mongo container (`Aspire.Hosting.MongoDB`, default, zero
-credentials needed) and an external connection string resource (`AddConnectionString("mongodb")`,
-e.g. a real Atlas cluster) - no code outside `AppHost.cs` needs to know which one is active.
+so it only gets the telemetry/resilience side). `AppHost/AppHost.cs` always resolves Mongo via an
+external connection string resource (`AddConnectionString("mongodb")`, e.g. a real Atlas cluster) -
+no local Mongo container/Docker dependency is involved in running the AppHost.
 
 ## Known data caveats
 

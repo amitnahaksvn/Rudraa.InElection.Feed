@@ -124,28 +124,19 @@ each individually verified to return valid RSS 2.0 XML. Three tak.live slugs tha
 
 ## Running locally
 
-**Option A - Aspire AppHost (recommended for local dev):** spins up a local Mongo container plus
-Web and Worker, with the Aspire dashboard for logs/traces/metrics. Requires Docker running.
+**Option A - Aspire AppHost (recommended for local dev):** runs Web and Worker together, with the
+Aspire dashboard for logs/traces/metrics. No Docker needed - Mongo is a real connection string
+(e.g. Atlas) provided via `ConnectionStrings:mongodb` on `AppHost`'s user-secrets.
 
 ```bash
 dotnet run --project src/AppHost
 ```
-
-To point the AppHost at an existing cluster (e.g. Atlas) instead of a local container, set
-`UseLocalMongo` to `false` and provide a `ConnectionStrings:mongodb` value via user-secrets on
-`AppHost`.
 
 **Option B - run projects directly:**
 
 ```bash
 dotnet run --project src/Worker   # scheduled crawler, no HTTP
 dotnet run --project src/Web      # read/query API + Swagger UI in Development
-```
-
-**Option C - Docker Compose** (Mongo container + both services, no Aspire/Docker-in-loop needed):
-
-```bash
-docker compose up --build
 ```
 
 **Error-monitor UI (`/errors`)**: its React source lives in `src/Web/ClientApp` and is not built
@@ -169,8 +160,8 @@ extra is needed for a container deployment.
 
 ## MongoDB setup
 
-Any reachable MongoDB 6+ instance works - a local container (`docker compose up mongo` or the
-Aspire AppHost's local option), or a managed cluster such as Atlas. No manual schema setup is
+Any reachable MongoDB 6+ instance works, e.g. a managed cluster such as Atlas, or your own local
+Mongo instance. No manual schema setup is
 required: `MongoIndexInitializerHostedService` (registered once, in `Infrastructure`, so both
 Web and Worker get it automatically) creates every index on startup, and MongoDB implicitly
 creates the corresponding collections on first write - the very first run against a brand-new
@@ -267,8 +258,7 @@ docker build --build-arg PROJECT=Web       -t politicalnews-web    .
 ```
 
 Run each with `MongoDb__ConnectionString` / `MongoDb__DatabaseName` environment variables
-pointing at your MongoDB instance (see `docker-compose.yml` for a working example against a
-local Mongo container).
+pointing at your MongoDB instance.
 
 ## Future expansion
 
