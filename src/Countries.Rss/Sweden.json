@@ -14,7 +14,7 @@
             "Url": "https://www.svt.se/nyheter/rss.xml",
             "Category": "General",
             "Language": "sv",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -29,7 +29,7 @@
             "Url": "https://www.dn.se/nyheter/m/rss/",
             "Category": "General",
             "Language": "sv",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -44,7 +44,7 @@
             "Url": "https://www.sydsvenskan.se/rss.xml",
             "Category": "General",
             "Language": "sv",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -59,7 +59,7 @@
             "Url": "https://rss.aftonbladet.se/rss2/small/pages/sections/senastenytt/",
             "Category": "General",
             "Language": "sv",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },

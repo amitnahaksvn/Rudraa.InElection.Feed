@@ -51,7 +51,7 @@
             "Url": "https://www.interfax.ru/rss.asp",
             "Category": "General",
             "Language": "ru",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -66,7 +66,7 @@
             "Url": "https://rssexport.rbc.ru/rbcnews/news/30/full.rss",
             "Category": "Business",
             "Language": "ru",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       }

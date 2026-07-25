@@ -29,7 +29,7 @@
             "Url": "https://www.reforma.com/rss/portada.xml",
             "Category": "General",
             "Language": "es",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       }

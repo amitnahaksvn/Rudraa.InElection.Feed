@@ -29,7 +29,7 @@
             "Url": "https://rss.tempo.co/nasional",
             "Category": "General",
             "Language": "id",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       }

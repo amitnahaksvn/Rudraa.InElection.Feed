@@ -14,7 +14,7 @@
             "Url": "https://www.ceskenoviny.cz/sluzby/rss/zpravy.php",
             "Category": "General",
             "Language": "cs",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -44,7 +44,7 @@
             "Url": "https://servis.idnes.cz/rss.aspx",
             "Category": "General",
             "Language": "cs",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -59,7 +59,7 @@
             "Url": "https://www.seznamzpravy.cz/rss",
             "Category": "General",
             "Language": "cs",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       }

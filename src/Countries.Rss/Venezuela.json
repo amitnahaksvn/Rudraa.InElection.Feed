@@ -29,7 +29,7 @@
             "Url": "https://www.elnacional.com/feed/",
             "Category": "General",
             "Language": "es",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       }

@@ -44,7 +44,7 @@
             "Url": "https://feeds.nos.nl/nosnieuwsalgemeen",
             "Category": "General",
             "Language": "nl",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -59,7 +59,7 @@
             "Url": "https://www.nu.nl/rss/Algemeen",
             "Category": "General",
             "Language": "nl",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -74,7 +74,7 @@
             "Url": "https://www.telegraaf.nl/rss",
             "Category": "General",
             "Language": "nl",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       }

@@ -14,7 +14,7 @@
             "Url": "https://www.rp.pl/rss_main",
             "Category": "General",
             "Language": "pl",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -29,7 +29,7 @@
             "Url": "https://wiadomosci.onet.pl/.feed",
             "Category": "General",
             "Language": "pl",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       }

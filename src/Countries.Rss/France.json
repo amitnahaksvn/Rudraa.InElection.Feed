@@ -50,14 +50,14 @@
             "Url": "https://www.lemonde.fr/international/rss_full.xml",
             "Category": "World",
             "Language": "fr",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "Economy",
             "Url": "https://www.lemonde.fr/economie/rss_full.xml",
             "Category": "Business",
             "Language": "fr",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -72,21 +72,21 @@
             "Url": "https://www.lefigaro.fr/rss/figaro_actualites.xml",
             "Category": "General",
             "Language": "fr",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "Politics",
             "Url": "https://www.lefigaro.fr/rss/figaro_politique.xml",
             "Category": "Politics",
             "Language": "fr",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "Economy",
             "Url": "https://www.lefigaro.fr/rss/figaro_economie.xml",
             "Category": "Business",
             "Language": "fr",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -116,7 +116,7 @@
             "Url": "https://www.francetvinfo.fr/titres.rss",
             "Category": "General",
             "Language": "fr",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -131,7 +131,7 @@
             "Url": "https://www.liberation.fr/arc/outboundfeeds/rss/",
             "Category": "General",
             "Language": "fr",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       }

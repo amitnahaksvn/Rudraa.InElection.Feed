@@ -29,7 +29,7 @@
             "Url": "https://magyarnemzet.hu/feed",
             "Category": "General",
             "Language": "hu",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -44,7 +44,7 @@
             "Url": "https://index.hu/24ora/rss/",
             "Category": "General",
             "Language": "hu",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -59,7 +59,7 @@
             "Url": "https://hvg.hu/rss",
             "Category": "General",
             "Language": "hu",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       }

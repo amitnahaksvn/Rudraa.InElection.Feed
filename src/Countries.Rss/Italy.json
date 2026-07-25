@@ -29,7 +29,7 @@
             "Url": "https://xml2.corriereobjects.it/rss/homepage.xml",
             "Category": "General",
             "Language": "it",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -44,28 +44,28 @@
             "Url": "https://www.ilsole24ore.com/rss/italia.xml",
             "Category": "General",
             "Language": "it",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "Politics",
             "Url": "https://www.ilsole24ore.com/rss/italia--politica.xml",
             "Category": "Politics",
             "Language": "it",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "Business",
             "Url": "https://www.ilsole24ore.com/rss/economia.xml",
             "Category": "Business",
             "Language": "it",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "World",
             "Url": "https://www.ilsole24ore.com/rss/mondo.xml",
             "Category": "World",
             "Language": "it",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       }

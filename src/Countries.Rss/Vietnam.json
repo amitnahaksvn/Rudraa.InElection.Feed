@@ -44,7 +44,7 @@
             "Url": "https://vnexpress.net/rss/tin-moi-nhat.rss",
             "Category": "General",
             "Language": "vi",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },

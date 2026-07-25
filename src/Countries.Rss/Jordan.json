@@ -14,7 +14,7 @@
             "Url": "https://royanews.tv/rss",
             "Category": "General",
             "Language": "ar",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       }

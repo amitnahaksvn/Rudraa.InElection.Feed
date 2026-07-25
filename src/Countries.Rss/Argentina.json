@@ -29,7 +29,7 @@
             "Url": "https://www.lanacion.com.ar/arc/outboundfeeds/rss/",
             "Category": "General",
             "Language": "es",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -44,7 +44,7 @@
             "Url": "https://www.clarin.com/rss/lo-ultimo/",
             "Category": "General",
             "Language": "es",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       }

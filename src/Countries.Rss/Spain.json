@@ -14,7 +14,7 @@
             "Url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada",
             "Category": "General",
             "Language": "es",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -29,7 +29,7 @@
             "Url": "https://e00-elmundo.uecdn.es/elmundo/rss/portada.xml",
             "Category": "General",
             "Language": "es",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -44,7 +44,7 @@
             "Url": "https://www.abc.es/rss/feeds/abcPortada.xml",
             "Category": "General",
             "Language": "es",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -59,7 +59,7 @@
             "Url": "https://www.europapress.es/rss/rss.aspx",
             "Category": "General",
             "Language": "es",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       }

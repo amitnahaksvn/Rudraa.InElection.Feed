@@ -14,7 +14,7 @@
             "Url": "https://www.dr.dk/nyheder/service/feeds/senestenyt",
             "Category": "General",
             "Language": "da",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },

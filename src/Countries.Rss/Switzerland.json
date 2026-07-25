@@ -14,7 +14,7 @@
             "Url": "https://www.nzz.ch/recent.rss",
             "Category": "General",
             "Language": "de",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       }

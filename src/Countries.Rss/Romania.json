@@ -14,7 +14,7 @@
             "Url": "https://www.digi24.ro/rss",
             "Category": "General",
             "Language": "ro",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -29,7 +29,7 @@
             "Url": "https://hotnews.ro/rss",
             "Category": "General",
             "Language": "ro",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },

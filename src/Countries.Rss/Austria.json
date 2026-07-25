@@ -14,7 +14,7 @@
             "Url": "https://rss.orf.at/news.xml",
             "Category": "General",
             "Language": "de",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -29,7 +29,7 @@
             "Url": "https://www.derstandard.at/rss",
             "Category": "General",
             "Language": "de",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -44,7 +44,7 @@
             "Url": "https://kurier.at/xml/rss",
             "Category": "General",
             "Language": "de",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -59,7 +59,7 @@
             "Url": "https://www.diepresse.com/rss",
             "Category": "General",
             "Language": "de",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       }

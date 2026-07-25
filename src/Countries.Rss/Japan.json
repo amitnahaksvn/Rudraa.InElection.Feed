@@ -102,7 +102,7 @@
             "Url": "https://www.asahi.com/rss/asahi/newsheadlines.rdf",
             "Category": "General",
             "Language": "ja",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },

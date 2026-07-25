@@ -14,7 +14,7 @@
             "Url": "https://feeds.folha.uol.com.br/emcimadahora/rss091.xml",
             "Category": "General",
             "Language": "pt",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },

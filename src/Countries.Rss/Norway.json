@@ -14,7 +14,7 @@
             "Url": "https://www.nrk.no/toppsaker.rss",
             "Category": "General",
             "Language": "no",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -29,7 +29,7 @@
             "Url": "https://www.aftenposten.no/rss",
             "Category": "General",
             "Language": "no",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -44,7 +44,7 @@
             "Url": "https://e24.no/rss",
             "Category": "Business",
             "Language": "no",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },

@@ -64,28 +64,28 @@
             "Url": "https://www.spiegel.de/politik/index.rss",
             "Category": "General",
             "Language": "de",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "Business",
             "Url": "https://www.spiegel.de/wirtschaft/index.rss",
             "Category": "Business",
             "Language": "de",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "Technology",
             "Url": "https://www.spiegel.de/netzwelt/index.rss",
             "Category": "Technology",
             "Language": "de",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "Science",
             "Url": "https://www.spiegel.de/wissenschaft/index.rss",
             "Category": "Science",
             "Language": "de",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -100,21 +100,21 @@
             "Url": "https://www.faz.net/rss/aktuell/",
             "Category": "General",
             "Language": "de",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "Politics",
             "Url": "https://www.faz.net/rss/aktuell/politik/",
             "Category": "Politics",
             "Language": "de",
-            "Enabled": true
+            "Enabled": false
           },
           {
             "Name": "Business",
             "Url": "https://www.faz.net/rss/aktuell/wirtschaft/",
             "Category": "Business",
             "Language": "de",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -129,7 +129,7 @@
             "Url": "https://www.tagesschau.de/xml/rss2",
             "Category": "General",
             "Language": "de",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -144,7 +144,7 @@
             "Url": "https://www.zdf.de/rss/zdf/nachrichten",
             "Category": "General",
             "Language": "de",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       }

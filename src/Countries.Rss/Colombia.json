@@ -14,7 +14,7 @@
             "Url": "https://www.elespectador.com/arc/outboundfeeds/discover/?outputType=xml",
             "Category": "General",
             "Language": "es",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -29,7 +29,7 @@
             "Url": "https://www.semana.com/arc/outboundfeeds/rss/",
             "Category": "General",
             "Language": "es",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -44,7 +44,7 @@
             "Url": "https://www.larepublica.co/rss",
             "Category": "Business",
             "Language": "es",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       }

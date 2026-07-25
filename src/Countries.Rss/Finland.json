@@ -29,7 +29,7 @@
             "Url": "https://www.hs.fi/rss/tuoreimmat.xml",
             "Category": "General",
             "Language": "fi",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -44,7 +44,7 @@
             "Url": "https://www.is.fi/rss/tuoreimmat.xml",
             "Category": "General",
             "Language": "fi",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       }

@@ -14,7 +14,7 @@
             "Url": "https://www.tsa-algerie.com/feed/",
             "Category": "General",
             "Language": "fr",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       },
@@ -29,7 +29,7 @@
             "Url": "https://elwatan-dz.com/feed",
             "Category": "General",
             "Language": "fr",
-            "Enabled": true
+            "Enabled": false
           }
         ]
       }
