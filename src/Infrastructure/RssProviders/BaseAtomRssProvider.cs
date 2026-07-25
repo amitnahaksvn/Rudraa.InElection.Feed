@@ -103,6 +103,14 @@ public abstract class BaseAtomRssProvider : IRssProvider
                 FeedUrl = feed.Url,
                 Success = false,
                 Error = ex.Message,
+                // Previously omitted here (unlike BaseRssProvider.FetchFeedAsync's own catch),
+                // so every Atom-provider failure recorded an ErrorLog with ExceptionType falling
+                // back to the generic "Unknown" and no stack trace at all - confirmed against a
+                // real NationalHerald failure, making it harder to diagnose than every RSS 2.0
+                // provider's own failures right next to it in the same error list.
+                ExceptionType = ex.GetType().FullName ?? ex.GetType().Name,
+                StackTrace = ex.StackTrace,
+                InnerException = ex.InnerException is { } inner ? $"{inner.GetType().FullName}: {inner.Message}" : null,
                 FetchedAt = fetchedAt,
                 HttpStatusCode = httpStatusCode,
                 RawXml = rawXml,

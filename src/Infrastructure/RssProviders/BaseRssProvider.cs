@@ -230,7 +230,15 @@ public abstract partial class BaseRssProvider : IRssProvider
             var match = OgImageRegex().Match(html);
             return match.Success ? match.Groups["url"].Value : null;
         }
-        catch (Exception ex) when (ex is not OperationCanceledException)
+        // Same "only let a real caller-requested cancellation through uncaught" test as
+        // FetchFeedAsync's own catch just above in the call chain - `ex is not
+        // OperationCanceledException` looked equivalent but isn't: HttpClient.Timeout firing on
+        // *this* request throws a TaskCanceledException too (a subtype of OperationCanceledException),
+        // indistinguishable by type alone from our own cancellationToken firing. That let a single
+        // slow article page's og:image lookup escape this catch entirely and fail the whole feed's
+        // fetch (every other article in it included), rather than just leaving that one article
+        // without an image - confirmed exactly this way in production against a real feed.
+        catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
         {
             logger.LogDebug(ex, "og:image fallback lookup failed for {Url}", articleUrl);
             return null;
