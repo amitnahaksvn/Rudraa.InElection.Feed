@@ -6,9 +6,9 @@ import CardContent from '@mui/material/CardContent';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import type { CrawlPipelineName } from '../../api/crawlTypes';
 import { useCrawlReport } from './useCrawlReport';
 import { DateRangeControl, type DateRangePreset } from './DateRangeControl';
+import { ProviderFilterControl } from './ProviderFilterControl';
 import { defaultCustomRange, resolveDateRange } from './dateRange';
 import { StatTile } from './StatTile';
 import { DailyStackedChart } from './charts/DailyStackedChart';
@@ -16,15 +16,16 @@ import { ProviderBreakdownTable } from './ProviderBreakdownTable';
 import { RecentRunsTable } from './RecentRunsTable';
 import { useChartColors } from './useChartColorMode';
 
-export function CrawlPipelineReport({ pipeline }: { pipeline: CrawlPipelineName }) {
+export function CrawlPipelineReport({ pipeline }: { pipeline: 'Rss' | 'Api' }) {
   const [preset, setPreset] = useState<DateRangePreset>('7');
   const initialCustom = useMemo(defaultCustomRange, []);
   const [customFrom, setCustomFrom] = useState(initialCustom.from);
   const [customTo, setCustomTo] = useState(initialCustom.to);
+  const [selectedProviders, setSelectedProviders] = useState<string[]>([]);
 
   const { from, to } = useMemo(() => resolveDateRange(preset, customFrom, customTo), [preset, customFrom, customTo]);
 
-  const { data: report, isLoading, isError, isFetching } = useCrawlReport(pipeline, from, to);
+  const { data: report, isLoading, isError, isFetching } = useCrawlReport(pipeline, from, to, selectedProviders);
   const colors = useChartColors();
 
   const dates = report?.timeSeries.map((p) => p.date) ?? [];
@@ -39,6 +40,8 @@ export function CrawlPipelineReport({ pipeline }: { pipeline: CrawlPipelineName 
         onCustomFromChange={setCustomFrom}
         onCustomToChange={setCustomTo}
       />
+
+      <ProviderFilterControl pipeline={pipeline} selected={selectedProviders} onChange={setSelectedProviders} />
 
       {isLoading && (
         <Stack alignItems="center" sx={{ py: 6 }}>
@@ -114,7 +117,7 @@ export function CrawlPipelineReport({ pipeline }: { pipeline: CrawlPipelineName 
                 <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 1 }}>
                   Recent runs
                 </Typography>
-                <RecentRunsTable pipeline={pipeline} from={from} to={to} />
+                <RecentRunsTable pipeline={pipeline} from={from} to={to} providers={selectedProviders} />
               </CardContent>
             </Card>
           </Stack>

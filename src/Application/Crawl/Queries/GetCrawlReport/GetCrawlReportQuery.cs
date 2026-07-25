@@ -7,8 +7,18 @@ using Domain.Enums;
 
 namespace Application.Crawl.Queries.GetCrawlReport;
 
-/// <summary>Backs the crawl-report page's RSS/API tabs. <paramref name="From"/>/<paramref name="To"/> default to the trailing 7 days when omitted, so the page always has something to show the first time it's opened.</summary>
-public sealed record GetCrawlReportQuery(CrawlPipeline Pipeline, DateTimeOffset? From, DateTimeOffset? To) : IRequest<CrawlReportDto>;
+/// <summary>
+/// Backs the crawl-report page's RSS/API tabs. <paramref name="From"/>/<paramref name="To"/> default
+/// to the trailing 7 days when omitted, so the page always has something to show the first time
+/// it's opened. <paramref name="Providers"/> is the page's multi-provider filter (by bare provider
+/// name, so a provider scheduled under more than one country is selected as a whole): when null or
+/// empty, behaviour is unchanged from before this filter existed - every enabled provider under an
+/// enabled country. When non-empty, it takes over provider selection entirely and lists exactly the
+/// requested providers regardless of their own or their country's Enabled flag - this is
+/// deliberate, since it's the only way for the page to surface a disabled provider's history when
+/// the caller explicitly asks for it.
+/// </summary>
+public sealed record GetCrawlReportQuery(CrawlPipeline Pipeline, DateTimeOffset? From, DateTimeOffset? To, IReadOnlyList<string>? Providers = null) : IRequest<CrawlReportDto>;
 
 public sealed class GetCrawlReportQueryHandler : IRequestHandler<GetCrawlReportQuery, CrawlReportDto>
 {
@@ -42,8 +52,14 @@ public sealed class GetCrawlReportQueryHandler : IRequestHandler<GetCrawlReportQ
         var to = request.To ?? DateTimeOffset.UtcNow;
         var from = request.From ?? to.AddDays(-7);
 
+        // Non-null only when the caller made an explicit selection - see this query's own doc
+        // comment for why an explicit selection also overrides the enabled-only default below.
+        var selectedProviders = request.Providers is { Count: > 0 }
+            ? new HashSet<string>(request.Providers, StringComparer.OrdinalIgnoreCase)
+            : null;
+
         var runs = await _history.GetFilteredAsync(
-            new CrawlHistoryFilter(request.Pipeline, Provider: null, from, to, Skip: 0, Take: MaxRunsConsidered),
+            new CrawlHistoryFilter(request.Pipeline, Provider: null, from, to, Skip: 0, Take: MaxRunsConsidered, Providers: request.Providers),
             cancellationToken);
 
         // "New" articles are sourced from ArticleFingerprints' own CrawledAt (a real count of
@@ -54,6 +70,10 @@ public sealed class GetCrawlReportQueryHandler : IRequestHandler<GetCrawlReportQ
         var sourceType = request.Pipeline == CrawlPipeline.Api ? ArticleSourceType.Api : ArticleSourceType.Rss;
 
         var newCounts = await _fingerprints.GetDailyProviderCountsAsync(sourceType, from, to, cancellationToken);
+        if (selectedProviders is not null)
+        {
+            newCounts = newCounts.Where(c => selectedProviders.Contains(c.Provider)).ToList();
+        }
         var newArticlesByDay = newCounts.GroupBy(c => c.Date).ToDictionary(g => g.Key, g => g.Sum(c => c.Count));
         var newArticlesByProvider = newCounts
             .GroupBy(c => c.Provider, StringComparer.OrdinalIgnoreCase)
@@ -73,7 +93,9 @@ public sealed class GetCrawlReportQueryHandler : IRequestHandler<GetCrawlReportQ
             countries.Where(c => c.Enabled).Select(c => c.Name), StringComparer.OrdinalIgnoreCase);
         var schedules = await _scheduleRepository.GetAllAsync(request.Pipeline, cancellationToken);
         var configured = schedules
-            .Where(s => s.Enabled && enabledCountryNames.Contains(s.Country))
+            .Where(s => selectedProviders is not null
+                ? selectedProviders.Contains(s.Provider)
+                : s.Enabled && enabledCountryNames.Contains(s.Country))
             .Select(s => (Country: s.Country, Provider: s.Provider))
             .ToList();
 

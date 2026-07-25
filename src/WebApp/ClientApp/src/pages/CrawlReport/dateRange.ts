@@ -25,3 +25,23 @@ export function resolveDateRange(preset: DateRangePreset, customFrom: string, cu
   from.setUTCHours(0, 0, 0, 0);
   return { from: from.toISOString(), to: to.toISOString() };
 }
+
+/**
+ * Every ISO "YYYY-MM-DD" UTC day from `from` to `to` inclusive - mirrors
+ * GetArticleVolumeReportQuery's own day-range loop. Needed when the backend response is sparse
+ * (only real (day, provider) counts, no explicit zero rows) but the chart still needs the full,
+ * contiguous day axis to plot against.
+ */
+export function enumerateDates(from: string, to: string): string[] {
+  const start = new Date(from);
+  const end = new Date(to);
+  const cursor = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate()));
+  const endDay = new Date(Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate()));
+
+  const dates: string[] = [];
+  while (cursor <= endDay) {
+    dates.push(cursor.toISOString().slice(0, 10));
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+  return dates;
+}

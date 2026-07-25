@@ -45,6 +45,11 @@ public sealed class CrawlHistoryRepository : ICrawlHistoryRepository
             clauses.Add(builder.AnyEq(h => h.Providers, filter.Provider));
         }
 
+        if (filter.Providers is { Count: > 0 })
+        {
+            clauses.Add(builder.AnyIn(h => h.Providers, filter.Providers));
+        }
+
         if (filter.From is { } from)
         {
             clauses.Add(builder.Gte(h => h.StartTime, from));

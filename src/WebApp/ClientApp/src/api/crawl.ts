@@ -1,4 +1,4 @@
-import type { CrawlHistoryRun, CrawlPipelineName, CrawlReport } from './crawlTypes';
+import type { ArticleVolumeReport, CrawlHistoryRun, CrawlPipelineName, CrawlReport } from './crawlTypes';
 import { throwIfNotOk } from './httpUtils';
 
 export interface CrawlHistoryQuery {
@@ -8,10 +8,17 @@ export interface CrawlHistoryQuery {
   count?: number;
   skip?: number;
   provider?: string;
+  providers?: string[];
 }
 
-export async function fetchCrawlReport(pipeline: CrawlPipelineName, from: string, to: string): Promise<CrawlReport> {
+export async function fetchCrawlReport(
+  pipeline: CrawlPipelineName,
+  from: string,
+  to: string,
+  providers: string[] = [],
+): Promise<CrawlReport> {
   const params = new URLSearchParams({ pipeline, from, to });
+  providers.forEach((p) => params.append('providers', p));
   const response = await fetch(`/api/crawl/report?${params}`);
   await throwIfNotOk(response);
   return response.json();
@@ -28,6 +35,7 @@ export async function fetchCrawlHistory(query: CrawlHistoryQuery): Promise<Crawl
   if (query.provider) {
     params.set('provider', query.provider);
   }
+  query.providers?.forEach((p) => params.append('providers', p));
   const response = await fetch(`/api/crawl/history?${params}`);
   await throwIfNotOk(response);
   return response.json();
@@ -35,6 +43,19 @@ export async function fetchCrawlHistory(query: CrawlHistoryQuery): Promise<Crawl
 
 export async function fetchCrawlRunById(id: string): Promise<CrawlHistoryRun> {
   const response = await fetch(`/api/crawl/history/${encodeURIComponent(id)}`);
+  await throwIfNotOk(response);
+  return response.json();
+}
+
+export async function fetchArticleVolumeReport(
+  pipeline: CrawlPipelineName,
+  from: string,
+  to: string,
+  providers: string[] = [],
+): Promise<ArticleVolumeReport> {
+  const params = new URLSearchParams({ pipeline, from, to });
+  providers.forEach((p) => params.append('providers', p));
+  const response = await fetch(`/api/crawl/article-volume?${params}`);
   await throwIfNotOk(response);
   return response.json();
 }

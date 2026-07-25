@@ -66,3 +66,26 @@ export interface CrawlHistoryRun {
   status: string;
   error: string | null;
 }
+
+// Sparse - a (day, provider) combination with zero articles simply has no entry, rather than an
+// explicit zero-count row. Zero-fill against a known date range when charting (see
+// pages/CrawlReport/dateRange.ts's enumerateDates).
+export interface ArticleVolumeProviderDailyPoint {
+  date: string; // "2026-07-01"
+  provider: string;
+  count: number;
+}
+
+export interface ArticleVolumeProviderRow {
+  provider: string;
+  count: number;
+}
+
+export interface ArticleVolumeReport {
+  pipeline: CrawlPipelineName;
+  from: string;
+  to: string;
+  totalArticles: number;
+  providerTimeSeries: ArticleVolumeProviderDailyPoint[];
+  providers: ArticleVolumeProviderRow[];
+}

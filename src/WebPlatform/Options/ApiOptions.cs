@@ -49,4 +49,14 @@ public sealed class ApiOptions
     /// casually.
     /// </summary>
     public bool EnableCrawlReportDashboard { get; set; }
+
+    /// <summary>
+    /// The Article Volume page (/article-volume) reads via the authenticated-nothing
+    /// api/crawl/article-volume endpoint - same "no built-in auth, off by default" trade-off as
+    /// <see cref="EnableCrawlReportDashboard"/>. Read-only, no test/trigger action, so the same
+    /// low-risk profile as that one; off by default for consistency with every other admin
+    /// dashboard in this app; enabling it on a public deployment is a deliberate choice, not a
+    /// default to flip on casually.
+    /// </summary>
+    public bool EnableArticleVolumeDashboard { get; set; }
 }

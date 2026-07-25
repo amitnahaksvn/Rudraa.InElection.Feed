@@ -5,6 +5,7 @@ using Application.Crawl.Queries.GetCrawlHistory;
 using Application.Crawl.Queries.GetCrawlHistoryById;
 using Application.Crawl.Queries.GetCrawlJobStatus;
 using Application.Crawl.Queries.GetCrawlReport;
+using Application.Crawl.Queries.GetArticleVolumeReport;
 using Domain.Enums;
 using WebPlatform.Infrastructure;
 
@@ -28,6 +29,7 @@ public sealed class Crawl : IEndpointGroup
         group.MapGet("history", GetHistory);
         group.MapGet("history/{id}", GetHistoryById);
         group.MapGet("report", GetReport);
+        group.MapGet("article-volume", GetArticleVolumeReport);
     }
 
     [EndpointSummary("Get a provider-country's recurring job status")]
@@ -49,16 +51,17 @@ public sealed class Crawl : IEndpointGroup
     [EndpointSummary("Crawl run history")]
     [EndpointDescription(
         "Most recent crawl run records, newest first. Every filter beyond 'count' is optional: " +
-        "'pipeline' (Rss/Api/Social), 'provider' (an exact provider name), 'from'/'to' (an " +
-        "inclusive UTC date range), and 'skip' (page offset) narrow it down to one " +
+        "'pipeline' (Rss/Api/Social), 'provider' (an exact provider name), 'providers' (repeatable - " +
+        "matches a run if ANY of its own providers is in this set, additive to 'provider'), " +
+        "'from'/'to' (an inclusive UTC date range), and 'skip' (page offset) narrow it down to one " +
         "pipeline/provider/window/page - e.g. the crawl-report page's recent-runs table for " +
-        "whichever tab, date range, and page is selected.")]
+        "whichever tab, date range, provider selection, and page is selected.")]
     public static async Task<Ok<IReadOnlyList<CrawlHistoryDto>>> GetHistory(
-        ISender sender, int count, CrawlPipeline? pipeline, string? provider, DateTimeOffset? from, DateTimeOffset? to, int? skip,
+        ISender sender, int count, CrawlPipeline? pipeline, string? provider, string[]? providers, DateTimeOffset? from, DateTimeOffset? to, int? skip,
         CancellationToken cancellationToken)
     {
         var result = await sender.Send(
-            new GetCrawlHistoryQuery(count <= 0 ? 20 : count, pipeline, provider, from, to, Math.Max(0, skip ?? 0)), cancellationToken);
+            new GetCrawlHistoryQuery(count <= 0 ? 20 : count, pipeline, provider, from, to, Math.Max(0, skip ?? 0), providers), cancellationToken);
         return TypedResults.Ok(result);
     }
 
@@ -76,11 +79,30 @@ public sealed class Crawl : IEndpointGroup
         "Headline stats, a daily time series, and a per-provider breakdown (schedule, next/last " +
         "run, success rate, articles saved/skipped) for either the RSS or API pipeline over a date " +
         "range - backs the crawl-report page's two tabs. 'from'/'to' default to the trailing 7 days " +
-        "when omitted and the range cannot exceed 365 days.")]
+        "when omitted and the range cannot exceed 365 days. 'providers' (repeatable, exact provider " +
+        "names) optionally narrows the whole report to just those providers; when given, it also " +
+        "surfaces a provider regardless of its own or its country's Enabled flag, so this is the " +
+        "one way to include an otherwise-hidden disabled provider in the report.")]
     public static async Task<Ok<CrawlReportDto>> GetReport(
-        ISender sender, CrawlPipeline pipeline, DateTimeOffset? from, DateTimeOffset? to, CancellationToken cancellationToken)
+        ISender sender, CrawlPipeline pipeline, DateTimeOffset? from, DateTimeOffset? to, string[]? providers, CancellationToken cancellationToken)
     {
-        var result = await sender.Send(new GetCrawlReportQuery(pipeline, from, to), cancellationToken);
+        var result = await sender.Send(new GetCrawlReportQuery(pipeline, from, to, providers), cancellationToken);
+        return TypedResults.Ok(result);
+    }
+
+    [EndpointSummary("Article volume report for one pipeline")]
+    [EndpointDescription(
+        "How many articles were actually ingested per provider over a date range, straight from " +
+        "the ArticleFingerprints collection - a real per-provider count, not a schedule/success-rate " +
+        "view. Backs the article-volume report page. 'from'/'to' default to the trailing 7 days " +
+        "when omitted and the range cannot exceed 365 days. 'providers' (repeatable, exact provider " +
+        "names) optionally narrows the report to just those providers, surfacing a provider " +
+        "regardless of its own or its country's Enabled flag when explicitly selected - the one way " +
+        "to see a disabled provider's past volume.")]
+    public static async Task<Ok<ArticleVolumeReportDto>> GetArticleVolumeReport(
+        ISender sender, CrawlPipeline pipeline, DateTimeOffset? from, DateTimeOffset? to, string[]? providers, CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(new GetArticleVolumeReportQuery(pipeline, from, to, providers), cancellationToken);
         return TypedResults.Ok(result);
     }
 }

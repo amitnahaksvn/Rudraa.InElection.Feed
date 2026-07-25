@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -21,13 +21,28 @@ import { RunDetailDialog } from './RunDetailDialog';
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50];
 
-export function RecentRunsTable({ pipeline, from, to }: { pipeline: CrawlPipelineName; from: string; to: string }) {
+export function RecentRunsTable({
+  pipeline,
+  from,
+  to,
+  providers = [],
+}: {
+  pipeline: CrawlPipelineName;
+  from: string;
+  to: string;
+  providers?: string[];
+}) {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(25);
   const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
 
-  const { data, isLoading, isFetching } = useCrawlHistory(pipeline, from, to, page, pageSize);
+  const { data, isLoading, isFetching } = useCrawlHistory(pipeline, from, to, page, pageSize, providers);
   const runs: CrawlHistoryRun[] = data ?? [];
+
+  // A provider selection change can easily land the current page past the new, narrower result
+  // set - reset back to the first page rather than showing a confusing "no runs" for a page that
+  // simply no longer exists.
+  useEffect(() => setPage(0), [pipeline, JSON.stringify(providers)]);
 
   return (
     <Box sx={{ position: 'relative' }}>

@@ -27,7 +27,11 @@ export function CrawlReportPage() {
         <Tab label="APIs" value="Api" />
       </Tabs>
 
-      {tab === 'Rss' ? <CrawlPipelineReport pipeline="Rss" /> : <CrawlPipelineReport pipeline="Api" />}
+      {/* key={tab} forces a full remount on tab switch, since CrawlPipelineReport's provider
+          filter selection is pipeline-specific - without it, React reuses the same component
+          instance across the ternary (same type, same position) and an RSS provider selection
+          would silently carry over into the API tab's (unrelated) provider list. */}
+      {tab === 'Rss' ? <CrawlPipelineReport key="Rss" pipeline="Rss" /> : <CrawlPipelineReport key="Api" pipeline="Api" />}
     </Box>
   );
 }

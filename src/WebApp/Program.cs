@@ -247,4 +247,14 @@ if (builder.Configuration.GetValue($"{ApiOptions.SectionName}:EnableCrawlReportD
     app.MapFallbackToFile("/reports/{**slug}", "index.html", indexHtmlCacheOptions);
 }
 
+if (builder.Configuration.GetValue($"{ApiOptions.SectionName}:EnableArticleVolumeDashboard", false))
+{
+    // Same "no built-in auth, off by default" trade-off as EnableCrawlReportDashboard above - see
+    // ApiOptions.EnableArticleVolumeDashboard's own doc comment. The underlying
+    // api/crawl/article-volume JSON endpoint stays mapped regardless (same always-on trust model
+    // as every other endpoint in this app); only the SPA page itself is gated here.
+    app.MapFallbackToFile("/article-volume", "index.html", indexHtmlCacheOptions);
+    app.MapFallbackToFile("/article-volume/{**slug}", "index.html", indexHtmlCacheOptions);
+}
+
 app.Run();

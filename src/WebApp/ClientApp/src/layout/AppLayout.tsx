@@ -15,6 +15,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import HubIcon from '@mui/icons-material/Hub';
 import AssessmentIcon from '@mui/icons-material/Assessment';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import DynamicFeedIcon from '@mui/icons-material/DynamicFeed';
 
 const DRAWER_WIDTH = 240;
@@ -26,6 +27,7 @@ const NAV_ITEMS = [
   { label: 'Error Monitor', path: '/errors', icon: <ErrorOutlineIcon /> },
   { label: 'Provider Management', path: '/providers', icon: <HubIcon /> },
   { label: 'Crawl Report', path: '/reports', icon: <AssessmentIcon /> },
+  { label: 'Article Volume', path: '/article-volume', icon: <BarChartIcon /> },
 ];
 
 export function AppLayout({ children }: { children: ReactNode }) {
