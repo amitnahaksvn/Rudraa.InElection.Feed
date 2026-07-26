@@ -119,9 +119,12 @@ public static class Extensions
         // Unlike /health above, /alive only reports the static "self" check registered in
         // AddDefaultHealthChecks (always Healthy, no dependency probing) - there's nothing here for
         // a non-development environment's security concern to apply to, so it's mapped
-        // unconditionally. This is what HangfireKeepAliveExecutor pings to keep a free-tier host
-        // (e.g. Render, which spins down a Web Service after ~15 minutes with no inbound HTTP
-        // traffic) from sleeping - that self-ping is pointless if this route 404s in Production.
+        // unconditionally. A self-ping mechanism used to target this route to keep a free-tier
+        // host (e.g. Render, which spins down a Web Service after ~15 minutes with no inbound HTTP
+        // traffic) from sleeping, but that self-ping has since been removed without a replacement -
+        // see render.yaml's own comment for the current state of that gap. This route still needs
+        // to stay mapped unconditionally regardless, since an external uptime monitor or any other
+        // future keep-alive mechanism would target it the same way.
         app.MapHealthChecks(AlivenessEndpointPath, new HealthCheckOptions
         {
             Predicate = r => r.Tags.Contains("live")

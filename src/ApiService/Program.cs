@@ -19,7 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 // SPA/dashboard. It still needs to be an ASP.NET Core "web" host rather than a plain console app
 // because free-tier hosting (Render, Azure App Service Free) only offers a free plan for
 // HTTP-listening apps, not true background workers - MapDefaultEndpoints() below is what that
-// listener is actually for (health checks + the keep-alive self-ping target), not real traffic.
+// listener is actually for (health checks), not real traffic.
 SplitCountryConfigLoader.InsertBeforeEnvironmentVariables(
     builder.Configuration, AppContext.BaseDirectory,
     new SplitCountryConfigLoader.Pipeline("WebApiFeed.appsettings.json", "Countries.Api", "NewsApiCrawler"));

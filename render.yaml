@@ -13,15 +13,16 @@
 # can never starve the other's small Hangfire WorkerCount; splitting the admin site out into its
 # own process means neither worker needs to carry an SPA/dashboard it doesn't need.
 # All three still fit Render's free tier the same way earlier versions did: Background Workers
-# require a paid plan with no free option, while a free Web Service is available (with the
-# platform's usual spin-down after ~15 minutes of no inbound HTTP traffic, which would otherwise
-# stop each service's in-process Hangfire scheduler - or webapp's own keep-alive loop - from
-# firing on schedule). No external uptime monitor needs to be configured for any of the three -
-# each has its own self-ping (rssservice/apiservice via HangfireKeepAliveExecutor, webapp via
-# KeepAliveBackgroundService), every 5 minutes by default, targeting that same service's own
-# public URL (Render's automatic RENDER_EXTERNAL_URL env var + "/alive"), which round-trips back
-# in through Render's edge as ordinary inbound traffic and resets that service's own inactivity
-# timer.
+# require a paid plan with no free option, while a free Web Service is available - but the
+# platform's usual spin-down after ~15 minutes of no inbound HTTP traffic would stop each
+# service's in-process Hangfire scheduler from firing on schedule. This app previously had a
+# self-ping mechanism for exactly this (rssservice/apiservice via HangfireKeepAliveExecutor,
+# webapp via KeepAliveBackgroundService, each pinging its own /alive every 5 minutes) - both were
+# removed at some point without a replacement, so on Render specifically (unlike Azure App
+# Service's own "Always On" setting), an idle rssservice/apiservice can currently still spin down
+# and silently stop crawling until the next inbound request wakes it - worth an external uptime
+# monitor (or a real "Always On"-equivalent) if this app is actually being run on Render, not just
+# Azure.
 services:
   - type: web
     name: rudraa-inelection-webapp
