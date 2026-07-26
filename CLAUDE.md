@@ -1545,17 +1545,31 @@ blocks youtube.com outright - the first entry in this Mongo-driven pipeline that
 curl/fetch-verified the way almost everything else in this file was; worth re-confirming once
 network access to youtube.com is available.
 
-**ANI (Asian News International, `aninews.in`) was investigated and not wired in - frozen content,
-not a technical block.** Its `/rss-feed/` index page lists 24 category feeds (National, National/
-Politics, World + 5 sub-regions, Business, Sports + 5 sub-sports, Entertainment + 4 sub-genres,
-Tech + 4 sub-topics, Health), every one individually curl-verified as HTTP 200 with well-formed
-RSS 2.0 XML and a real 20-item body - but every single feed's items are frozen: dates embedded in
-each article's own URL (`.../{slug}20241022150636/`, a `YYYYMMDDHHMMSS` suffix) span only
-July-October 2024 across all 10 feeds sampled, over 20 months stale as of this check
-(2026-07-07), including on `National/Politics` specifically (its newest item is an Oct 28, 2024
-Jharkhand-election piece). This is the same "technically 200 and well-formed but dead" trap
-already documented for CNN/Xinhua/China Daily/Forbes'-most-popular-feed elsewhere in this file,
-with one new wrinkle: the channel-level `<lastBuildDate>` header is dynamically regenerated to the
-current request time on every fetch even though the actual `<item>` list behind it never changes -
-so that header alone is not a reliable liveness signal and shouldn't be trusted without checking
-item dates too. Not wired into `NewsCrawler.appsettings.json`.
+**ANI (Asian News International, `aninews.in`) - re-checked and wired in as `AniRssProvider`, but
+every one of its 29 feeds is disabled, since the frozen-content finding below re-confirmed
+unchanged a year later.** Its `/rss-feed/` index page lists 29 category/subcategory feeds under
+`rss/feed/category/{category}[/{subcategory}].xml` (National + Politics/Features/General-News,
+World + 5 sub-regions, Business, Sports + 5 sub-sports, Entertainment + 4 sub-genres, Tech + 4
+sub-topics, Health) - every one individually verified HTTP 200 with well-formed RSS 2.0 XML. Two
+findings from an original 2026-07-07 check (frozen content) and a follow-up 2026-07-26 live
+re-check (same content, still frozen, plus a CDN-block finding the first check missed):
+1. **Every feed's items are still frozen at the same October 2024 content, unchanged across the
+   full ~12 months between checks** - dates embedded in each article's own URL
+   (`.../{slug}20241022150636/`, a `YYYYMMDDHHMMSS` suffix) still span only July-October 2024,
+   including on `National/Politics` specifically. Same "technically 200 and well-formed but dead"
+   trap already documented for CNN/Xinhua/China Daily/Forbes'-most-popular-feed elsewhere in this
+   file - the channel-level `<lastBuildDate>` header is dynamically regenerated to the current
+   request time on every fetch even though the actual `<item>` list never changes, so it is not a
+   reliable liveness signal on its own.
+2. **ANI's CDN returns 403 for this app's crawler-style User-Agent** (only caught on the
+   2026-07-26 re-check, via `curl` with a plain UA) **while serving the same public feeds to a
+   browser UA** - the same WAF signature already documented for News18/OneIndia/DeccanChronicle/
+   PIB, so `AniRssProvider` is registered with `BrowserUserAgent`, not the default
+   `CrawlerUserAgent`.
+
+Given content is confirmed still frozen (not a transient block this time - a full year of zero
+new items), the user's explicit choice was to wire up every feed as a real `CrawlFeed` document
+for future reference (so re-enabling any of them, e.g. `National - Politics`, is a pure config
+flip if ANI ever resumes publishing) while leaving both the `ANI` provider schedule itself and all
+29 individual feeds `Enabled: false` - nothing here will run until someone deliberately flips it
+on.

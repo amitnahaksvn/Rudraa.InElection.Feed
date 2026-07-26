@@ -172,6 +172,10 @@ public static class InfrastructureServiceCollectionExtensions
         AddRssProvider<OpIndiaRssProvider>(services, OpIndiaRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<TfiPostRssProvider>(services, TfiPostRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<OrganiserRssProvider>(services, OrganiserRssProvider.ClientName, CrawlerUserAgent);
+        // ANI's CDN returns 403 for crawler-style UAs while serving the same public feeds to
+        // browsers - same reasoning as News18/OneIndia/DeccanChronicle/PIB. Every feed is wired up
+        // disabled by default - see AniRssProvider's own doc comment for why (frozen content).
+        AddRssProvider<AniRssProvider>(services, AniRssProvider.ClientName, BrowserUserAgent);
 
         // International providers (Feedspot cross-check) - each provider's own doc comment notes
         // its country; NewsCrawler:Providers[...]:Feeds[...]:Country carries that same value
