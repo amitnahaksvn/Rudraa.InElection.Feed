@@ -17,6 +17,16 @@ public sealed record GetNewsCountriesQuery(ArticleSourceType? SourceType) : IReq
 /// in practice - confirmed live: this exact query was hitting Cosmos DB 429 throttling under
 /// ordinary concurrent page-load traffic even after raising NewsArticles' provisioned RU/s, and
 /// re-querying it on every request was the actual root cause, not insufficient throughput alone.
+///
+/// Wrapped in <see cref="Lazy{T}"/> (not a bare <c>GetOrCreateAsync</c> factory) specifically for
+/// single-flight/stampede protection: plain <c>IMemoryCache.GetOrCreateAsync</c> does not lock per
+/// key, so N concurrent requests against a cold cache (confirmed live right after a deploy, or
+/// whenever the 5-minute entry expires under real concurrent traffic) each independently re-run
+/// the expensive query instead of one populating it for the rest - <see cref="Lazy{T}"/>'s default
+/// thread-safety mode guarantees the factory delegate runs exactly once even when multiple callers
+/// request it simultaneously. On failure the cache entry is evicted immediately (rather than
+/// caching a faulted <see cref="Lazy{T}"/> for the rest of the 5-minute window) so a transient
+/// Cosmos throttle doesn't poison every request until expiry.
 /// </summary>
 public sealed class GetNewsCountriesQueryHandler : IRequestHandler<GetNewsCountriesQuery, IReadOnlyList<string>>
 {
@@ -31,13 +41,26 @@ public sealed class GetNewsCountriesQueryHandler : IRequestHandler<GetNewsCountr
         _cache = cache;
     }
 
-    public ValueTask<IReadOnlyList<string>> Handle(GetNewsCountriesQuery request, CancellationToken cancellationToken)
+    public async ValueTask<IReadOnlyList<string>> Handle(GetNewsCountriesQuery request, CancellationToken cancellationToken)
     {
         var cacheKey = $"news-countries:{request.SourceType?.ToString() ?? "all"}";
-        return new ValueTask<IReadOnlyList<string>>(_cache.GetOrCreateAsync(cacheKey, async entry =>
+
+        var lazyResult = _cache.GetOrCreate(cacheKey, entry =>
         {
             entry.AbsoluteExpirationRelativeToNow = CacheDuration;
-            return await _articles.GetDistinctCountriesAsync(request.SourceType, cancellationToken);
-        })!);
+            return new Lazy<Task<IReadOnlyList<string>>>(
+                () => _articles.GetDistinctCountriesAsync(request.SourceType, cancellationToken),
+                LazyThreadSafetyMode.ExecutionAndPublication);
+        })!;
+
+        try
+        {
+            return await lazyResult.Value;
+        }
+        catch
+        {
+            _cache.Remove(cacheKey);
+            throw;
+        }
     }
 }
