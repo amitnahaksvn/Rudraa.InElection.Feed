@@ -137,6 +137,15 @@ public sealed class NewsArticleRepository : INewsArticleRepository
     // direction as the primary sort) breaks ties for the minority of articles with no PublishedAt
     // at all - sorted to whichever end that direction puts nulls - and for same-instant
     // PublishedAt values.
+    /// <summary>
+    /// Sorts on exactly one field (no <c>ThenBy</c> tiebreaker) - Azure Cosmos DB's Mongo API
+    /// rejects a multi-field <c>ORDER BY</c> outright with "the order by query does not have a
+    /// corresponding composite index that it can be served from", confirmed live to be unrelated
+    /// to indexing at all: the identical query against a freshly-created matching compound index
+    /// still failed, while the exact same filter with a single-field sort succeeded immediately.
+    /// A same-<c>PublishedAt</c> tie no longer has a deterministic secondary order as a result -
+    /// an acceptable trade-off against a hard platform limitation, not a design choice.
+    /// </summary>
     public async Task<IReadOnlyList<NewsArticle>> GetFeedAsync(NewsArticleFeedFilter filter, CancellationToken cancellationToken)
     {
         var query = _collection.Find(BuildFeedFilter(filter));
@@ -144,9 +153,7 @@ public sealed class NewsArticleRepository : INewsArticleRepository
 
         var sorted = filter.SortBy == NewsFeedSortBy.CrawledAt
             ? (ascending ? query.SortBy(a => a.CrawledAt) : query.SortByDescending(a => a.CrawledAt))
-            : (ascending
-                ? query.SortBy(a => a.PublishedAt).ThenBy(a => a.CrawledAt)
-                : query.SortByDescending(a => a.PublishedAt).ThenByDescending(a => a.CrawledAt));
+            : (ascending ? query.SortBy(a => a.PublishedAt) : query.SortByDescending(a => a.PublishedAt));
 
         return await sorted.Skip(filter.Skip).Limit(filter.Take).ToListAsync(cancellationToken);
     }
@@ -226,9 +233,86 @@ public sealed class NewsArticleRepository : INewsArticleRepository
                 new CreateIndexOptions { Name = "ix_news_active_sourcetype_country" })
         };
 
+        // Backs GetFeedAsync's own filter/sort combinations - Azure Cosmos DB's Mongo API rejects
+        // an ORDER BY outright ("the order by query does not have a corresponding composite
+        // index") unless a composite index exists whose leading fields exactly match the query's
+        // equality filters followed by the sort field, rather than just running it unindexed like
+        // real MongoDB would. Confirmed live in production: the News Feed page's own default
+        // sortBy=PublishedAt, combined with the SourceType tab filter, failed this way with a 400.
+        // BuildFeedFilter always includes IsActive and independently may add SourceType and/or
+        // Country; GetFeedAsync sorts by either CrawledAt or PublishedAt alone - every reachable
+        // filter-field subset needs its own matching index per sort field. Named with a "_v2"
+        // suffix, not reusing the bare "ix_news_feed_*" names this fix originally shipped under
+        // (see FeedIndexV1Names below): those briefly had a 4-field definition (equality fields +
+        // PublishedAt + a ThenBy(CrawledAt) tiebreaker) before discovering Cosmos doesn't support a
+        // multi-field ORDER BY at all - dropping and immediately recreating an index under the same
+        // name failed live with "an existing index has the same name as the requested index",
+        // because unlike real MongoDB, Cosmos's index drop isn't synchronous with the very next
+        // operation on the same connection - the same reasoning ProviderScheduleRepository already
+        // documents for its own widened index. A new name sidesteps the race entirely.
+        models.AddRange(BuildFeedIndexModels());
+
         await _collection.Indexes.CreateManyAsync(models, cancellationToken);
 
         await DropSupersededSingleFieldIndexesAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// The original, since-corrected names of the four PublishedAt-sort indexes in
+    /// <see cref="BuildFeedIndexModels"/> (now the "..._v2" names) - see that method's own doc
+    /// comment. Folded into <see cref="SupersededIndexNames"/> below for cleanup.
+    /// </summary>
+    private static readonly string[] FeedIndexV1Names =
+    [
+        "ix_news_feed_publishedat", "ix_news_feed_sourcetype_publishedat",
+        "ix_news_feed_country_publishedat", "ix_news_feed_sourcetype_country_publishedat"
+    ];
+
+    // (IsActive) + CrawledAt-only is already covered by ix_news_active_crawledat above, so it's
+    // not repeated here. Every other filter-field-subset x sort-field combination GetFeedAsync can
+    // reach is listed explicitly below - each index has exactly one sort field (see
+    // GetFeedAsync's own doc comment for why: Cosmos DB's Mongo API rejects a multi-field ORDER BY
+    // outright regardless of indexing, confirmed live, so there's no ThenBy tiebreaker to index
+    // for here) - not generated from raw field-name strings (a first draft of this method built
+    // keys from lowercased C# property names, e.g. "isactive"/"crawledat", which silently
+    // mismatches this codebase's camelCase BSON convention, "isActive"/"crawledAt" - Mongo doesn't
+    // validate field names against a schema, so that would have created indexes on fields that
+    // don't exist in any document, providing zero benefit while still costing write RU on every
+    // insert; using the same typed Builders<NewsArticle>.IndexKeys lambdas as every other index in
+    // this file rules that class of bug out entirely).
+    private static IEnumerable<CreateIndexModel<NewsArticle>> BuildFeedIndexModels()
+    {
+        // The four "_publishedat" indexes below are named "..._v2" - see BuildFeedIndexModels's
+        // own doc comment and FeedIndexV1Names for why. The three "_crawledat" indexes never had a
+        // ThenBy tiebreaker to begin with (CrawledAt was always GetFeedAsync's single sort field
+        // for that branch), so their original names/definitions were already correct and are kept
+        // as-is - only the PublishedAt-sort variants needed correcting.
+        yield return new CreateIndexModel<NewsArticle>(
+            Builders<NewsArticle>.IndexKeys.Ascending(a => a.IsActive).Descending(a => a.PublishedAt),
+            new CreateIndexOptions { Name = "ix_news_feed_publishedat_v2" });
+
+        yield return new CreateIndexModel<NewsArticle>(
+            Builders<NewsArticle>.IndexKeys.Ascending(a => a.IsActive).Ascending(a => a.SourceType).Descending(a => a.CrawledAt),
+            new CreateIndexOptions { Name = "ix_news_feed_sourcetype_crawledat" });
+        // The combination that actually broke in production: IsActive+SourceType filter, default
+        // sortBy=PublishedAt.
+        yield return new CreateIndexModel<NewsArticle>(
+            Builders<NewsArticle>.IndexKeys.Ascending(a => a.IsActive).Ascending(a => a.SourceType).Descending(a => a.PublishedAt),
+            new CreateIndexOptions { Name = "ix_news_feed_sourcetype_publishedat_v2" });
+
+        yield return new CreateIndexModel<NewsArticle>(
+            Builders<NewsArticle>.IndexKeys.Ascending(a => a.IsActive).Ascending(a => a.Country).Descending(a => a.CrawledAt),
+            new CreateIndexOptions { Name = "ix_news_feed_country_crawledat" });
+        yield return new CreateIndexModel<NewsArticle>(
+            Builders<NewsArticle>.IndexKeys.Ascending(a => a.IsActive).Ascending(a => a.Country).Descending(a => a.PublishedAt),
+            new CreateIndexOptions { Name = "ix_news_feed_country_publishedat_v2" });
+
+        yield return new CreateIndexModel<NewsArticle>(
+            Builders<NewsArticle>.IndexKeys.Ascending(a => a.IsActive).Ascending(a => a.SourceType).Ascending(a => a.Country).Descending(a => a.CrawledAt),
+            new CreateIndexOptions { Name = "ix_news_feed_sourcetype_country_crawledat" });
+        yield return new CreateIndexModel<NewsArticle>(
+            Builders<NewsArticle>.IndexKeys.Ascending(a => a.IsActive).Ascending(a => a.SourceType).Ascending(a => a.Country).Descending(a => a.PublishedAt),
+            new CreateIndexOptions { Name = "ix_news_feed_sourcetype_country_publishedat_v2" });
     }
 
     // ux_news_url/ux_news_hash/ix_news_hash/ix_news_originalguid are superseded by
@@ -238,7 +322,8 @@ public sealed class NewsArticleRepository : INewsArticleRepository
     private static readonly string[] SupersededIndexNames =
     [
         "ix_news_crawledat", "ix_news_provider", "ix_news_category",
-        "ux_news_url", "ux_news_hash", "ix_news_hash", "ix_news_originalguid"
+        "ux_news_url", "ux_news_hash", "ix_news_hash", "ix_news_originalguid",
+        .. FeedIndexV1Names
     ];
 
     /// <summary>
