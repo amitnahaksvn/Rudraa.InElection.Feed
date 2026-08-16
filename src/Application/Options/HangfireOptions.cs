@@ -39,4 +39,18 @@ public sealed class HangfireOptions
     /// (<c>Environment.ProcessorCount * 5</c>).
     /// </summary>
     public int? WorkerCount { get; set; }
+
+    /// <summary>
+    /// Real MongoDB (not Cosmos DB) connection string backing Hangfire's own job storage -
+    /// deliberately kept separate from <c>CosmosDbOptions.ConnectionString</c>, which every other
+    /// collection in this app (NewsArticles, CrawlHistory, ...) uses. Hangfire.Mongo needs capped
+    /// collections and a backup-then-migrate schema strategy that Azure Cosmos DB's Mongo API
+    /// (RU-based) doesn't support - confirmed live against this app's real Cosmos DB account
+    /// (capped-collection creation and migration-backup both failed outright) - so Hangfire keeps
+    /// running against a real MongoDB instance instead, while everything else moved to Cosmos.
+    /// </summary>
+    public string MongoConnectionString { get; set; } = "mongodb://localhost:27017";
+
+    /// <summary>Database name on <see cref="MongoConnectionString"/>'s server - see its own doc comment.</summary>
+    public string MongoDatabaseName { get; set; } = "PoliticalNewsDb";
 }

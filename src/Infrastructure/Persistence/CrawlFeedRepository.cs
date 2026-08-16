@@ -3,7 +3,7 @@ using MongoDB.Driver;
 using Application.Abstractions;
 using Domain.Entities;
 using Domain.Enums;
-using Infrastructure.Mongo;
+using Infrastructure.Cosmos;
 
 namespace Infrastructure.Persistence;
 
@@ -11,7 +11,7 @@ public sealed class CrawlFeedRepository : ICrawlFeedRepository
 {
     private readonly IMongoCollection<CrawlFeed> _collection;
 
-    public CrawlFeedRepository(MongoDbContext context)
+    public CrawlFeedRepository(CosmosDbContext context)
     {
         _collection = context.CrawlFeeds;
     }

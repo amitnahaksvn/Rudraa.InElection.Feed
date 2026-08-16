@@ -1,8 +1,14 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-// Reads a real connection string named "mongodb" from this AppHost's own configuration
-// (user-secrets/env var), e.g. an existing Atlas cluster - no local Docker container involved.
-var mongoConnectionString = builder.AddConnectionString("mongodb");
+// Reads a real connection string named "cosmosdb" from this AppHost's own configuration
+// (user-secrets/env var), e.g. an existing Azure Cosmos DB for MongoDB account - no local Docker
+// container involved. Every collection except Hangfire's own storage lives here.
+var cosmosConnectionString = builder.AddConnectionString("cosmosdb");
+
+// Hangfire's own job storage stays on a real MongoDB instance instead (see
+// WebPlatform.HangfireStorageSetup's own doc comment for why) - a second, independent connection
+// string resource, not the same one as cosmosConnectionString above.
+var hangfireMongoConnectionString = builder.AddConnectionString("mongodb");
 
 // Pinned (rather than Aspire's usual dynamically-assigned port) so the browser-auto-open below
 // can target a known URL - also matches each project's own launchSettings.json default, so it's
@@ -11,9 +17,9 @@ const int webAppPort = 5095;
 const int rssPort = 5096;
 const int apiPort = 5097;
 
-// Three independent processes, all pointed at the same Mongo (that shared connection string/
-// database is what keeps their data - and Hangfire job storage - unified despite running
-// separately):
+// Three independent processes, all pointed at the same Cosmos DB account and the same Hangfire
+// MongoDB instance (those shared connection strings/databases are what keeps their data - and
+// Hangfire job storage - unified despite running separately):
 //   - WebApp: the one admin site/dashboard/read API. Never executes a crawl job itself, only
 //     enqueues/manages them against the shared Hangfire storage.
 //   - RssService: headless worker, owns RSS + Dynamic-feed job execution.
@@ -23,20 +29,26 @@ const int apiPort = 5097;
 // so a pipeline's job volume can never starve another's, but only one admin site instead of
 // duplicating it per pipeline.
 builder.AddProject<Projects.WebApp>("webapp")
-    .WithReference(mongoConnectionString)
-    .WaitFor(mongoConnectionString)
+    .WithReference(cosmosConnectionString)
+    .WaitFor(cosmosConnectionString)
+    .WithReference(hangfireMongoConnectionString)
+    .WaitFor(hangfireMongoConnectionString)
     .WithHttpEndpoint(port: webAppPort)
     .WithExternalHttpEndpoints();
 
 builder.AddProject<Projects.RssService>("rssservice")
-    .WithReference(mongoConnectionString)
-    .WaitFor(mongoConnectionString)
+    .WithReference(cosmosConnectionString)
+    .WaitFor(cosmosConnectionString)
+    .WithReference(hangfireMongoConnectionString)
+    .WaitFor(hangfireMongoConnectionString)
     .WithHttpEndpoint(port: rssPort)
     .WithExternalHttpEndpoints();
 
 builder.AddProject<Projects.ApiService>("apiservice")
-    .WithReference(mongoConnectionString)
-    .WaitFor(mongoConnectionString)
+    .WithReference(cosmosConnectionString)
+    .WaitFor(cosmosConnectionString)
+    .WithReference(hangfireMongoConnectionString)
+    .WaitFor(hangfireMongoConnectionString)
     .WithHttpEndpoint(port: apiPort)
     .WithExternalHttpEndpoints();
 

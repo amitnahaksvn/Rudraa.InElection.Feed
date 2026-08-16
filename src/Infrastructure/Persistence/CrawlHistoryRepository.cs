@@ -3,7 +3,7 @@ using MongoDB.Driver;
 using Application.Abstractions;
 using Application.Models;
 using Domain.Entities;
-using Infrastructure.Mongo;
+using Infrastructure.Cosmos;
 
 namespace Infrastructure.Persistence;
 
@@ -11,7 +11,7 @@ public sealed class CrawlHistoryRepository : ICrawlHistoryRepository
 {
     private readonly IMongoCollection<CrawlHistory> _collection;
 
-    public CrawlHistoryRepository(MongoDbContext context)
+    public CrawlHistoryRepository(CosmosDbContext context)
     {
         _collection = context.CrawlHistory;
     }

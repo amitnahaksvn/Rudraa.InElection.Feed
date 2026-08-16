@@ -1,7 +1,7 @@
 using MongoDB.Driver;
 using Application.Abstractions;
 using Domain.Entities;
-using Infrastructure.Mongo;
+using Infrastructure.Cosmos;
 
 namespace Infrastructure.Persistence;
 
@@ -9,7 +9,7 @@ public sealed class FeedErrorLogRepository : IFeedErrorLogRepository
 {
     private readonly IMongoCollection<FeedErrorLog> _collection;
 
-    public FeedErrorLogRepository(MongoDbContext context)
+    public FeedErrorLogRepository(CosmosDbContext context)
     {
         _collection = context.FeedErrorLogs;
     }

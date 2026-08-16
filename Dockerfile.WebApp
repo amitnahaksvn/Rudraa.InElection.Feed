@@ -11,7 +11,7 @@ RUN npm run build
 
 # Builds WebApp - the one admin site/read API/Hangfire dashboard. Never executes a crawl job
 # itself; RssService and ApiService (separate images/deployments) do that, all three sharing the
-# same MongoDB database (see CLAUDE.md for why this split exists).
+# same Cosmos DB (Mongo API) database (see CLAUDE.md for why this split exists).
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 

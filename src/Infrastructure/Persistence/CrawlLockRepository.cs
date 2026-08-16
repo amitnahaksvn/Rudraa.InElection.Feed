@@ -2,7 +2,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using Application.Abstractions;
 using Domain.Entities;
-using Infrastructure.Mongo;
+using Infrastructure.Cosmos;
 
 namespace Infrastructure.Persistence;
 
@@ -15,7 +15,7 @@ public sealed class CrawlLockRepository : ICrawlLockRepository
 {
     private readonly IMongoCollection<CrawlLock> _collection;
 
-    public CrawlLockRepository(MongoDbContext context)
+    public CrawlLockRepository(CosmosDbContext context)
     {
         _collection = context.CrawlLocks;
     }

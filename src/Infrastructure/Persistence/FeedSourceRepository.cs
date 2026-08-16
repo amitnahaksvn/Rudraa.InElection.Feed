@@ -1,17 +1,20 @@
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Application.Abstractions;
 using Domain.Entities;
-using Infrastructure.Mongo;
+using Infrastructure.Cosmos;
 
 namespace Infrastructure.Persistence;
 
 public sealed class FeedSourceRepository : IFeedSourceRepository
 {
     private readonly IMongoCollection<FeedSource> _collection;
+    private readonly ILogger<FeedSourceRepository> _logger;
 
-    public FeedSourceRepository(MongoDbContext context)
+    public FeedSourceRepository(CosmosDbContext context, ILogger<FeedSourceRepository> logger)
     {
         _collection = context.FeedSources;
+        _logger = logger;
     }
 
     public async Task<IReadOnlyList<FeedSource>> GetActiveAsync(CancellationToken cancellationToken) =>
@@ -39,10 +42,19 @@ public sealed class FeedSourceRepository : IFeedSourceRepository
 
     public async Task EnsureIndexesAsync(CancellationToken cancellationToken)
     {
+        // The unique index is created separately via CosmosIndexHelpers (see its own doc
+        // comment) - Cosmos DB's Mongo API rejects createIndexes entirely (not just the offending
+        // model) when any index in the same batch is unique against a non-empty collection, so it
+        // can't share a CreateManyAsync call with the plain indexes below.
+        await CosmosIndexHelpers.TryCreateUniqueIndexAsync(
+            _collection.Indexes,
+            new CreateIndexModel<FeedSource>(
+                Builders<FeedSource>.IndexKeys.Ascending(f => f.SourceCode),
+                new CreateIndexOptions { Name = "ux_feedsource_sourcecode", Unique = true }),
+            _logger, cancellationToken);
+
         var models = new List<CreateIndexModel<FeedSource>>
         {
-            new(Builders<FeedSource>.IndexKeys.Ascending(f => f.SourceCode),
-                new CreateIndexOptions { Name = "ux_feedsource_sourcecode", Unique = true }),
             new(Builders<FeedSource>.IndexKeys.Ascending(f => f.IsActive),
                 new CreateIndexOptions { Name = "ix_feedsource_isactive" }),
             new(Builders<FeedSource>.IndexKeys.Descending(f => f.Priority),

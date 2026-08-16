@@ -6,9 +6,10 @@
 #     only enqueues/manages jobs against the shared Hangfire storage.
 #   - rssservice: headless worker, owns RSS + Dynamic-feed job execution.
 #   - apiservice: headless worker, owns JSON-API + Social job execution.
-# All three point at the same MongoDB database via each service's own MongoDb:ConnectionString/
-# DatabaseName (see each project's own appsettings.json - not declared as env vars here, same
-# "baked into the committed file" convention already used for earlier versions of this app).
+# All three point at the same Cosmos DB (Mongo API) database via each service's own
+# CosmosDb:ConnectionString/DatabaseName (see each project's own appsettings.json - not declared as
+# env vars here, same "baked into the committed file" convention already used for earlier versions
+# of this app).
 # Splitting job execution across two workers means one pipeline's job volume (260+ RSS providers)
 # can never starve the other's small Hangfire WorkerCount; splitting the admin site out into its
 # own process means neither worker needs to carry an SPA/dashboard it doesn't need.

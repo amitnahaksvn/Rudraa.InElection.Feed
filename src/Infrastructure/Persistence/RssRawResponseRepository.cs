@@ -2,7 +2,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using Application.Abstractions;
 using Domain.Entities;
-using Infrastructure.Mongo;
+using Infrastructure.Cosmos;
 
 namespace Infrastructure.Persistence;
 
@@ -10,7 +10,7 @@ public sealed class RssRawResponseRepository : IRssRawResponseRepository
 {
     private readonly IMongoCollection<RssRawResponse> _collection;
 
-    public RssRawResponseRepository(MongoDbContext context)
+    public RssRawResponseRepository(CosmosDbContext context)
     {
         _collection = context.RssRawResponses;
     }

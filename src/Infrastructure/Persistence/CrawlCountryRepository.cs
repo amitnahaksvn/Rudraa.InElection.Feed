@@ -1,19 +1,22 @@
+using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Application.Abstractions;
 using Domain.Entities;
 using Domain.Enums;
-using Infrastructure.Mongo;
+using Infrastructure.Cosmos;
 
 namespace Infrastructure.Persistence;
 
 public sealed class CrawlCountryRepository : ICrawlCountryRepository
 {
     private readonly IMongoCollection<CrawlCountry> _collection;
+    private readonly ILogger<CrawlCountryRepository> _logger;
 
-    public CrawlCountryRepository(MongoDbContext context)
+    public CrawlCountryRepository(CosmosDbContext context, ILogger<CrawlCountryRepository> logger)
     {
         _collection = context.CrawlCountries;
+        _logger = logger;
     }
 
     public async Task<IReadOnlyList<CrawlCountry>> GetAllAsync(CrawlPipeline pipeline, CancellationToken cancellationToken) =>
@@ -61,6 +64,6 @@ public sealed class CrawlCountryRepository : ICrawlCountryRepository
             Builders<CrawlCountry>.IndexKeys.Ascending(c => c.Pipeline).Ascending(c => c.Name),
             new CreateIndexOptions { Name = "ux_crawlcountry_pipeline_name", Unique = true });
 
-        await _collection.Indexes.CreateOneAsync(model, cancellationToken: cancellationToken);
+        await CosmosIndexHelpers.TryCreateUniqueIndexAsync(_collection.Indexes, model, _logger, cancellationToken);
     }
 }

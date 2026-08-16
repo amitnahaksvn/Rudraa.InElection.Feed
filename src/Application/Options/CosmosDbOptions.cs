@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations;
 namespace Application.Options;
 
 /// <summary>
-/// Root configuration section ("MongoDb") controlling the database connection and collection names.
+/// Root configuration section ("CosmosDb") controlling the database connection and collection names.
 /// </summary>
-public sealed class MongoDbOptions
+public sealed class CosmosDbOptions
 {
-    public const string SectionName = "MongoDb";
+    public const string SectionName = "CosmosDb";
 
     [Required]
     public string ConnectionString { get; set; } = "mongodb://localhost:27017";

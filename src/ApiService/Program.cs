@@ -6,8 +6,8 @@ using Infrastructure.DependencyInjection;
 using Infrastructure.Scheduling;
 using WebPlatform;
 
-// `dotnet run --project src/ApiService -- --init-db` creates every MongoDB collection/index (see
-// MongoIndexInitializerHostedService) and exits - a repeatable, idempotent database setup script
+// `dotnet run --project src/ApiService -- --init-db` creates every Cosmos DB (Mongo API) collection/index
+// (see CosmosIndexInitializerHostedService) and exits - a repeatable, idempotent database setup script
 // with no Kestrel/HTTP surface started. Safe to run from any of the three processes (WebApp,
 // RssService, ApiService) - all point at the same database and this is purely idempotent index
 // creation.
@@ -26,7 +26,7 @@ SplitCountryConfigLoader.InsertBeforeEnvironmentVariables(
 
 // Render's "Secret Files" feature mounts an uploaded file at /etc/secrets/<filename> for
 // Docker-based services (render.com/docs/configure-environment-variables) - this lets the same
-// nested JSON shape already used here for MongoDb/NewsApiKeys secrets keep working as-is in
+// nested JSON shape already used here for CosmosDb/NewsApiKeys secrets keep working as-is in
 // production, instead of converting every key into an individual env var. Optional and appended
 // normally (highest priority in the config chain, unlike the config above) so it's a no-op
 // wherever the file doesn't exist (local dev, tests, Azure).
@@ -43,14 +43,17 @@ builder.Services.AddInfrastructure(builder.Configuration);
 // invoked here, since this process maps no ErrorLogs endpoints at all.
 builder.Services.AddSingleton<IErrorLogNotifier, NullErrorLogNotifier>();
 
-var mongoConnectionString = InfrastructureServiceCollectionExtensions.ResolveMongoConnectionString(
-    builder.Configuration, builder.Configuration[$"{MongoDbOptions.SectionName}:ConnectionString"] ?? new MongoDbOptions().ConnectionString);
-var mongoDatabaseName = builder.Configuration[$"{MongoDbOptions.SectionName}:DatabaseName"] ?? new MongoDbOptions().DatabaseName;
+// Hangfire's own storage is real MongoDB, deliberately separate from CosmosDb (see
+// HangfireStorageSetup's own doc comment for why) - resolved the same Aspire-first-else-configured
+// way as CosmosDbOptions, just under the "Hangfire" section/"mongodb" Aspire resource instead.
+var hangfireMongoConnectionString = InfrastructureServiceCollectionExtensions.ResolveHangfireMongoConnectionString(
+    builder.Configuration, builder.Configuration[$"{HangfireOptions.SectionName}:MongoConnectionString"] ?? new HangfireOptions().MongoConnectionString);
+var hangfireMongoDatabaseName = builder.Configuration[$"{HangfireOptions.SectionName}:MongoDatabaseName"] ?? new HangfireOptions().MongoDatabaseName;
 
 // Same connection string/database/"hangfire" prefix as RssService/WebApp - this is what makes the
 // job storage genuinely shared: WebApp's own dashboard can see every job registered here, even
 // though it never executes any of them itself.
-builder.Services.AddSharedHangfireStorage(mongoConnectionString, mongoDatabaseName);
+builder.Services.AddSharedHangfireStorage(hangfireMongoConnectionString, hangfireMongoDatabaseName);
 
 if (initDbOnly)
 {
@@ -85,7 +88,7 @@ builder.Services.AddHangfireServer(options =>
     }
 });
 
-builder.Services.AddHealthChecks().AddMongoDb(name: "mongodb");
+builder.Services.AddHealthChecks().AddMongoDb(name: "cosmosdb");
 
 var app = builder.Build();
 

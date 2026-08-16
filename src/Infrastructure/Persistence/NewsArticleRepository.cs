@@ -4,7 +4,7 @@ using Application.Models;
 using Application.Services;
 using Domain.Entities;
 using Domain.Enums;
-using Infrastructure.Mongo;
+using Infrastructure.Cosmos;
 
 namespace Infrastructure.Persistence;
 
@@ -13,7 +13,7 @@ public sealed class NewsArticleRepository : INewsArticleRepository
     private readonly IMongoCollection<NewsArticle> _collection;
     private readonly IArticleFingerprintRepository _fingerprints;
 
-    public NewsArticleRepository(MongoDbContext context, IArticleFingerprintRepository fingerprints)
+    public NewsArticleRepository(CosmosDbContext context, IArticleFingerprintRepository fingerprints)
     {
         _collection = context.NewsArticles;
         _fingerprints = fingerprints;
@@ -215,7 +215,15 @@ public sealed class NewsArticleRepository : INewsArticleRepository
             new(Builders<NewsArticle>.IndexKeys.Ascending(a => a.IsActive).Ascending(a => a.Provider).Descending(a => a.CrawledAt),
                 new CreateIndexOptions { Name = "ix_news_active_provider_crawledat" }),
             new(Builders<NewsArticle>.IndexKeys.Ascending(a => a.IsActive).Ascending(a => a.Category).Descending(a => a.CrawledAt),
-                new CreateIndexOptions { Name = "ix_news_active_category_crawledat" })
+                new CreateIndexOptions { Name = "ix_news_active_category_crawledat" }),
+            // Backs GetDistinctCountriesAsync's own $match (IsActive [+ SourceType]) + distinct-on-
+            // Country - with no index touching Country at all, that distinct forced a full
+            // collection scan (confirmed live: threw a Cosmos DB 429 "Request rate is large"
+            // against this app's real ~62k-document NewsArticles collection). Country last in the
+            // key list so an index-only scan can resolve the distinct values directly instead of
+            // fetching each matching document.
+            new(Builders<NewsArticle>.IndexKeys.Ascending(a => a.IsActive).Ascending(a => a.SourceType).Ascending(a => a.Country),
+                new CreateIndexOptions { Name = "ix_news_active_sourcetype_country" })
         };
 
         await _collection.Indexes.CreateManyAsync(models, cancellationToken);

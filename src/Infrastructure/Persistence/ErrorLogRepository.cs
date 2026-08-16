@@ -3,7 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using Application.Abstractions;
 using Domain.Entities;
-using Infrastructure.Mongo;
+using Infrastructure.Cosmos;
 
 namespace Infrastructure.Persistence;
 
@@ -11,7 +11,7 @@ public sealed class ErrorLogRepository : IErrorLogRepository
 {
     private readonly IMongoCollection<ErrorLog> _collection;
 
-    public ErrorLogRepository(MongoDbContext context)
+    public ErrorLogRepository(CosmosDbContext context)
     {
         _collection = context.ErrorLogs;
     }

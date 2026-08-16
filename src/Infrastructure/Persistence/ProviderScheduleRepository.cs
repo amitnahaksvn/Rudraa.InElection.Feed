@@ -1,9 +1,10 @@
+using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Application.Abstractions;
 using Domain.Entities;
 using Domain.Enums;
-using Infrastructure.Mongo;
+using Infrastructure.Cosmos;
 
 namespace Infrastructure.Persistence;
 
@@ -13,10 +14,12 @@ public sealed class ProviderScheduleRepository : IProviderScheduleRepository
     private const string IndexName = "ux_providerschedule_pipeline_provider_country";
 
     private readonly IMongoCollection<ProviderSchedule> _collection;
+    private readonly ILogger<ProviderScheduleRepository> _logger;
 
-    public ProviderScheduleRepository(MongoDbContext context)
+    public ProviderScheduleRepository(CosmosDbContext context, ILogger<ProviderScheduleRepository> logger)
     {
         _collection = context.ProviderSchedules;
+        _logger = logger;
     }
 
     public async Task<IReadOnlyList<ProviderSchedule>> GetAllAsync(CrawlPipeline pipeline, CancellationToken cancellationToken) =>
@@ -127,6 +130,6 @@ public sealed class ProviderScheduleRepository : IProviderScheduleRepository
             Builders<ProviderSchedule>.IndexKeys.Ascending(s => s.Pipeline).Ascending(s => s.Provider).Ascending(s => s.Country),
             new CreateIndexOptions { Name = IndexName, Unique = true });
 
-        await _collection.Indexes.CreateOneAsync(model, cancellationToken: cancellationToken);
+        await CosmosIndexHelpers.TryCreateUniqueIndexAsync(_collection.Indexes, model, _logger, cancellationToken);
     }
 }

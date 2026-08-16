@@ -3,15 +3,15 @@ using MongoDB.Driver;
 using Application.Options;
 using Domain.Entities;
 
-namespace Infrastructure.Mongo;
+namespace Infrastructure.Cosmos;
 
 /// <summary>
 /// Single access point to the configured Mongo database and its collections.
 /// Registered as a singleton - <see cref="IMongoClient"/>/<see cref="IMongoDatabase"/> are thread-safe.
 /// </summary>
-public sealed class MongoDbContext
+public sealed class CosmosDbContext
 {
-    public MongoDbContext(IOptions<MongoDbOptions> options)
+    public CosmosDbContext(IOptions<CosmosDbOptions> options)
     {
         var settings = options.Value;
         Client = new MongoClient(settings.ConnectionString);
@@ -37,7 +37,7 @@ public sealed class MongoDbContext
 
     public IMongoCollection<NewsArticle> NewsArticles { get; }
 
-    /// <summary>Lean duplicate-detection records - see <see cref="Application.Options.MongoDbOptions.ArticleFingerprintsCollection"/>.</summary>
+    /// <summary>Lean duplicate-detection records - see <see cref="Application.Options.CosmosDbOptions.ArticleFingerprintsCollection"/>.</summary>
     public IMongoCollection<ArticleFingerprint> ArticleFingerprints { get; }
 
     public IMongoCollection<CrawlHistory> CrawlHistory { get; }
@@ -46,22 +46,22 @@ public sealed class MongoDbContext
 
     public IMongoCollection<RssRawResponse> RssRawResponses { get; }
 
-    /// <summary>Mongo-driven feed configuration - see <see cref="Application.Options.MongoDbOptions.FeedSourcesCollection"/>.</summary>
+    /// <summary>Mongo-driven feed configuration - see <see cref="Application.Options.CosmosDbOptions.FeedSourcesCollection"/>.</summary>
     public IMongoCollection<FeedSource> FeedSources { get; }
 
     public IMongoCollection<FeedErrorLog> FeedErrorLogs { get; }
 
     public IMongoCollection<ErrorLog> ErrorLogs { get; }
 
-    /// <summary>Mongo-driven channel list for the Social pipeline - see <see cref="Application.Options.MongoDbOptions.SocialMediaSourcesCollection"/>.</summary>
+    /// <summary>Mongo-driven channel list for the Social pipeline - see <see cref="Application.Options.CosmosDbOptions.SocialMediaSourcesCollection"/>.</summary>
     public IMongoCollection<SocialMediaSource> SocialMediaSources { get; }
 
-    /// <summary>Database-backed provider Enabled/Cron/TimeZone - see <see cref="Application.Options.MongoDbOptions.ProviderSchedulesCollection"/>.</summary>
+    /// <summary>Database-backed provider Enabled/Cron/TimeZone - see <see cref="Application.Options.CosmosDbOptions.ProviderSchedulesCollection"/>.</summary>
     public IMongoCollection<ProviderSchedule> ProviderSchedules { get; }
 
-    /// <summary>Database-backed country-level provider grouping - see <see cref="Application.Options.MongoDbOptions.CrawlCountriesCollection"/>.</summary>
+    /// <summary>Database-backed country-level provider grouping - see <see cref="Application.Options.CosmosDbOptions.CrawlCountriesCollection"/>.</summary>
     public IMongoCollection<CrawlCountry> CrawlCountries { get; }
 
-    /// <summary>Database-backed feed/endpoint catalog - see <see cref="Application.Options.MongoDbOptions.CrawlFeedsCollection"/>.</summary>
+    /// <summary>Database-backed feed/endpoint catalog - see <see cref="Application.Options.CosmosDbOptions.CrawlFeedsCollection"/>.</summary>
     public IMongoCollection<CrawlFeed> CrawlFeeds { get; }
 }

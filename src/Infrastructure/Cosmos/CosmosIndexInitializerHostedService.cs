@@ -4,14 +4,14 @@ using Microsoft.Extensions.Options;
 using Application.Abstractions;
 using Application.Options;
 
-namespace Infrastructure.Mongo;
+namespace Infrastructure.Cosmos;
 
 /// <summary>
-/// Ensures every Mongo index (and, implicitly, every collection) exists before the host starts
+/// Ensures every Cosmos DB (Mongo API) index (and, implicitly, every collection) exists before the host starts
 /// serving requests/ticks. Registered by <c>AddInfrastructure</c>, so it runs automatically
 /// against a brand new database, creating the required collections/indexes with no manual step.
 /// </summary>
-public sealed class MongoIndexInitializerHostedService : IHostedService
+public sealed class CosmosIndexInitializerHostedService : IHostedService
 {
     private readonly INewsArticleRepository _articles;
     private readonly IArticleFingerprintRepository _articleFingerprints;
@@ -26,9 +26,9 @@ public sealed class MongoIndexInitializerHostedService : IHostedService
     private readonly ICrawlCountryRepository _crawlCountries;
     private readonly ICrawlFeedRepository _crawlFeeds;
     private readonly NewsCrawlerOptions _options;
-    private readonly ILogger<MongoIndexInitializerHostedService> _logger;
+    private readonly ILogger<CosmosIndexInitializerHostedService> _logger;
 
-    public MongoIndexInitializerHostedService(
+    public CosmosIndexInitializerHostedService(
         INewsArticleRepository articles,
         IArticleFingerprintRepository articleFingerprints,
         ICrawlHistoryRepository history,
@@ -42,7 +42,7 @@ public sealed class MongoIndexInitializerHostedService : IHostedService
         ICrawlCountryRepository crawlCountries,
         ICrawlFeedRepository crawlFeeds,
         IOptions<NewsCrawlerOptions> options,
-        ILogger<MongoIndexInitializerHostedService> logger)
+        ILogger<CosmosIndexInitializerHostedService> logger)
     {
         _articles = articles;
         _articleFingerprints = articleFingerprints;
@@ -62,7 +62,7 @@ public sealed class MongoIndexInitializerHostedService : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Ensuring MongoDB indexes");
+        _logger.LogInformation("Ensuring Cosmos DB (Mongo API) indexes");
         await _articles.EnsureIndexesAsync(cancellationToken);
         await _articleFingerprints.EnsureIndexesAsync(cancellationToken);
         await _history.EnsureIndexesAsync(cancellationToken);
@@ -75,7 +75,7 @@ public sealed class MongoIndexInitializerHostedService : IHostedService
         await _providerSchedules.EnsureIndexesAsync(cancellationToken);
         await _crawlCountries.EnsureIndexesAsync(cancellationToken);
         await _crawlFeeds.EnsureIndexesAsync(cancellationToken);
-        _logger.LogInformation("MongoDB indexes ready");
+        _logger.LogInformation("Cosmos DB (Mongo API) indexes ready");
     }
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

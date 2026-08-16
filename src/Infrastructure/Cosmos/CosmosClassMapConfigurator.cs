@@ -6,13 +6,13 @@ using MongoDB.Bson.Serialization.Serializers;
 using Domain.Entities;
 using Domain.Enums;
 
-namespace Infrastructure.Mongo;
+namespace Infrastructure.Cosmos;
 
 /// <summary>
 /// Registers BSON class maps for Domain entities so the Domain layer stays free of any
 /// MongoDB.Driver/Bson attribute dependency. Must run once before the first Mongo operation.
 /// </summary>
-public static class MongoClassMapConfigurator
+public static class CosmosClassMapConfigurator
 {
     private static int _configured;
 

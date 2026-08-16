@@ -2,6 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Mediator;
 using MongoDB.Driver;
 using Polly;
 using Polly.Extensions.Http;
@@ -10,8 +11,8 @@ using Application.Abstractions;
 using Application.Options;
 using Application.Services;
 using Infrastructure.ArticleNormalizers;
+using Infrastructure.Cosmos;
 using Infrastructure.Email;
-using Infrastructure.Mongo;
 using Infrastructure.NewsApiProviders;
 using Infrastructure.Persistence;
 using Infrastructure.RSS;
@@ -32,12 +33,13 @@ public static class InfrastructureServiceCollectionExtensions
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
 
     /// <summary>
-    /// Registers Mongo, the repository layer, and every <see cref="IRssProvider"/>. Adding a new
-    /// provider in a future phase is one line here plus one appsettings.json config block.
+    /// Registers Cosmos DB (Mongo API), the repository layer, and every <see cref="IRssProvider"/>.
+    /// Adding a new provider in a future phase is one line here plus one appsettings.json config
+    /// block.
     /// </summary>
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        MongoClassMapConfigurator.Configure();
+        CosmosClassMapConfigurator.Configure();
 
         // Applies to every HttpClient registered anywhere below (every RSS/API provider, og:image
         // fetches, dynamic feed ingestion, Resend) - none of them set Accept-Encoding or expect a
@@ -51,19 +53,24 @@ public static class InfrastructureServiceCollectionExtensions
             new SocketsHttpHandler { AutomaticDecompression = System.Net.DecompressionMethods.All }));
 
         services
-            .AddOptions<MongoDbOptions>()
-            .Bind(configuration.GetSection(MongoDbOptions.SectionName))
+            .AddOptions<CosmosDbOptions>()
+            .Bind(configuration.GetSection(CosmosDbOptions.SectionName))
             // Aspire (and the ASP.NET Core convention in general) injects resource connection
-            // strings under ConnectionStrings:<name> - e.g. AppHost.cs's "mongodb" resource
-            // becomes ConnectionStrings__mongodb. When present it wins over MongoDb:ConnectionString,
+            // strings under ConnectionStrings:<name> - e.g. AppHost.cs's "cosmosdb" resource
+            // becomes ConnectionStrings__cosmosdb. When present it wins over CosmosDb:ConnectionString,
             // so the same code runs unchanged whether launched via the Aspire AppHost or plain
             // `dotnet run`.
-            .PostConfigure(options => options.ConnectionString = ResolveMongoConnectionString(configuration, options.ConnectionString))
+            .PostConfigure(options => options.ConnectionString = ResolveCosmosConnectionString(configuration, options.ConnectionString))
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddSingleton<MongoDbContext>();
-        services.AddSingleton<IMongoClient>(sp => sp.GetRequiredService<MongoDbContext>().Client);
+        services.AddSingleton<CosmosDbContext>();
+        services.AddSingleton<IMongoClient>(sp => sp.GetRequiredService<CosmosDbContext>().Client);
+
+        // Registered here (not alongside Application's own Logging/UnhandledException/Validation/
+        // Performance behaviours) since it needs MongoDB.Driver - see its own doc comment for why,
+        // and for why this registration order places it as the innermost pipeline layer.
+        services.AddSingleton(typeof(IPipelineBehavior<,>), typeof(CosmosThrottleRetryBehaviour<,>));
 
         services.AddSingleton<INewsArticleRepository, NewsArticleRepository>();
         services.AddSingleton<IArticleFingerprintRepository, ArticleFingerprintRepository>();
@@ -532,7 +539,7 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddSingleton<INewsApiProvider, RedditProvider>();
         services.AddTransient<HangfireNewsApiJobExecutor>();
 
-        services.AddHostedService<MongoIndexInitializerHostedService>();
+        services.AddHostedService<CosmosIndexInitializerHostedService>();
 
         // Requires the caller to have already called AddHangfire(...) (Web/Worker's Program.cs -
         // connection-string resolution needs the builder before this method runs) so that
@@ -571,13 +578,26 @@ public static class InfrastructureServiceCollectionExtensions
     }
 
     /// <summary>
-    /// Same Aspire-first-else-configured-value resolution used for <see cref="MongoDbOptions"/>
-    /// above, exposed for callers (e.g. Hangfire's Mongo storage setup) that need the connection
-    /// string before <see cref="IServiceProvider"/> / bound options exist yet.
+    /// Aspire-first-else-configured-value resolution for <see cref="CosmosDbOptions"/> above,
+    /// exposed for callers that need the connection string before <see cref="IServiceProvider"/> /
+    /// bound options exist yet.
     /// </summary>
-    public static string ResolveMongoConnectionString(IConfiguration configuration, string fallback)
+    public static string ResolveCosmosConnectionString(IConfiguration configuration, string fallback) =>
+        ResolveConnectionString(configuration, "cosmosdb", fallback);
+
+    /// <summary>
+    /// Same resolution as <see cref="ResolveCosmosConnectionString"/>, for Hangfire's own real
+    /// MongoDB instance instead - see <see cref="HangfireOptions.MongoConnectionString"/> and
+    /// <c>WebPlatform.HangfireStorageSetup</c>'s own doc comment for why Hangfire deliberately
+    /// isn't on Cosmos DB with everything else. A distinct Aspire resource name ("mongodb", not
+    /// "cosmosdb") so <c>AppHost.cs</c> can inject each independently.
+    /// </summary>
+    public static string ResolveHangfireMongoConnectionString(IConfiguration configuration, string fallback) =>
+        ResolveConnectionString(configuration, "mongodb", fallback);
+
+    private static string ResolveConnectionString(IConfiguration configuration, string resourceName, string fallback)
     {
-        var aspireConnectionString = configuration.GetConnectionString("mongodb");
+        var aspireConnectionString = configuration.GetConnectionString(resourceName);
         return string.IsNullOrWhiteSpace(aspireConnectionString) ? fallback : aspireConnectionString;
     }
 }

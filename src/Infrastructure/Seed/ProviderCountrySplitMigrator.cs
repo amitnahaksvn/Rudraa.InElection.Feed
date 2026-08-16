@@ -58,7 +58,7 @@ public sealed class ProviderCountrySplitMigrator
     public async Task MigrateAsync(CancellationToken cancellationToken)
     {
         // The --migrate-provider-countries CLI path builds its own throwaway ServiceProvider and
-        // never goes through MongoIndexInitializerHostedService's normal startup sequence, so the
+        // never goes through CosmosIndexInitializerHostedService's normal startup sequence, so the
         // (Pipeline, Provider, Country) unique index has to be created explicitly here - otherwise
         // ProviderScheduleSeeder's own next-startup pass would race against an index that doesn't
         // exist yet.

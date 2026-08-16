@@ -1,20 +1,23 @@
+using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Application.Abstractions;
 using Application.Models;
 using Domain.Entities;
 using Domain.Enums;
-using Infrastructure.Mongo;
+using Infrastructure.Cosmos;
 
 namespace Infrastructure.Persistence;
 
 public sealed class ArticleFingerprintRepository : IArticleFingerprintRepository
 {
     private readonly IMongoCollection<ArticleFingerprint> _collection;
+    private readonly ILogger<ArticleFingerprintRepository> _logger;
 
-    public ArticleFingerprintRepository(MongoDbContext context)
+    public ArticleFingerprintRepository(CosmosDbContext context, ILogger<ArticleFingerprintRepository> logger)
     {
         _collection = context.ArticleFingerprints;
+        _logger = logger;
     }
 
     public Task<ArticleFingerprint?> FindByUrlAsync(string url, CancellationToken cancellationToken) =>
@@ -86,12 +89,26 @@ public sealed class ArticleFingerprintRepository : IArticleFingerprintRepository
 
     public async Task EnsureIndexesAsync(CancellationToken cancellationToken)
     {
+        // Unique indexes are created one at a time via CosmosIndexHelpers (see its own doc
+        // comment) - Cosmos DB's Mongo API rejects createIndexes entirely (not just the offending
+        // model) when any index in the same batch is unique against a non-empty collection, so
+        // these can't share a CreateManyAsync call with the plain indexes below without a doomed
+        // unique index also blocking the harmless ones from ever being created.
+        await CosmosIndexHelpers.TryCreateUniqueIndexAsync(
+            _collection.Indexes,
+            new CreateIndexModel<ArticleFingerprint>(
+                Builders<ArticleFingerprint>.IndexKeys.Ascending(f => f.Url),
+                new CreateIndexOptions { Unique = true, Name = "ux_articlefingerprint_url" }),
+            _logger, cancellationToken);
+        await CosmosIndexHelpers.TryCreateUniqueIndexAsync(
+            _collection.Indexes,
+            new CreateIndexModel<ArticleFingerprint>(
+                Builders<ArticleFingerprint>.IndexKeys.Ascending(f => f.Hash),
+                new CreateIndexOptions { Unique = true, Name = "ux_articlefingerprint_hash" }),
+            _logger, cancellationToken);
+
         var models = new List<CreateIndexModel<ArticleFingerprint>>
         {
-            new(Builders<ArticleFingerprint>.IndexKeys.Ascending(f => f.Url),
-                new CreateIndexOptions { Unique = true, Name = "ux_articlefingerprint_url" }),
-            new(Builders<ArticleFingerprint>.IndexKeys.Ascending(f => f.Hash),
-                new CreateIndexOptions { Unique = true, Name = "ux_articlefingerprint_hash" }),
             new(Builders<ArticleFingerprint>.IndexKeys.Ascending(f => f.OriginalGuid),
                 new CreateIndexOptions { Name = "ix_articlefingerprint_originalguid" }),
             // Backs GetDailyProviderCountsAsync's own $match (sourceType equality + crawledAt.DateTime
