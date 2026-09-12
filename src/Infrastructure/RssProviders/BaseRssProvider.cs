@@ -252,6 +252,19 @@ public abstract partial class BaseRssProvider : IRssProvider
     // returning. The point in time is identical either way; this just makes what's actually stored
     // in NewsArticle.PublishedAt consistently UTC (Offset=00:00) like CrawledAt/UpdatedAt already
     // are, instead of varying per publisher's own reported zone.
+    //
+    // Every DateTimeOffset.TryParse call below passes DateTimeStyles.AssumeUniversal, not just
+    // .None - confirmed live to matter, not defensive-for-its-own-sake: DateTimeStyles.None makes
+    // .NET silently fall back to the *host machine's own local time zone* for any input string
+    // that turns out to carry no explicit offset/zone token, which is exactly the bug the NL Times
+    // tier further down was already written to route around by hand (see its own comment). Every
+    // tier here is written assuming its input already carries an explicit offset by the time it
+    // reaches TryParse - true for every currently-wired provider - but AssumeUniversal costs
+    // nothing when that assumption holds (it only ever applies when no offset is present) and
+    // removes the silent machine-locale dependency entirely if it's ever wrong: this app runs from
+    // both a local dev machine (IST) and Azure (UTC), and a genuinely offset-less string reaching
+    // here would otherwise parse to two different instants a fixed 5:30 apart depending on which
+    // one processed it, with nothing in the stored Offset field ever revealing the discrepancy.
     internal static DateTimeOffset? ParsePublishDate(string? raw)
     {
         if (string.IsNullOrWhiteSpace(raw))
@@ -260,7 +273,7 @@ public abstract partial class BaseRssProvider : IRssProvider
         }
 
         var trimmed = raw.Trim();
-        if (DateTimeOffset.TryParse(trimmed, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed))
+        if (DateTimeOffset.TryParse(trimmed, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var parsed))
         {
             return parsed.ToUniversalTime();
         }
@@ -282,7 +295,7 @@ public abstract partial class BaseRssProvider : IRssProvider
         cleaned = WhitespaceRegex().Replace(cleaned, " ").Trim();
         cleaned = SingleDigitUtcOffsetRegex().Replace(cleaned, "${sign}0${hour}:");
 
-        if (DateTimeOffset.TryParse(cleaned, CultureInfo.InvariantCulture, DateTimeStyles.None, out parsed))
+        if (DateTimeOffset.TryParse(cleaned, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out parsed))
         {
             return parsed.ToUniversalTime();
         }
@@ -299,7 +312,7 @@ public abstract partial class BaseRssProvider : IRssProvider
                 $"{reorderMatch.Groups["day"].Value} {reorderMatch.Groups["month"].Value} {reorderMatch.Groups["year"].Value} " +
                 $"{reorderMatch.Groups["time"].Value} {reorderMatch.Groups["offset"].Value}";
 
-            if (DateTimeOffset.TryParse(reordered, CultureInfo.InvariantCulture, DateTimeStyles.None, out parsed))
+            if (DateTimeOffset.TryParse(reordered, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out parsed))
             {
                 return parsed.ToUniversalTime();
             }
@@ -325,7 +338,7 @@ public abstract partial class BaseRssProvider : IRssProvider
                 $"{hindiMonthMatch.Groups["day"].Value} {englishMonth} {hindiMonthMatch.Groups["year"].Value} " +
                 $"{hindiMonthMatch.Groups["time"].Value} +05:30";
 
-            if (DateTimeOffset.TryParse(reconstructed, CultureInfo.InvariantCulture, DateTimeStyles.None, out parsed))
+            if (DateTimeOffset.TryParse(reconstructed, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out parsed))
             {
                 return parsed.ToUniversalTime();
             }

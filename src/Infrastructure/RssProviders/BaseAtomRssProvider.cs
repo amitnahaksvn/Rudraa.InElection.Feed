@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Globalization;
 using System.Xml.Linq;
 using Microsoft.Extensions.Logging;
 using Application.Abstractions;
@@ -138,7 +139,13 @@ public abstract class BaseAtomRssProvider : IRssProvider
         var publishedRaw = entry.Element(Atom + "published")?.Value ?? entry.Element(Atom + "updated")?.Value;
         // .ToUniversalTime() so PublishedAt is consistently UTC (Offset=00:00) regardless of
         // whatever offset the feed's own <published>/<updated> timestamp carries.
-        var publishedAt = DateTimeOffset.TryParse(publishedRaw, out var parsed) ? parsed.ToUniversalTime() : (DateTimeOffset?)null;
+        // AssumeUniversal (not the implicit .None a bare TryParse(raw, out _) overload uses) so an
+        // entry that happened to carry no offset at all parses to UTC deterministically instead of
+        // silently assuming whatever time zone this process's own host machine is set to - see
+        // BaseRssProvider.ParsePublishDate's own doc comment for why that distinction matters here.
+        var publishedAt = DateTimeOffset.TryParse(publishedRaw, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var parsed)
+            ? parsed.ToUniversalTime()
+            : (DateTimeOffset?)null;
         var tags = entry.Elements(Atom + "category")
             .Select(c => c.Attribute("term")?.Value)
             .Where(t => !string.IsNullOrWhiteSpace(t))

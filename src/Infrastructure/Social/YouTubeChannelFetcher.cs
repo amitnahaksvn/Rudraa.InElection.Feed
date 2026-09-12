@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Xml.Linq;
 using Microsoft.Extensions.Logging;
 using Application.Abstractions;
@@ -71,8 +72,11 @@ public sealed class YouTubeChannelFetcher : ISocialPlatformFetcher
 
         var videoId = entry.Element(Yt + "videoId")?.Value.Trim();
         var author = entry.Element(Atom + "author")?.Element(Atom + "name")?.Value.Trim();
-        // .ToUniversalTime() so PublishedAt is consistently UTC (Offset=00:00).
-        var publishedAt = DateTimeOffset.TryParse(entry.Element(Atom + "published")?.Value, out var parsed)
+        // .ToUniversalTime() so PublishedAt is consistently UTC (Offset=00:00). AssumeUniversal so
+        // an entry with no offset at all parses to UTC deterministically rather than silently
+        // assuming this host machine's own local time zone - see BaseRssProvider.ParsePublishDate's
+        // own doc comment for why that distinction matters here.
+        var publishedAt = DateTimeOffset.TryParse(entry.Element(Atom + "published")?.Value, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var parsed)
             ? parsed.ToUniversalTime()
             : (DateTimeOffset?)null;
 
