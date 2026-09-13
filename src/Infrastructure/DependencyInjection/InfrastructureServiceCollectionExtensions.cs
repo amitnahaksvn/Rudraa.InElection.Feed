@@ -28,9 +28,22 @@ public static class InfrastructureServiceCollectionExtensions
     private const string CrawlerUserAgent =
         "Mozilla/5.0 (compatible; PoliticalNewsCrawler/1.0; +https://example.com/bot)";
 
-    /// <summary>Only for providers whose CDN rejects crawler UAs on public feeds (News18).</summary>
+    /// <summary>Only for providers whose CDN rejects crawler UAs on public feeds (IndianExpress/DeccanChronicle/OneIndia/PIB/ANI).</summary>
     private const string BrowserUserAgent =
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
+
+    /// <summary>
+    /// Only for News18: verified 2026-09-13 (curl from a GitHub Actions runner, well outside
+    /// Azure's IP range, so this isn't the same edge/IP block as MPInfo/NDMA/IndianExpress) that
+    /// its Akamai CDN now does the opposite of every other provider above - it 403s a request
+    /// declaring itself a browser (<see cref="BrowserUserAgent"/>, which is what News18 originally
+    /// needed) *and* a request with no User-Agent header at all, but lets through a plain,
+    /// honestly-generic HTTP-client UA that never claims to be a browser. Consistent with Akamai
+    /// Bot Manager's "impersonator" detection: a UA claiming Chrome from a client whose TLS/HTTP
+    /// fingerprint isn't Chrome reads as a bot pretending to be a browser, while a client that
+    /// doesn't make that claim doesn't trip the same rule.
+    /// </summary>
+    private const string GenericHttpClientUserAgent = "curl/8.5.0";
 
     /// <summary>
     /// Named client for <see cref="WaybackMachineFeedResolver"/>'s own calls to archive.org's
@@ -140,9 +153,10 @@ public static class InfrastructureServiceCollectionExtensions
         // working fine with it - same WAF signature as News18/OneIndia/PIB below.
         AddRssProvider<IndianExpressRssProvider>(services, IndianExpressRssProvider.ClientName, BrowserUserAgent);
         AddRssProvider<TheHinduRssProvider>(services, TheHinduRssProvider.ClientName, CrawlerUserAgent);
-        // News18's CDN (Akamai) returns 403 for crawler-style UAs while serving the same public
-        // RSS feeds to browsers - the one provider that needs a browser-style UA.
-        AddRssProvider<News18RssProvider>(services, News18RssProvider.ClientName, BrowserUserAgent);
+        // News18's CDN (Akamai) now blocks a declared-browser UA (and no UA at all) but allows a
+        // plain, honestly-generic HTTP-client UA through - the opposite of every other
+        // Akamai-blocked provider in this file. See GenericHttpClientUserAgent's doc comment.
+        AddRssProvider<News18RssProvider>(services, News18RssProvider.ClientName, GenericHttpClientUserAgent);
         AddRssProvider<TimesOfIndiaRssProvider>(services, TimesOfIndiaRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<NavbharatTimesRssProvider>(services, NavbharatTimesRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<HindustanTimesRssProvider>(services, HindustanTimesRssProvider.ClientName, CrawlerUserAgent);
