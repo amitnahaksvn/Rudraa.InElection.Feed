@@ -58,3 +58,18 @@ jobs:
           echo "--- Same Modi request with a browser User-Agent ---"
           curl -s -o modi_ua.xml -w "HTTP=%{http_code} bytes=%{size_download}\n" --max-time 20 -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36" "https://www.youtube.com/feeds/videos.xml?channel_id=UC1NF71EwP41VdjAU1iXdLkw"
           head -c 500 modi_ua.xml; echo
+
+      - name: News18 still 403 post-fix - check Wayback CDX coverage for its feed URLs
+        run: |
+          for url in "https://www.news18.com/rss/politics.xml" "https://www.news18.com/rss/india.xml"; do
+            echo "=== CDX for $url ==="
+            encoded=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$url")
+            curl -sS --max-time 20 "https://web.archive.org/cdx/search/cdx?url=${encoded}&output=json&limit=5&sort=reverse" || echo "CDX request failed"
+            echo
+          done
+          echo "=== Direct fetch of News18 feed from GH Actions (not Azure), default curl UA ==="
+          curl -s -o news18_default.xml -w "HTTP=%{http_code} bytes=%{size_download}\n" --max-time 20 "https://www.news18.com/rss/politics.xml"
+          head -c 500 news18_default.xml; echo
+          echo "=== Direct fetch of News18 feed from GH Actions, browser UA ==="
+          curl -s -o news18_ua.xml -w "HTTP=%{http_code} bytes=%{size_download}\n" --max-time 20 -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36" "https://www.news18.com/rss/politics.xml"
+          head -c 500 news18_ua.xml; echo
