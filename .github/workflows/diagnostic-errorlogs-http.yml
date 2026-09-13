@@ -6,17 +6,11 @@ jobs:
   query:
     runs-on: ubuntu-latest
     steps:
-      - name: Bulk-delete Organiser pre-fix errors (before PR 23's 20:14:17Z deploy)
-        run: curl -sS -X DELETE --max-time 30 -w "\nHTTP=%{http_code}\n" "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?provider=Organiser&createdBefore=2026-09-13T20%3A14%3A17Z"
+      - name: YouTube newest unresolved error
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=1&isResolved=false&provider=YouTube" | python3 -m json.tool
 
-      - name: Bulk-delete IndiaToday pre-fix errors (before PR 23's 20:14:17Z deploy)
-        run: curl -sS -X DELETE --max-time 30 -w "\nHTTP=%{http_code}\n" "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?provider=IndiaToday&createdBefore=2026-09-13T20%3A14%3A17Z"
+      - name: NationalHerald newest unresolved error
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=1&isResolved=false&provider=NationalHerald" | python3 -m json.tool
 
-      - name: Bulk-delete MinistryOfPortsShipping pre-fix errors (before PR 23's 20:14:17Z deploy)
-        run: curl -sS -X DELETE --max-time 30 -w "\nHTTP=%{http_code}\n" "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?provider=MinistryOfPortsShipping&createdBefore=2026-09-13T20%3A14%3A17Z"
-
-      - name: Counts after cleanup
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors/counts" | python3 -m json.tool
-
-      - name: Provider/category breakdown after cleanup
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors/breakdown" | python3 -m json.tool
+      - name: NavhindTimes newest unresolved error
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=1&isResolved=false&provider=NavhindTimes" | python3 -m json.tool
