@@ -674,90 +674,90 @@
       },
       {
         "Name": "News18",
-        "Enabled": false,
+        "Enabled": true,
         "Cron": "14,44 * * * *",
         "SaveRawResponses": true,
         "Feeds": [
           {
             "Name": "India",
-            "Url": "https://www.news18.com/rss/india.xml",
+            "Url": "https://www.news18.com/commonfeeds/v1/eng/rss/india.xml",
             "Category": "National",
             "Language": "en",
             "Enabled": true
           },
           {
             "Name": "Politics",
-            "Url": "https://www.news18.com/rss/politics.xml",
+            "Url": "https://www.news18.com/commonfeeds/v1/eng/rss/politics.xml",
             "Category": "Politics",
             "Language": "en",
             "Enabled": true
           },
           {
             "Name": "World",
-            "Url": "https://www.news18.com/rss/world.xml",
+            "Url": "https://www.news18.com/commonfeeds/v1/eng/rss/world.xml",
             "Category": "World",
             "Language": "en",
             "Enabled": true
           },
           {
             "Name": "Business",
-            "Url": "https://www.news18.com/rss/business.xml",
+            "Url": "https://www.news18.com/commonfeeds/v1/eng/rss/business.xml",
             "Category": "Business",
             "Language": "en",
             "Enabled": true
           },
           {
             "Name": "Movies",
-            "Url": "https://www.news18.com/rss/movies.xml",
+            "Url": "https://www.news18.com/commonfeeds/v1/eng/rss/movies.xml",
             "Category": "Entertainment",
             "Language": "en",
             "Enabled": true
           },
           {
             "Name": "Sports",
-            "Url": "https://www.news18.com/rss/sports.xml",
+            "Url": "https://www.news18.com/commonfeeds/v1/eng/rss/sports.xml",
             "Category": "Sports",
             "Language": "en",
             "Enabled": true
           },
           {
             "Name": "Cricket",
-            "Url": "https://www.news18.com/rss/cricket.xml",
+            "Url": "https://www.news18.com/commonfeeds/v1/eng/rss/cricket.xml",
             "Category": "Sports",
             "Language": "en",
             "Enabled": true
           },
           {
             "Name": "Tech",
-            "Url": "https://www.news18.com/rss/tech.xml",
+            "Url": "https://www.news18.com/commonfeeds/v1/eng/rss/tech.xml",
             "Category": "Technology",
             "Language": "en",
             "Enabled": true
           },
           {
             "Name": "Auto",
-            "Url": "https://www.news18.com/rss/auto.xml",
+            "Url": "https://www.news18.com/commonfeeds/v1/eng/rss/auto.xml",
             "Category": "Auto",
             "Language": "en",
             "Enabled": true
           },
           {
             "Name": "Lifestyle",
-            "Url": "https://www.news18.com/rss/lifestyle.xml",
+            "Url": "https://www.news18.com/commonfeeds/v1/eng/rss/lifestyle-2.xml",
             "Category": "Lifestyle",
             "Language": "en",
             "Enabled": true
           },
           {
             "Name": "EducationCareer",
-            "Url": "https://www.news18.com/rss/education-career.xml",
+            "Url": "https://www.news18.com/commonfeeds/v1/eng/rss/education-career.xml",
             "Category": "Education",
             "Language": "en",
             "Enabled": true
           },
           {
             "Name": "Viral",
-            "Url": "https://www.news18.com/rss/viral.xml",
+            "Url": "https://www.news18.com/commonfeeds/v1/eng/rss/viral.xml",
             "Category": "Trending",
             "Language": "en",
             "Enabled": true
