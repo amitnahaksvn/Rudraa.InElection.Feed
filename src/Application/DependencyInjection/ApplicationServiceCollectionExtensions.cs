@@ -24,6 +24,13 @@ public static class ApplicationServiceCollectionExtensions
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
+        // No ValidateDataAnnotations/ValidateOnStart - both fields are deliberately optional (see
+        // WaybackMachineOptions's own doc comment: unconfigured credentials just mean MPInfo/NDMA
+        // fetch directly instead, not a startup-blocking misconfiguration).
+        services
+            .AddOptions<WaybackMachineOptions>()
+            .Bind(configuration.GetSection(WaybackMachineOptions.SectionName));
+
         services
             .AddOptions<NewsApiCrawlerOptions>()
             .Bind(configuration.GetSection(NewsApiCrawlerOptions.SectionName))

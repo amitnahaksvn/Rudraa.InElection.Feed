@@ -33,6 +33,17 @@ public static class InfrastructureServiceCollectionExtensions
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
 
     /// <summary>
+    /// Named client for <see cref="WaybackMachineFeedResolver"/>'s own calls to archive.org's
+    /// Save-Page-Now/CDX APIs (never to MPInfo/NDMA directly - see its doc comment). Deliberately
+    /// separate from <see cref="MPInfoRssProvider.ClientName"/>/<see cref="NdmaRssProvider.ClientName"/>,
+    /// which still fetch the actual resolved (web.archive.org) feed content with each provider's
+    /// own configured <see cref="NewsCrawlerOptions.FeedTimeout"/> - this one has its own shorter,
+    /// fixed timeout since it's making several small API calls per resolution, not downloading a
+    /// feed body.
+    /// </summary>
+    internal const string WaybackMachineClientName = "WaybackMachineClient";
+
+    /// <summary>
     /// Registers Cosmos DB (Mongo API), the repository layer, and every <see cref="IRssProvider"/>.
     /// Adding a new provider in a future phase is one line here plus one appsettings.json config
     /// block.
@@ -420,6 +431,15 @@ public static class InfrastructureServiceCollectionExtensions
         AddRssProvider<NavhindTimesRssProvider>(services, NavhindTimesRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<AndamanSheekhaRssProvider>(services, AndamanSheekhaRssProvider.ClientName, CrawlerUserAgent);
         AddRssProvider<ManipurOrgRssProvider>(services, ManipurOrgRssProvider.ClientName, CrawlerUserAgent);
+
+        // MPInfo's and NDMA's own ResolveFeedUrlAsync overrides call archive.org's APIs through
+        // this client before the actual feed content fetch (which still goes through each
+        // provider's own ClientName above, just against the resolved web.archive.org URL).
+        services.AddHttpClient(WaybackMachineClientName, client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(20);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(CrawlerUserAgent);
+        });
 
         // The Mongo-driven FeedSource pipeline (PIB first) - a generic alternative to the
         // file-configured providers above, for feeds that need no publisher-specific quirks.

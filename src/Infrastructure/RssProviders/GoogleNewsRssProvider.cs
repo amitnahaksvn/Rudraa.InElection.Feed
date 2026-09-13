@@ -7,7 +7,7 @@ namespace Infrastructure.RssProviders;
 /// <summary>
 /// Google News RSS integration - unlike every other provider, a configured feed's
 /// <see cref="RssFeedOptions.Url"/> is not a literal feed URL but a plain-text search topic
-/// (e.g. "India politics"); <see cref="ResolveFeedUrl"/> builds the actual
+/// (e.g. "India politics"); <see cref="ResolveFeedUrlAsync"/> builds the actual
 /// <c>news.google.com/rss/search</c> URL from it. This means adding a new topic is purely a
 /// configuration change - one new entry in NewsCrawler:Providers[Name="GoogleNews"]:Feeds with the
 /// topic text as Url - no code or URL-construction knowledge required.
@@ -23,7 +23,7 @@ namespace Infrastructure.RssProviders;
 /// their Google-hosted link as-is, so the same story already ingested from a direct publisher
 /// feed will not dedupe against its Google News copy - they are intentionally separate documents.
 ///
-/// <see cref="ResolveFeedUrl"/> derives the <c>hl</c>/<c>ceid</c> query parameters from the feed's
+/// <see cref="ResolveFeedUrlAsync"/> derives the <c>hl</c>/<c>ceid</c> query parameters from the feed's
 /// own <see cref="RssFeedOptions.Language"/> (already required on every feed for article tagging,
 /// so this reuses it rather than adding a new property) instead of hardcoding English - needed for
 /// state-level regional-language searches (e.g. Language "te" -> hl=te&amp;ceid=IN:te for a Telugu
@@ -45,10 +45,10 @@ public sealed class GoogleNewsRssProvider : BaseRssProvider
 
     protected override string HttpClientName => ClientName;
 
-    protected override string ResolveFeedUrl(RssFeedOptions feed)
+    protected override Task<string> ResolveFeedUrlAsync(RssFeedOptions feed, CancellationToken cancellationToken)
     {
         var language = string.IsNullOrWhiteSpace(feed.Language) ? "en" : feed.Language;
         var hl = language == "en" ? "en-IN" : language;
-        return $"https://news.google.com/rss/search?q={WebUtility.UrlEncode(feed.Url)}&hl={hl}&gl=IN&ceid=IN:{language}";
+        return Task.FromResult($"https://news.google.com/rss/search?q={WebUtility.UrlEncode(feed.Url)}&hl={hl}&gl=IN&ceid=IN:{language}");
     }
 }

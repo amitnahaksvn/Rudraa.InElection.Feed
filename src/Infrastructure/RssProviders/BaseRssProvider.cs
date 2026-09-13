@@ -42,9 +42,13 @@ public abstract partial class BaseRssProvider : IRssProvider
     /// as the identity (<see cref="RssFeedOptions.Url"/> is already the literal feed URL), but
     /// <see cref="GoogleNewsRssProvider"/> overrides it to treat <c>Url</c> as a search topic and
     /// build a Google News search-feed URL from it - letting a new topic be added purely via
-    /// configuration (one list entry) rather than a hardcoded URL per topic.
+    /// configuration (one list entry) rather than a hardcoded URL per topic. Async (not just a
+    /// string transform) because <see cref="MPInfoRssProvider"/>/<see cref="NdmaRssProvider"/>
+    /// need a real HTTP round trip to the Wayback Machine to resolve the URL that's actually
+    /// fetched - see <see cref="WaybackMachineFeedResolver"/>.
     /// </summary>
-    protected virtual string ResolveFeedUrl(RssFeedOptions feed) => feed.Url;
+    protected virtual Task<string> ResolveFeedUrlAsync(RssFeedOptions feed, CancellationToken cancellationToken) =>
+        Task.FromResult(feed.Url);
 
     public async Task<IReadOnlyList<FeedFetchResult>> FetchAllFeedsAsync(
         IReadOnlyList<RssFeedOptions> feeds,
@@ -66,7 +70,7 @@ public abstract partial class BaseRssProvider : IRssProvider
         var stopwatch = Stopwatch.StartNew();
         string? rawXml = null;
         int? httpStatusCode = null;
-        var url = ResolveFeedUrl(feed);
+        var url = await ResolveFeedUrlAsync(feed, cancellationToken);
 
         try
         {
