@@ -6,59 +6,27 @@ jobs:
   query:
     runs-on: ubuntu-latest
     steps:
-      - name: Organiser - default curl UA, follow redirects
+      - name: Replicate WaybackMachineFeedResolver's EXACT CDX query for Organiser
         run: |
-          curl -sS -L -o org_default.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
-            "https://organiser.org/feed"
-          head -c 500 org_default.xml; echo
+          curl -sS --max-time 20 "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Forganiser.org%2Ffeed&output=json&limit=-5&filter=statuscode:200"
+          echo
 
-      - name: Organiser - CURRENT PROD UA (CrawlerUserAgent, declared bot) + prod headers
+      - name: Replicate WaybackMachineFeedResolver's EXACT CDX query for IndiaToday
         run: |
-          curl -sS -L -o org_crawler.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
-            -A "Mozilla/5.0 (compatible; PoliticalNewsCrawler/1.0; +https://example.com/bot)" \
-            -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
-            -H "Accept-Language: en-US,en;q=0.9" \
-            "https://organiser.org/feed"
-          head -c 800 org_crawler.xml; echo
+          curl -sS --max-time 45 "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Fwww.indiatoday.in%2Frss%2F1206578&output=json&limit=-5&filter=statuscode:200"
+          echo
 
-      - name: Organiser - BrowserUserAgent + prod headers (candidate fix)
+      - name: Fetch the resolved archive.org snapshot URL for Organiser (proof the mechanism works end to end)
         run: |
-          curl -sS -L -o org_browser.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
-            -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36" \
-            -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
-            -H "Accept-Language: en-US,en;q=0.9" \
-            "https://organiser.org/feed"
-          head -c 800 org_browser.xml; echo
-
-      - name: IndiaToday India feed - default curl UA, follow redirects
-        run: |
-          curl -sS -L -o it_default.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
-            "https://www.indiatoday.in/rss/1206578"
-          head -c 500 it_default.xml; echo
-
-      - name: IndiaToday India feed - CURRENT PROD UA (CrawlerUserAgent, declared bot) + prod headers
-        run: |
-          curl -sS -L -o it_crawler.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
-            -A "Mozilla/5.0 (compatible; PoliticalNewsCrawler/1.0; +https://example.com/bot)" \
-            -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
-            -H "Accept-Language: en-US,en;q=0.9" \
-            "https://www.indiatoday.in/rss/1206578"
-          head -c 800 it_crawler.xml; echo
-
-      - name: IndiaToday India feed - BrowserUserAgent + prod headers (candidate fix)
-        run: |
-          curl -sS -L -o it_browser.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
-            -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36" \
-            -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
-            -H "Accept-Language: en-US,en;q=0.9" \
-            "https://www.indiatoday.in/rss/1206578"
-          head -c 800 it_browser.xml; echo
-
-      - name: CDX coverage check for both feeds (in case Wayback is still the right lever)
-        run: |
-          for url in "https://organiser.org/feed" "https://www.indiatoday.in/rss/1206578"; do
-            echo "=== CDX for $url ==="
-            encoded=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$url")
-            curl -sS --max-time 20 "https://web.archive.org/cdx/search/cdx?url=${encoded}&output=json&limit=3&sort=reverse" || echo "CDX request failed"
-            echo
-          done
+          snapshot=$(curl -sS --max-time 20 "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Forganiser.org%2Ffeed&output=json&limit=-5&filter=statuscode:200" | python3 -c "
+          import json, sys
+          rows = json.load(sys.stdin)
+          if len(rows) >= 2:
+              ts, orig = rows[-1][1], rows[-1][2]
+              print('https://web.archive.org/web/' + ts + 'id_/' + orig)
+          ")
+          echo "Resolved snapshot URL: $snapshot"
+          if [ -n "$snapshot" ]; then
+            curl -sS -o snap.xml -w "HTTP=%{http_code} bytes=%{size_download}\n" --max-time 20 "$snapshot"
+            head -c 500 snap.xml; echo
+          fi
