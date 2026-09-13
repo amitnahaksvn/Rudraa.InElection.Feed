@@ -87,3 +87,12 @@ jobs:
             -H "Accept-Language: en-US,en;q=0.9" \
             "https://www.news18.com/commonfeeds/v1/eng/rss/politics.xml"
           head -c 800 news18_new.xml; echo
+          echo "=== Test with the app's declared CrawlerUserAgent string, following redirects ==="
+          curl -sS -L -o news18_crawler.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
+            -A "Mozilla/5.0 (compatible; PoliticalNewsCrawler/1.0; +https://example.com/bot)" \
+            "https://www.news18.com/rss/politics.xml"
+          head -c 500 news18_crawler.xml; echo
+          echo "=== Test with curl default UA but explicit -L follow, old URL ==="
+          curl -sS -L -o news18_nofollow.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
+            "https://www.news18.com/rss/politics.xml"
+          head -c 500 news18_nofollow.xml; echo
