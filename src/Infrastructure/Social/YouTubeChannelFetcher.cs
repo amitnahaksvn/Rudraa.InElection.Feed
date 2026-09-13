@@ -1,10 +1,13 @@
 using System.Globalization;
 using System.Xml.Linq;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Application.Abstractions;
 using Application.Models;
+using Application.Options;
 using Domain.Entities;
 using Domain.Enums;
+using Infrastructure.DependencyInjection;
 using Infrastructure.RssProviders;
 
 namespace Infrastructure.Social;
@@ -19,6 +22,13 @@ namespace Infrastructure.Social;
 /// (entry/published/id/link/media:group), same reasoning for why it isn't RSS 2.0 either, just a
 /// different config source. Reuses <see cref="YouTubeRssProvider.ClientName"/>'s already-registered
 /// HttpClient rather than adding a second one for the exact same target domain.
+///
+/// Routed through <see cref="WaybackMachineFeedResolver"/> after 113 unresolved HTTP 404s
+/// accumulated in production (both the Modi and BJP channels, identically) - confirmed live from
+/// GitHub Actions (not Azure) that both feed URLs return HTTP 200 with real, correct content
+/// (channel titles match), so this is the same edge/network block against this app's specific
+/// Azure outbound IP already documented for News18/Organiser/IndianExpress/MPInfo/NDMA, just a new
+/// failure-signature variant (404 instead of 403/timeout/DNS failure).
 /// </summary>
 public sealed class YouTubeChannelFetcher : ISocialPlatformFetcher
 {
@@ -27,11 +37,13 @@ public sealed class YouTubeChannelFetcher : ISocialPlatformFetcher
     private static readonly XNamespace Yt = "http://www.youtube.com/xml/schemas/2015";
 
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly WaybackMachineOptions _waybackOptions;
     private readonly ILogger<YouTubeChannelFetcher> _logger;
 
-    public YouTubeChannelFetcher(IHttpClientFactory httpClientFactory, ILogger<YouTubeChannelFetcher> logger)
+    public YouTubeChannelFetcher(IHttpClientFactory httpClientFactory, ILogger<YouTubeChannelFetcher> logger, IOptions<WaybackMachineOptions> waybackOptions)
     {
         _httpClientFactory = httpClientFactory;
+        _waybackOptions = waybackOptions.Value;
         _logger = logger;
     }
 
@@ -39,7 +51,13 @@ public sealed class YouTubeChannelFetcher : ISocialPlatformFetcher
 
     public async Task<IReadOnlyList<NormalizedArticle>> FetchAsync(SocialMediaSource source, CancellationToken cancellationToken)
     {
-        var feedUrl = $"https://www.youtube.com/feeds/videos.xml?channel_id={Uri.EscapeDataString(source.Identifier)}";
+        var realFeedUrl = $"https://www.youtube.com/feeds/videos.xml?channel_id={Uri.EscapeDataString(source.Identifier)}";
+        var feedUrl = await WaybackMachineFeedResolver.ResolveAsync(
+            _httpClientFactory.CreateClient(InfrastructureServiceCollectionExtensions.WaybackMachineClientName),
+            _waybackOptions,
+            realFeedUrl,
+            _logger,
+            cancellationToken);
 
         var client = _httpClientFactory.CreateClient(YouTubeRssProvider.ClientName);
         using var response = await client.GetAsync(feedUrl, cancellationToken);
