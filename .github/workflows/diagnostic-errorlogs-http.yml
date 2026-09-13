@@ -6,27 +6,32 @@ jobs:
   query:
     runs-on: ubuntu-latest
     steps:
-      - name: Replicate WaybackMachineFeedResolver's EXACT CDX query for Organiser
-        run: |
-          curl -sS --max-time 20 "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Forganiser.org%2Ffeed&output=json&limit=-5&filter=statuscode:200"
-          echo
+      - name: Trigger Organiser
+        run: curl -sS -X POST --max-time 20 -w "\nHTTP=%{http_code}\n" "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/crawl/trigger/Organiser?country=India"
 
-      - name: Replicate WaybackMachineFeedResolver's EXACT CDX query for IndiaToday
-        run: |
-          curl -sS --max-time 45 "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Fwww.indiatoday.in%2Frss%2F1206578&output=json&limit=-5&filter=statuscode:200"
-          echo
+      - name: Trigger IndiaToday
+        run: curl -sS -X POST --max-time 20 -w "\nHTTP=%{http_code}\n" "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/crawl/trigger/IndiaToday?country=India"
 
-      - name: Fetch the resolved archive.org snapshot URL for Organiser (proof the mechanism works end to end)
-        run: |
-          snapshot=$(curl -sS --max-time 20 "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Forganiser.org%2Ffeed&output=json&limit=-5&filter=statuscode:200" | python3 -c "
-          import json, sys
-          rows = json.load(sys.stdin)
-          if len(rows) >= 2:
-              ts, orig = rows[-1][1], rows[-1][2]
-              print('https://web.archive.org/web/' + ts + 'id_/' + orig)
-          ")
-          echo "Resolved snapshot URL: $snapshot"
-          if [ -n "$snapshot" ]; then
-            curl -sS -o snap.xml -w "HTTP=%{http_code} bytes=%{size_download}\n" --max-time 20 "$snapshot"
-            head -c 500 snap.xml; echo
-          fi
+      - name: Trigger MinistryOfPortsShipping
+        run: curl -sS -X POST --max-time 20 -w "\nHTTP=%{http_code}\n" "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/crawl/trigger/MinistryOfPortsShipping?country=India"
+
+      - name: Wait for the crawls to run
+        run: sleep 40
+
+      - name: Organiser newest unresolved errors AFTER trigger
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=5&isResolved=false&provider=Organiser" | python3 -m json.tool
+
+      - name: Organiser latest articles
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/news/provider/Organiser?count=5" | python3 -m json.tool
+
+      - name: IndiaToday newest unresolved errors AFTER trigger
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=5&isResolved=false&provider=IndiaToday" | python3 -m json.tool
+
+      - name: IndiaToday latest articles
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/news/provider/IndiaToday?count=5" | python3 -m json.tool
+
+      - name: MinistryOfPortsShipping newest unresolved errors AFTER trigger
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=5&isResolved=false&provider=MinistryOfPortsShipping" | python3 -m json.tool
+
+      - name: MinistryOfPortsShipping latest articles
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/news/provider/MinistryOfPortsShipping?count=5" | python3 -m json.tool
