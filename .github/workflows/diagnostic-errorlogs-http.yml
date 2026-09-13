@@ -109,3 +109,16 @@ jobs:
             loc=$(curl -sS -o /dev/null -D - --max-time 15 "https://www.news18.com/rss/${slug}.xml" | grep -i '^location:' | tr -d '\r')
             echo "$slug -> $loc"
           done
+          echo "=== Final check: plain curl UA + prod Accept/Accept-Language headers, new URL ==="
+          curl -sS -o news18_final.xml -w "HTTP=%{http_code} bytes=%{size_download}\n" --max-time 20 \
+            -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
+            -H "Accept-Language: en-US,en;q=0.9" \
+            "https://www.news18.com/commonfeeds/v1/eng/rss/politics.xml"
+          head -c 400 news18_final.xml; echo
+          echo "=== Final check: explicit UA curl/8.5.0 + same headers, new URL ==="
+          curl -sS -o news18_final2.xml -w "HTTP=%{http_code} bytes=%{size_download}\n" --max-time 20 \
+            -A "curl/8.5.0" \
+            -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
+            -H "Accept-Language: en-US,en;q=0.9" \
+            "https://www.news18.com/commonfeeds/v1/eng/rss/politics.xml"
+          head -c 400 news18_final2.xml; echo
