@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Application.Abstractions;
 using Application.ErrorLogs.Commands.AddErrorLogComment;
+using Application.ErrorLogs.Commands.DeleteErrorLogs;
 using Application.ErrorLogs.Commands.SetErrorLogResolved;
 using Application.ErrorLogs.Dtos;
 using Application.ErrorLogs.Queries.GetErrorLogById;
@@ -28,6 +29,7 @@ public sealed class ErrorLogs : IEndpointGroup
         group.MapGet("{id}", GetById);
         group.MapPatch("{id}/resolved", SetResolved);
         group.MapPost("{id}/comments", AddComment);
+        group.MapDelete("", DeleteMany);
     }
 
     [EndpointSummary("List errors")]
@@ -119,6 +121,20 @@ public sealed class ErrorLogs : IEndpointGroup
     {
         var found = await sender.Send(new AddErrorLogCommentCommand(id, request.Comment, request.Description, clientId), cancellationToken);
         return found ? TypedResults.Ok() : TypedResults.NotFound();
+    }
+
+    [EndpointSummary("Bulk-delete a provider's error rows")]
+    [EndpointDescription(
+        "Cleanup sweep for once a provider's underlying failure cause has been fixed and confirmed " +
+        "- not a per-row action. provider is required (this can never run as an unscoped " +
+        "delete-everything); createdBefore is optional but should normally be the fix's own deploy " +
+        "time, so a genuinely new failure the fix didn't actually resolve is never deleted alongside " +
+        "the old, already-diagnosed noise. Returns the number of rows actually deleted.")]
+    public static async Task<Ok<long>> DeleteMany(
+        ISender sender, string provider, DateTimeOffset? createdBefore, CancellationToken cancellationToken)
+    {
+        var deletedCount = await sender.Send(new DeleteErrorLogsCommand(provider, createdBefore), cancellationToken);
+        return TypedResults.Ok(deletedCount);
     }
 
     private static int ResolvePageSize(int requested, ApiOptions options) =>

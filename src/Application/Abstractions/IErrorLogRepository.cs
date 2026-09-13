@@ -2,14 +2,15 @@ using Domain.Entities;
 
 namespace Application.Abstractions;
 
-/// <summary>Optional filters for <see cref="IErrorLogRepository.GetPagedAsync"/>/<see cref="IErrorLogRepository.CountAsync"/> - a null field means "don't filter on this". <paramref name="Category"/> is the error-monitor sidebar's quick-filter shortcut (see <see cref="ErrorLogCategory"/>) - a derived grouping on top of <see cref="Domain.Entities.ErrorLog.Source"/>/<see cref="Domain.Entities.ErrorLog.HttpStatusCode"/>, not a stored field of its own.</summary>
+/// <summary>Optional filters for <see cref="IErrorLogRepository.GetPagedAsync"/>/<see cref="IErrorLogRepository.CountAsync"/>/<see cref="IErrorLogRepository.DeleteManyAsync"/> - a null field means "don't filter on this". <paramref name="Category"/> is the error-monitor sidebar's quick-filter shortcut (see <see cref="ErrorLogCategory"/>) - a derived grouping on top of <see cref="Domain.Entities.ErrorLog.Source"/>/<see cref="Domain.Entities.ErrorLog.HttpStatusCode"/>, not a stored field of its own. <paramref name="CreatedBefore"/> only makes sense for a cleanup delete (bound the sweep to rows from before a fix went live, so any new failure a fix didn't actually resolve isn't silently wiped alongside the old noise) - the paged list/counts/breakdown queries never set it.</summary>
 public sealed record ErrorLogFilter(
     bool? IsResolved = null,
     string? Provider = null,
     string? Country = null,
     string? Source = null,
     string? SearchText = null,
-    ErrorLogCategory? Category = null);
+    ErrorLogCategory? Category = null,
+    DateTimeOffset? CreatedBefore = null);
 
 /// <summary>
 /// The error-monitor sidebar's quick-filter categories, shown alongside All/Unresolved/Resolved -
@@ -64,6 +65,9 @@ public interface IErrorLogRepository
 
     /// <summary>Appends a standalone comment - <see cref="ErrorLog.IsResolved"/>/<see cref="ErrorLog.ResolvedOn"/> are left unchanged, the new <see cref="ErrorLogHistoryEntry"/> just records the row's current status alongside the comment. Returns false when no row with that id exists.</summary>
     Task<bool> AddCommentAsync(string id, string comment, string? description, CancellationToken cancellationToken);
+
+    /// <summary>Bulk-deletes every row matching <paramref name="filter"/> - a cleanup sweep once a provider's underlying failure cause has been fixed and confirmed, not something the error-monitor UI's per-row actions use. Returns the number of rows actually deleted.</summary>
+    Task<long> DeleteManyAsync(ErrorLogFilter filter, CancellationToken cancellationToken);
 
     Task EnsureIndexesAsync(CancellationToken cancellationToken);
 }

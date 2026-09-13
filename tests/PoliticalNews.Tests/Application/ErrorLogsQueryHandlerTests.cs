@@ -1,6 +1,7 @@
 using Moq;
 using Application.Abstractions;
 using Application.ErrorLogs.Commands.AddErrorLogComment;
+using Application.ErrorLogs.Commands.DeleteErrorLogs;
 using Application.ErrorLogs.Commands.SetErrorLogResolved;
 using Application.ErrorLogs.Queries.GetErrorLogById;
 using Application.ErrorLogs.Queries.GetErrorLogCounts;
@@ -154,6 +155,32 @@ public class ErrorLogsQueryHandlerTests
         notifier.Verify(
             n => n.NotifyCommentAddedAsync("missing", It.IsAny<string>(), It.IsAny<string?>(), It.IsAny<DateTimeOffset>(), It.IsAny<string?>(), It.IsAny<CancellationToken>()),
             Times.Never);
+    }
+
+    [Fact]
+    public async Task DeleteErrorLogsCommandHandler_ScopesDeleteToProviderAndCreatedBefore()
+    {
+        var repo = new Mock<IErrorLogRepository>();
+        var cutoff = DateTimeOffset.UtcNow;
+        repo
+            .Setup(r => r.DeleteManyAsync(
+                It.Is<ErrorLogFilter>(f => f.Provider == "News18" && f.CreatedBefore == cutoff && f.IsResolved == null && f.Category == null),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(668);
+
+        var handler = new DeleteErrorLogsCommandHandler(repo.Object);
+        var deletedCount = await handler.Handle(new DeleteErrorLogsCommand("News18", cutoff), CancellationToken.None);
+
+        Assert.Equal(668, deletedCount);
+    }
+
+    [Fact]
+    public void DeleteErrorLogsCommandValidator_RejectsEmptyProvider()
+    {
+        var validator = new DeleteErrorLogsCommandValidator();
+
+        Assert.False(validator.Validate(new DeleteErrorLogsCommand("")).IsValid);
+        Assert.True(validator.Validate(new DeleteErrorLogsCommand("News18")).IsValid);
     }
 
     [Fact]
