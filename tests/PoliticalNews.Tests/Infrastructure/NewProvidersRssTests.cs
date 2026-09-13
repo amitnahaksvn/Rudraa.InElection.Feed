@@ -37,7 +37,7 @@ public class NewProvidersRssTests
     public static TheoryData<string, Func<IHttpClientFactory, IRssProvider>> Providers => new()
     {
         { "IndiaTV", f => new IndiaTvRssProvider(f, NullLogger<IndiaTvRssProvider>.Instance) },
-        { "News18", f => new News18RssProvider(f, NullLogger<News18RssProvider>.Instance) },
+        { "News18", f => new News18RssProvider(f, NullLogger<News18RssProvider>.Instance, Options.Create(new WaybackMachineOptions())) },
         { "NDTV", f => new NdtvRssProvider(f, NullLogger<NdtvRssProvider>.Instance) },
         { "IndianExpress", f => new IndianExpressRssProvider(f, NullLogger<IndianExpressRssProvider>.Instance, Options.Create(new WaybackMachineOptions())) },
         { "TheHindu", f => new TheHinduRssProvider(f, NullLogger<TheHinduRssProvider>.Instance) },
