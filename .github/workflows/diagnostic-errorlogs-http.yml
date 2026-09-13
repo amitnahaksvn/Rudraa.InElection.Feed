@@ -12,5 +12,23 @@ jobs:
       - name: Provider/category breakdown
         run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors/breakdown" | python3 -m json.tool
 
-      - name: Top 50 unresolved (newest first)
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=50&isResolved=false" | python3 -m json.tool
+      - name: News18 newest 5 (post-fix check)
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=5&isResolved=false&provider=News18" | python3 -m json.tool
+
+      - name: Organiser newest 5 (post-fix check)
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=5&isResolved=false&provider=Organiser" | python3 -m json.tool
+
+      - name: NationalHerald newest 5 (post-fix check)
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=5&isResolved=false&provider=NationalHerald" | python3 -m json.tool
+
+      - name: IndiaToday newest 5 (post-fix check)
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=5&isResolved=false&provider=IndiaToday" | python3 -m json.tool
+
+      - name: MinistryOfPortsShipping newest 5 (post-fix check)
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=5&isResolved=false&provider=MinistryOfPortsShipping" | python3 -m json.tool
+
+      - name: NavhindTimes newest 5 (still unaddressed - need error content)
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=5&isResolved=false&provider=NavhindTimes" | python3 -m json.tool
+
+      - name: YouTube newest 5 (still unaddressed - need error content)
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=5&isResolved=false&provider=YouTube" | python3 -m json.tool
