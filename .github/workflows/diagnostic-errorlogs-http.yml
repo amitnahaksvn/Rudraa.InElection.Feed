@@ -6,32 +6,17 @@ jobs:
   query:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Organiser
-        run: curl -sS -X POST --max-time 20 -w "\nHTTP=%{http_code}\n" "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/crawl/trigger/Organiser?country=India"
+      - name: Bulk-delete Organiser pre-fix errors (before PR 23's 20:14:17Z deploy)
+        run: curl -sS -X DELETE --max-time 30 -w "\nHTTP=%{http_code}\n" "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?provider=Organiser&createdBefore=2026-09-13T20%3A14%3A17Z"
 
-      - name: Trigger IndiaToday
-        run: curl -sS -X POST --max-time 20 -w "\nHTTP=%{http_code}\n" "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/crawl/trigger/IndiaToday?country=India"
+      - name: Bulk-delete IndiaToday pre-fix errors (before PR 23's 20:14:17Z deploy)
+        run: curl -sS -X DELETE --max-time 30 -w "\nHTTP=%{http_code}\n" "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?provider=IndiaToday&createdBefore=2026-09-13T20%3A14%3A17Z"
 
-      - name: Trigger MinistryOfPortsShipping
-        run: curl -sS -X POST --max-time 20 -w "\nHTTP=%{http_code}\n" "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/crawl/trigger/MinistryOfPortsShipping?country=India"
+      - name: Bulk-delete MinistryOfPortsShipping pre-fix errors (before PR 23's 20:14:17Z deploy)
+        run: curl -sS -X DELETE --max-time 30 -w "\nHTTP=%{http_code}\n" "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?provider=MinistryOfPortsShipping&createdBefore=2026-09-13T20%3A14%3A17Z"
 
-      - name: Wait for the crawls to run
-        run: sleep 40
+      - name: Counts after cleanup
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors/counts" | python3 -m json.tool
 
-      - name: Organiser newest unresolved errors AFTER trigger
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=5&isResolved=false&provider=Organiser" | python3 -m json.tool
-
-      - name: Organiser latest articles
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/news/provider/Organiser?count=5" | python3 -m json.tool
-
-      - name: IndiaToday newest unresolved errors AFTER trigger
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=5&isResolved=false&provider=IndiaToday" | python3 -m json.tool
-
-      - name: IndiaToday latest articles
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/news/provider/IndiaToday?count=5" | python3 -m json.tool
-
-      - name: MinistryOfPortsShipping newest unresolved errors AFTER trigger
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=5&isResolved=false&provider=MinistryOfPortsShipping" | python3 -m json.tool
-
-      - name: MinistryOfPortsShipping latest articles
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/news/provider/MinistryOfPortsShipping?count=5" | python3 -m json.tool
+      - name: Provider/category breakdown after cleanup
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors/breakdown" | python3 -m json.tool
