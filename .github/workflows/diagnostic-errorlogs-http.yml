@@ -11,13 +11,13 @@ jobs:
 
       - name: Manually trigger News18's crawl now (post-fix, provider re-enabled)
         run: |
-          curl -sS -X POST --max-time 20 -w "\nHTTP=%{http_code}\n" "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/crawl/trigger/News18"
+          curl -sS -X POST --max-time 20 -w "\nHTTP=%{http_code}\n" "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/crawl/trigger/News18?country=India"
 
       - name: Wait for the crawl to actually run (12 feeds)
         run: sleep 45
 
       - name: News18 recurring job status after trigger
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/crawl/jobs/News18" | python3 -m json.tool
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/crawl/jobs/News18?country=India" | python3 -m json.tool
 
       - name: News18 newest unresolved errors AFTER trigger
         run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=10&isResolved=false&provider=News18" | python3 -m json.tool
