@@ -32,3 +32,17 @@ jobs:
 
       - name: YouTube newest 5 (still unaddressed - need error content)
         run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=5&isResolved=false&provider=YouTube" | python3 -m json.tool
+
+      - name: YouTube newest 3 unresolved - ids only
+        id: youtube_ids
+        run: |
+          curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=3&isResolved=false&provider=YouTube" \
+            | python3 -c "import json,sys; d=json.load(sys.stdin); print('\n'.join(i['id'] for i in d['items']))" > ids.txt
+          cat ids.txt
+
+      - name: YouTube full error detail (BJP + Modi samples)
+        run: |
+          while read -r id; do
+            echo "=== $id ==="
+            curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors/$id" | python3 -m json.tool
+          done < ids.txt
