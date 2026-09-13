@@ -25,6 +25,14 @@ jobs:
       - name: News18 latest articles (proof real content is landing)
         run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/news/provider/News18?count=10" | python3 -m json.tool
 
+      - name: Bulk-delete News18's pre-fix error rows (before the deploy that fixed it)
+        run: |
+          curl -sS -X DELETE --max-time 30 -w "\nHTTP=%{http_code}\n" \
+            "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?provider=News18&createdBefore=2026-09-13T22%3A30%3A00Z"
+
+      - name: Counts after News18 cleanup
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors/counts" | python3 -m json.tool
+
       - name: Counts
         run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors/counts" | python3 -m json.tool
 
