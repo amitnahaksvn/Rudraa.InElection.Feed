@@ -1,4 +1,6 @@
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
+using Application.Options;
 using Domain.Entities;
 using Domain.Enums;
 using Infrastructure.Social;
@@ -47,7 +49,8 @@ public class YouTubeChannelFetcherTests
 
         var fetcher = new YouTubeChannelFetcher(
             new StubHttpClientFactory(new StubHttpMessageHandler(new Dictionary<string, string> { [url] = xml })),
-            NullLogger<YouTubeChannelFetcher>.Instance);
+            NullLogger<YouTubeChannelFetcher>.Instance,
+            Options.Create(new WaybackMachineOptions()));
 
         var articles = await fetcher.FetchAsync(BuildSource(), CancellationToken.None);
 
@@ -80,7 +83,8 @@ public class YouTubeChannelFetcherTests
 
         var fetcher = new YouTubeChannelFetcher(
             new StubHttpClientFactory(new StubHttpMessageHandler(new Dictionary<string, string> { [url] = xml })),
-            NullLogger<YouTubeChannelFetcher>.Instance);
+            NullLogger<YouTubeChannelFetcher>.Instance,
+            Options.Create(new WaybackMachineOptions()));
 
         var articles = await fetcher.FetchAsync(BuildSource(), CancellationToken.None);
 
@@ -91,5 +95,6 @@ public class YouTubeChannelFetcherTests
     public void Platform_IsYouTube() =>
         Assert.Equal(SocialPlatform.YouTube, new YouTubeChannelFetcher(
             new StubHttpClientFactory(new StubHttpMessageHandler(new Dictionary<string, string>())),
-            NullLogger<YouTubeChannelFetcher>.Instance).Platform);
+            NullLogger<YouTubeChannelFetcher>.Instance,
+            Options.Create(new WaybackMachineOptions())).Platform);
 }
