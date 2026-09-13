@@ -80,6 +80,12 @@ public sealed class ErrorLogRepository : IErrorLogRepository
         return result.MatchedCount > 0;
     }
 
+    public async Task<long> DeleteManyAsync(ErrorLogFilter filter, CancellationToken cancellationToken)
+    {
+        var result = await _collection.DeleteManyAsync(BuildFilter(filter), cancellationToken);
+        return result.DeletedCount;
+    }
+
     public async Task<bool> AddCommentAsync(string id, string comment, string? description, CancellationToken cancellationToken)
     {
         // IsResolved isn't changing here - the history entry just needs to record what the row's
@@ -143,6 +149,11 @@ public sealed class ErrorLogRepository : IErrorLogRepository
         if (filter.Category is { } category)
         {
             clauses.Add(BuildCategoryFilter(builder, category));
+        }
+
+        if (filter.CreatedBefore is { } createdBefore)
+        {
+            clauses.Add(builder.Lt(e => e.CreatedOn, createdBefore));
         }
 
         return clauses.Count == 0 ? builder.Empty : builder.And(clauses);
