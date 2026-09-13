@@ -46,3 +46,15 @@ jobs:
             echo "=== $id ==="
             curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors/$id" | python3 -m json.tool
           done < ids.txt
+
+      - name: Test YouTube feed URLs directly from GitHub Actions (not Azure)
+        run: |
+          echo "--- Modi channel feed ---"
+          curl -s -o modi.xml -w "HTTP=%{http_code} bytes=%{size_download}\n" --max-time 20 "https://www.youtube.com/feeds/videos.xml?channel_id=UC1NF71EwP41VdjAU1iXdLkw"
+          head -c 500 modi.xml; echo
+          echo "--- BJP channel feed ---"
+          curl -s -o bjp.xml -w "HTTP=%{http_code} bytes=%{size_download}\n" --max-time 20 "https://www.youtube.com/feeds/videos.xml?channel_id=UCrwE8kVqtIUVUzKui2WVpuQ"
+          head -c 500 bjp.xml; echo
+          echo "--- Same Modi request with a browser User-Agent ---"
+          curl -s -o modi_ua.xml -w "HTTP=%{http_code} bytes=%{size_download}\n" --max-time 20 -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36" "https://www.youtube.com/feeds/videos.xml?channel_id=UC1NF71EwP41VdjAU1iXdLkw"
+          head -c 500 modi_ua.xml; echo
