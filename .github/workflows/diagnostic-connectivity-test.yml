@@ -1,0 +1,14 @@
+name: Diagnostic - connectivity test (temporary)
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test MPInfo
+        run: curl -s -o /dev/null -w "MPInfo: HTTP=%{http_code} time=%{time_total}s\n" --max-time 20 https://mpinfo.org/RSSFeed/RSSFeed_EngNews.xml || true
+      - name: Test NDMA
+        run: curl -s -o /dev/null -w "NDMA: HTTP=%{http_code} time=%{time_total}s\n" --max-time 20 https://ndma.gov.in/rss.xml || true
+      - name: Show outbound IP
+        run: curl -s --max-time 10 https://api.ipify.org || true
