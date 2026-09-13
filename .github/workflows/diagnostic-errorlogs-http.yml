@@ -73,3 +73,17 @@ jobs:
           echo "=== Direct fetch of News18 feed from GH Actions, browser UA ==="
           curl -s -o news18_ua.xml -w "HTTP=%{http_code} bytes=%{size_download}\n" --max-time 20 -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36" "https://www.news18.com/rss/politics.xml"
           head -c 500 news18_ua.xml; echo
+          echo "=== Full simulation: exact prod UA+headers, follow redirects (-L), old URL ==="
+          curl -sS -L -o news18_full.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
+            -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36" \
+            -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
+            -H "Accept-Language: en-US,en;q=0.9" \
+            "https://www.news18.com/rss/politics.xml"
+          head -c 800 news18_full.xml; echo
+          echo "=== Same simulation directly against the new redirect-target URL ==="
+          curl -sS -o news18_new.xml -w "HTTP=%{http_code} bytes=%{size_download}\n" --max-time 20 \
+            -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36" \
+            -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
+            -H "Accept-Language: en-US,en;q=0.9" \
+            "https://www.news18.com/commonfeeds/v1/eng/rss/politics.xml"
+          head -c 800 news18_new.xml; echo
