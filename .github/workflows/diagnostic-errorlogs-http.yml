@@ -96,3 +96,11 @@ jobs:
           curl -sS -L -o news18_nofollow.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
             "https://www.news18.com/rss/politics.xml"
           head -c 500 news18_nofollow.xml; echo
+          echo "=== Test with NO User-Agent header at all (-A \"\"), following redirects ==="
+          curl -sS -L -A "" -o news18_nouawait.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
+            "https://www.news18.com/rss/politics.xml"
+          head -c 300 news18_nouawait.xml; echo
+          echo "=== Test with browser UA but ALSO curl default TLS/HTTP1.1 (--http1.1), no extra headers, following redirects ==="
+          curl -sS -L --http1.1 -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36" -o news18_http11.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
+            "https://www.news18.com/rss/politics.xml"
+          head -c 300 news18_http11.xml; echo
