@@ -83,7 +83,7 @@ public abstract partial class BaseRssProvider : IRssProvider
             rawXml = await response.Content.ReadAsStringAsync(cancellationToken);
             response.EnsureSuccessStatusCode();
 
-            var document = XDocument.Parse(rawXml);
+            var document = XDocument.Parse(SanitizeUnescapedAmpersands(rawXml));
 
             var articles = new List<NormalizedArticle>();
             foreach (var item in document.Descendants("item"))
@@ -412,8 +412,27 @@ public abstract partial class BaseRssProvider : IRssProvider
     internal static string? StripHtml(string? html) =>
         string.IsNullOrWhiteSpace(html) ? null : HtmlTagRegex().Replace(html, string.Empty).Trim();
 
+    /// <summary>
+    /// National Herald's feed generator emits raw, un-escaped "&amp;" characters in item text
+    /// (e.g. an HTML entity like "&amp;nbsp;"/"&amp;rsquo;", or plain "Politics &amp; Economy")
+    /// that XML's spec requires to be written as "&amp;amp;" - <see cref="XDocument.Parse(string)"/>
+    /// throws "An error occurred while parsing EntityName" the moment it hits one, confirmed live
+    /// against production traffic (recurring, line/position advancing with the feed's own growing
+    /// content on every poll). Widened to internal-static (raw XML string in, string out) so
+    /// <c>DynamicFeedIngestionService</c> (Mongo-driven feeds) reuses the exact same tolerance, not
+    /// a duplicate - same "fix the shared pipeline once, not per-provider" precedent as every other
+    /// spec-tolerance fix in this class. Only escapes an "&amp;" that isn't already the start of a
+    /// well-formed entity reference (named or numeric), so a feed that already escapes correctly is
+    /// completely unaffected.
+    /// </summary>
+    internal static string SanitizeUnescapedAmpersands(string xml) =>
+        UnescapedAmpersandRegex().Replace(xml, "&amp;");
+
     [GeneratedRegex("<[^>]+>")]
     private static partial Regex HtmlTagRegex();
+
+    [GeneratedRegex(@"&(?!amp;|lt;|gt;|quot;|apos;|#\d+;|#x[0-9a-fA-F]+;)")]
+    private static partial Regex UnescapedAmpersandRegex();
 
     [GeneratedRegex(@"\s+")]
     private static partial Regex WhitespaceRegex();
