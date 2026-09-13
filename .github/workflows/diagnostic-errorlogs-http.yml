@@ -1,0 +1,16 @@
+name: Diagnostic - ErrorLogs breakdown via HTTP (temporary)
+on:
+  workflow_dispatch:
+
+jobs:
+  query:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Counts
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors/counts" | python3 -m json.tool
+
+      - name: Provider/category breakdown
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors/breakdown" | python3 -m json.tool
+
+      - name: Top 50 unresolved (newest first)
+        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=50&isResolved=false" | python3 -m json.tool
