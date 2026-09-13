@@ -6,146 +6,59 @@ jobs:
   query:
     runs-on: ubuntu-latest
     steps:
-      - name: News18 error count BEFORE manual trigger
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors/counts?provider=News18" | python3 -m json.tool
-
-      - name: Manually trigger News18's crawl now (post-fix, provider re-enabled)
+      - name: Organiser - default curl UA, follow redirects
         run: |
-          curl -sS -X POST --max-time 20 -w "\nHTTP=%{http_code}\n" "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/crawl/trigger/News18?country=India"
+          curl -sS -L -o org_default.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
+            "https://organiser.org/feed"
+          head -c 500 org_default.xml; echo
 
-      - name: Wait for the crawl to actually run (12 feeds)
-        run: sleep 45
-
-      - name: News18 recurring job status after trigger
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/crawl/jobs/News18?country=India" | python3 -m json.tool
-
-      - name: News18 newest unresolved errors AFTER trigger
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=10&isResolved=false&provider=News18" | python3 -m json.tool
-
-      - name: News18 latest articles (proof real content is landing)
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/news/provider/News18?count=10" | python3 -m json.tool
-
-      - name: Bulk-delete News18's pre-fix error rows (before the deploy that fixed it)
+      - name: Organiser - CURRENT PROD UA (CrawlerUserAgent, declared bot) + prod headers
         run: |
-          curl -sS -X DELETE --max-time 30 -w "\nHTTP=%{http_code}\n" \
-            "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?provider=News18&createdBefore=2026-09-13T22%3A30%3A00Z"
+          curl -sS -L -o org_crawler.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
+            -A "Mozilla/5.0 (compatible; PoliticalNewsCrawler/1.0; +https://example.com/bot)" \
+            -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
+            -H "Accept-Language: en-US,en;q=0.9" \
+            "https://organiser.org/feed"
+          head -c 800 org_crawler.xml; echo
 
-      - name: Counts after News18 cleanup
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors/counts" | python3 -m json.tool
-
-      - name: Counts
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors/counts" | python3 -m json.tool
-
-      - name: Provider/category breakdown
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors/breakdown" | python3 -m json.tool
-
-      - name: News18 newest 5 (post-fix check)
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=5&isResolved=false&provider=News18" | python3 -m json.tool
-
-      - name: Organiser newest 5 (post-fix check)
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=5&isResolved=false&provider=Organiser" | python3 -m json.tool
-
-      - name: NationalHerald newest 5 (post-fix check)
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=5&isResolved=false&provider=NationalHerald" | python3 -m json.tool
-
-      - name: IndiaToday newest 5 (post-fix check)
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=5&isResolved=false&provider=IndiaToday" | python3 -m json.tool
-
-      - name: MinistryOfPortsShipping newest 5 (post-fix check)
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=5&isResolved=false&provider=MinistryOfPortsShipping" | python3 -m json.tool
-
-      - name: NavhindTimes newest 5 (still unaddressed - need error content)
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=5&isResolved=false&provider=NavhindTimes" | python3 -m json.tool
-
-      - name: YouTube newest 5 (still unaddressed - need error content)
-        run: curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=5&isResolved=false&provider=YouTube" | python3 -m json.tool
-
-      - name: YouTube newest 3 unresolved - ids only
-        id: youtube_ids
+      - name: Organiser - BrowserUserAgent + prod headers (candidate fix)
         run: |
-          curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors?page=1&pageSize=3&isResolved=false&provider=YouTube" \
-            | python3 -c "import json,sys; d=json.load(sys.stdin); print('\n'.join(i['id'] for i in d['items']))" > ids.txt
-          cat ids.txt
+          curl -sS -L -o org_browser.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
+            -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36" \
+            -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
+            -H "Accept-Language: en-US,en;q=0.9" \
+            "https://organiser.org/feed"
+          head -c 800 org_browser.xml; echo
 
-      - name: YouTube full error detail (BJP + Modi samples)
+      - name: IndiaToday India feed - default curl UA, follow redirects
         run: |
-          while read -r id; do
-            echo "=== $id ==="
-            curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/errors/$id" | python3 -m json.tool
-          done < ids.txt
+          curl -sS -L -o it_default.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
+            "https://www.indiatoday.in/rss/1206578"
+          head -c 500 it_default.xml; echo
 
-      - name: Test YouTube feed URLs directly from GitHub Actions (not Azure)
+      - name: IndiaToday India feed - CURRENT PROD UA (CrawlerUserAgent, declared bot) + prod headers
         run: |
-          echo "--- Modi channel feed ---"
-          curl -s -o modi.xml -w "HTTP=%{http_code} bytes=%{size_download}\n" --max-time 20 "https://www.youtube.com/feeds/videos.xml?channel_id=UC1NF71EwP41VdjAU1iXdLkw"
-          head -c 500 modi.xml; echo
-          echo "--- BJP channel feed ---"
-          curl -s -o bjp.xml -w "HTTP=%{http_code} bytes=%{size_download}\n" --max-time 20 "https://www.youtube.com/feeds/videos.xml?channel_id=UCrwE8kVqtIUVUzKui2WVpuQ"
-          head -c 500 bjp.xml; echo
-          echo "--- Same Modi request with a browser User-Agent ---"
-          curl -s -o modi_ua.xml -w "HTTP=%{http_code} bytes=%{size_download}\n" --max-time 20 -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36" "https://www.youtube.com/feeds/videos.xml?channel_id=UC1NF71EwP41VdjAU1iXdLkw"
-          head -c 500 modi_ua.xml; echo
+          curl -sS -L -o it_crawler.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
+            -A "Mozilla/5.0 (compatible; PoliticalNewsCrawler/1.0; +https://example.com/bot)" \
+            -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
+            -H "Accept-Language: en-US,en;q=0.9" \
+            "https://www.indiatoday.in/rss/1206578"
+          head -c 800 it_crawler.xml; echo
 
-      - name: News18 still 403 post-fix - check Wayback CDX coverage for its feed URLs
+      - name: IndiaToday India feed - BrowserUserAgent + prod headers (candidate fix)
         run: |
-          for url in "https://www.news18.com/rss/politics.xml" "https://www.news18.com/rss/india.xml"; do
+          curl -sS -L -o it_browser.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
+            -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36" \
+            -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
+            -H "Accept-Language: en-US,en;q=0.9" \
+            "https://www.indiatoday.in/rss/1206578"
+          head -c 800 it_browser.xml; echo
+
+      - name: CDX coverage check for both feeds (in case Wayback is still the right lever)
+        run: |
+          for url in "https://organiser.org/feed" "https://www.indiatoday.in/rss/1206578"; do
             echo "=== CDX for $url ==="
             encoded=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$url")
-            curl -sS --max-time 20 "https://web.archive.org/cdx/search/cdx?url=${encoded}&output=json&limit=5&sort=reverse" || echo "CDX request failed"
+            curl -sS --max-time 20 "https://web.archive.org/cdx/search/cdx?url=${encoded}&output=json&limit=3&sort=reverse" || echo "CDX request failed"
             echo
           done
-          echo "=== Direct fetch of News18 feed from GH Actions (not Azure), default curl UA ==="
-          curl -s -o news18_default.xml -w "HTTP=%{http_code} bytes=%{size_download}\n" --max-time 20 "https://www.news18.com/rss/politics.xml"
-          head -c 500 news18_default.xml; echo
-          echo "=== Direct fetch of News18 feed from GH Actions, browser UA ==="
-          curl -s -o news18_ua.xml -w "HTTP=%{http_code} bytes=%{size_download}\n" --max-time 20 -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36" "https://www.news18.com/rss/politics.xml"
-          head -c 500 news18_ua.xml; echo
-          echo "=== Full simulation: exact prod UA+headers, follow redirects (-L), old URL ==="
-          curl -sS -L -o news18_full.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
-            -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36" \
-            -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
-            -H "Accept-Language: en-US,en;q=0.9" \
-            "https://www.news18.com/rss/politics.xml"
-          head -c 800 news18_full.xml; echo
-          echo "=== Same simulation directly against the new redirect-target URL ==="
-          curl -sS -o news18_new.xml -w "HTTP=%{http_code} bytes=%{size_download}\n" --max-time 20 \
-            -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36" \
-            -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
-            -H "Accept-Language: en-US,en;q=0.9" \
-            "https://www.news18.com/commonfeeds/v1/eng/rss/politics.xml"
-          head -c 800 news18_new.xml; echo
-          echo "=== Test with the app's declared CrawlerUserAgent string, following redirects ==="
-          curl -sS -L -o news18_crawler.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
-            -A "Mozilla/5.0 (compatible; PoliticalNewsCrawler/1.0; +https://example.com/bot)" \
-            "https://www.news18.com/rss/politics.xml"
-          head -c 500 news18_crawler.xml; echo
-          echo "=== Test with curl default UA but explicit -L follow, old URL ==="
-          curl -sS -L -o news18_nofollow.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
-            "https://www.news18.com/rss/politics.xml"
-          head -c 500 news18_nofollow.xml; echo
-          echo "=== Test with NO User-Agent header at all (-A \"\"), following redirects ==="
-          curl -sS -L -A "" -o news18_nouawait.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
-            "https://www.news18.com/rss/politics.xml"
-          head -c 300 news18_nouawait.xml; echo
-          echo "=== Test with browser UA but ALSO curl default TLS/HTTP1.1 (--http1.1), no extra headers, following redirects ==="
-          curl -sS -L --http1.1 -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36" -o news18_http11.xml -w "HTTP=%{http_code} bytes=%{size_download} url_effective=%{url_effective}\n" --max-time 20 \
-            "https://www.news18.com/rss/politics.xml"
-          head -c 300 news18_http11.xml; echo
-          echo "=== Confirm redirect target pattern for other News18 slugs (default curl UA, no follow) ==="
-          for slug in india world business movies sports cricket tech auto lifestyle education-career viral; do
-            loc=$(curl -sS -o /dev/null -D - --max-time 15 "https://www.news18.com/rss/${slug}.xml" | grep -i '^location:' | tr -d '\r')
-            echo "$slug -> $loc"
-          done
-          echo "=== Final check: plain curl UA + prod Accept/Accept-Language headers, new URL ==="
-          curl -sS -o news18_final.xml -w "HTTP=%{http_code} bytes=%{size_download}\n" --max-time 20 \
-            -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
-            -H "Accept-Language: en-US,en;q=0.9" \
-            "https://www.news18.com/commonfeeds/v1/eng/rss/politics.xml"
-          head -c 400 news18_final.xml; echo
-          echo "=== Final check: explicit UA curl/8.5.0 + same headers, new URL ==="
-          curl -sS -o news18_final2.xml -w "HTTP=%{http_code} bytes=%{size_download}\n" --max-time 20 \
-            -A "curl/8.5.0" \
-            -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
-            -H "Accept-Language: en-US,en;q=0.9" \
-            "https://www.news18.com/commonfeeds/v1/eng/rss/politics.xml"
-          head -c 400 news18_final2.xml; echo
