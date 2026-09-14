@@ -149,44 +149,74 @@ internal static class WaybackMachineFeedResolver
         }
     }
 
+    private static readonly TimeSpan CdxRetryDelay = TimeSpan.FromSeconds(3);
+    private const int MaxCdxAttempts = 2;
+
+    /// <summary>
+    /// CDX is a separate subsystem from archive.org's main site and Save-Page-Now API, and is
+    /// observed to occasionally return a fast HTTP 503 on its own (confirmed live: web.archive.org/
+    /// itself healthy and sub-second while cdx/search/cdx 503s on every query, for several
+    /// unrelated URLs at once - a transient Internet Archive-side blip, not a per-URL issue) - one
+    /// retry rides out that kind of short-lived degradation. This matters more than it would for a
+    /// rarely-used fallback: for any feed whose Save-Page-Now quota (5 captures/URL/day, shared
+    /// across every archive.org caller for that URL, not just this app - popular pages get
+    /// captured by others too) is already exhausted for the day, CDX becomes the *primary* path for
+    /// the rest of that day, not an occasional backstop.
+    /// </summary>
     private static async Task<string?> TryGetLatestSnapshotAsync(
         HttpClient archiveClient,
         string realUrl,
         ILogger logger,
         CancellationToken cancellationToken)
     {
-        try
+        for (var attempt = 1; attempt <= MaxCdxAttempts; attempt++)
         {
-            var cdxUrl = $"{CdxEndpoint}?url={Uri.EscapeDataString(realUrl)}&output=json&limit=-5&filter=statuscode:200";
-            using var response = await archiveClient.GetAsync(cdxUrl, cancellationToken);
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                return null;
-            }
+                var cdxUrl = $"{CdxEndpoint}?url={Uri.EscapeDataString(realUrl)}&output=json&limit=-5&filter=statuscode:200";
+                using var response = await archiveClient.GetAsync(cdxUrl, cancellationToken);
+                if (!response.IsSuccessStatusCode)
+                {
+                    logger.LogWarning("Wayback Machine CDX lookup for {Url} returned HTTP {Status} (attempt {Attempt}/{Max})", realUrl, (int)response.StatusCode, attempt, MaxCdxAttempts);
+                    if (attempt < MaxCdxAttempts)
+                    {
+                        await Task.Delay(CdxRetryDelay, cancellationToken);
+                        continue;
+                    }
 
-            var body = await response.Content.ReadAsStringAsync(cancellationToken);
-            using var doc = JsonDocument.Parse(body);
-            var rows = doc.RootElement;
-            if (rows.ValueKind != JsonValueKind.Array || rows.GetArrayLength() < 2)
+                    return null;
+                }
+
+                var body = await response.Content.ReadAsStringAsync(cancellationToken);
+                using var doc = JsonDocument.Parse(body);
+                var rows = doc.RootElement;
+                if (rows.ValueKind != JsonValueKind.Array || rows.GetArrayLength() < 2)
+                {
+                    // Row 0 is the CDX header; fewer than 2 rows means no real capture exists -
+                    // not worth retrying, a retry won't make a capture that doesn't exist appear.
+                    return null;
+                }
+
+                var lastRow = rows[rows.GetArrayLength() - 1];
+                var timestamp = lastRow[1].GetString();
+                var originalUrl = lastRow[2].GetString();
+                if (string.IsNullOrWhiteSpace(timestamp) || string.IsNullOrWhiteSpace(originalUrl))
+                {
+                    return null;
+                }
+
+                return $"https://web.archive.org/web/{timestamp}id_/{originalUrl}";
+            }
+            catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
             {
-                // Row 0 is the CDX header; fewer than 2 rows means no real capture exists.
-                return null;
+                logger.LogWarning(ex, "Wayback Machine CDX lookup failed for {Url} (attempt {Attempt}/{Max})", realUrl, attempt, MaxCdxAttempts);
+                if (attempt < MaxCdxAttempts)
+                {
+                    await Task.Delay(CdxRetryDelay, cancellationToken);
+                }
             }
-
-            var lastRow = rows[rows.GetArrayLength() - 1];
-            var timestamp = lastRow[1].GetString();
-            var originalUrl = lastRow[2].GetString();
-            if (string.IsNullOrWhiteSpace(timestamp) || string.IsNullOrWhiteSpace(originalUrl))
-            {
-                return null;
-            }
-
-            return $"https://web.archive.org/web/{timestamp}id_/{originalUrl}";
         }
-        catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
-        {
-            logger.LogWarning(ex, "Wayback Machine CDX lookup failed for {Url}", realUrl);
-            return null;
-        }
+
+        return null;
     }
 }
