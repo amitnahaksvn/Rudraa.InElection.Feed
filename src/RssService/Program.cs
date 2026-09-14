@@ -2,7 +2,9 @@ using Hangfire;
 using Application.Abstractions;
 using Application.DependencyInjection;
 using Application.Options;
+using Infrastructure.Cosmos;
 using Infrastructure.DependencyInjection;
+using Infrastructure.RssProviders;
 using Infrastructure.Scheduling;
 using WebPlatform;
 
@@ -91,6 +93,13 @@ builder.Services.AddHangfireServer(options =>
 builder.Services.AddHealthChecks().AddMongoDb(name: "cosmosdb");
 
 var app = builder.Build();
+
+// Lets MPInfo/NDMA/IndianExpress/Organiser/PIB/ThePrint/YouTube's WaybackMachineFeedResolver
+// survive a process restart with its last-known-good snapshot cache intact, instead of starting
+// every restart from empty - see WaybackMachineFeedResolver's own doc comment for why this matters
+// (archive.org's own multi-minute outages otherwise force a cold cache into the blocked direct
+// fetch on the very next cycle after any restart).
+WaybackMachineFeedResolver.Initialize(app.Services.GetRequiredService<CosmosDbContext>().WaybackSnapshotCache);
 
 // Registers/refreshes every Hangfire recurring job this host owns (RSS providers, Mongo-driven
 // dynamic feeds, error-notification dispatch) against this process's own Hangfire server

@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Application.Options;
 using Domain.Entities;
@@ -29,6 +30,7 @@ public sealed class CosmosDbContext
         ProviderSchedules = Database.GetCollection<ProviderSchedule>(settings.ProviderSchedulesCollection);
         CrawlCountries = Database.GetCollection<CrawlCountry>(settings.CrawlCountriesCollection);
         CrawlFeeds = Database.GetCollection<CrawlFeed>(settings.CrawlFeedsCollection);
+        WaybackSnapshotCache = Database.GetCollection<BsonDocument>("WaybackSnapshotCache");
     }
 
     public IMongoClient Client { get; }
@@ -64,4 +66,13 @@ public sealed class CosmosDbContext
 
     /// <summary>Database-backed feed/endpoint catalog - see <see cref="Application.Options.CosmosDbOptions.CrawlFeedsCollection"/>.</summary>
     public IMongoCollection<CrawlFeed> CrawlFeeds { get; }
+
+    /// <summary>
+    /// Persists <see cref="Infrastructure.RssProviders.WaybackMachineFeedResolver"/>'s last-known-good
+    /// snapshot URLs so they survive a process restart, not just an in-memory cache's own lifetime -
+    /// a fixed, hardcoded collection name (not a configurable <see cref="CosmosDbOptions"/> field)
+    /// since it's a purely internal implementation cache, never a user-facing/queried entity. Raw
+    /// <see cref="BsonDocument"/> rather than a typed Domain entity for the same reason.
+    /// </summary>
+    public IMongoCollection<BsonDocument> WaybackSnapshotCache { get; }
 }

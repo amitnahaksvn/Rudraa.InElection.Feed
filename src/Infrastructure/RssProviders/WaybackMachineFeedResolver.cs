@@ -1,6 +1,10 @@
 using System.Collections.Concurrent;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using Application.Options;
 
 namespace Infrastructure.RssProviders;
@@ -29,13 +33,17 @@ namespace Infrastructure.RssProviders;
 ///    or - for a URL archive.org has genuinely never crawled before (confirmed true for NDMA's
 ///    exact rss.xml at the time this was written) - simply unavailable.
 /// 3. Falls back to the last snapshot URL either tier above resolved successfully for this same
-///    real URL, cached in-process for <see cref="CacheTtl"/> - added after confirming live that
-///    archive.org (not just CDX specifically) has real multi-minute full outages several times in
-///    one day, well beyond what a short retry can ride out. Without this, a feed whose Save-Page-
-///    Now daily quota is already exhausted (making CDX its *primary* path for the rest of the day -
-///    see <see cref="TryGetLatestSnapshotAsync"/>'s own doc comment) falls all the way through to
-///    the blocked direct fetch on every single outage overlap, even though a perfectly good
-///    snapshot URL was resolved just one crawl cycle earlier.
+///    real URL, valid for <see cref="CacheTtl"/> - added after confirming live that archive.org
+///    (not just CDX specifically) has real multi-minute full outages several times in one day, well
+///    beyond what a short retry can ride out. Without this, a feed whose Save-Page-Now daily quota
+///    is already exhausted (making CDX its *primary* path for the rest of the day - see
+///    <see cref="TryGetLatestSnapshotAsync"/>'s own doc comment) falls all the way through to the
+///    blocked direct fetch on every single outage overlap, even though a perfectly good snapshot
+///    URL was resolved just one crawl cycle earlier. Checked first in-process
+///    (<see cref="LastKnownGoodSnapshots"/>), then in the Mongo-persisted copy
+///    (<see cref="_persistentCache"/>, set once at startup via <see cref="Initialize"/>) if the
+///    in-memory one has nothing - the persisted copy is what survives an actual process restart,
+///    which an in-memory-only cache cannot.
 /// Only if the cache is also empty does this fall back to the real URL directly (identical to
 /// today's behavior before any of this existed - no worse than that baseline).
 ///
@@ -43,7 +51,7 @@ namespace Infrastructure.RssProviders;
 /// malformed JSON) is caught internally and degrades to the next tier, since a fetch-URL resolver
 /// must not be able to crash the crawl loop that calls it.
 /// </summary>
-internal static class WaybackMachineFeedResolver
+public static class WaybackMachineFeedResolver
 {
     private const string SavePageNowEndpoint = "https://web.archive.org/save/";
     private const string SaveStatusEndpoint = "https://web.archive.org/save/status/";
@@ -57,6 +65,17 @@ internal static class WaybackMachineFeedResolver
     private static readonly TimeSpan CacheTtl = TimeSpan.FromMinutes(45);
     private static readonly ConcurrentDictionary<string, (string SnapshotUrl, DateTimeOffset ExpiresAt)> LastKnownGoodSnapshots = new();
 
+    // Set once at startup (see RssService/Program.cs) - an in-memory-only cache is wiped by every
+    // process restart, and this app got restarted far more often than a normal production deployment
+    // cadence while these Wayback fixes were being rolled out one provider at a time, which is
+    // exactly what kept the in-memory cache from ever getting a chance to help. Persisting to Mongo
+    // means the cache survives a restart, not just the current process's own uptime. Nullable/no-op
+    // when unset (e.g. in unit tests, which construct providers directly without calling Initialize)
+    // - degrades to the in-memory-only behavior from before this existed.
+    private static IMongoCollection<BsonDocument>? _persistentCache;
+
+    public static void Initialize(IMongoCollection<BsonDocument> persistentCache) => _persistentCache = persistentCache;
+
     public static async Task<string> ResolveAsync(
         HttpClient archiveClient,
         WaybackMachineOptions options,
@@ -69,7 +88,7 @@ internal static class WaybackMachineFeedResolver
             var freshSnapshotUrl = await TryCaptureFreshSnapshotAsync(archiveClient, options, realUrl, logger, cancellationToken);
             if (freshSnapshotUrl is not null)
             {
-                CacheSnapshot(realUrl, freshSnapshotUrl);
+                await CacheSnapshotAsync(realUrl, freshSnapshotUrl, logger, cancellationToken);
                 return freshSnapshotUrl;
             }
         }
@@ -77,21 +96,89 @@ internal static class WaybackMachineFeedResolver
         var latestSnapshotUrl = await TryGetLatestSnapshotAsync(archiveClient, realUrl, logger, cancellationToken);
         if (latestSnapshotUrl is not null)
         {
-            CacheSnapshot(realUrl, latestSnapshotUrl);
+            await CacheSnapshotAsync(realUrl, latestSnapshotUrl, logger, cancellationToken);
             return latestSnapshotUrl;
         }
 
         if (LastKnownGoodSnapshots.TryGetValue(realUrl, out var cached) && cached.ExpiresAt > DateTimeOffset.UtcNow)
         {
-            logger.LogWarning("Wayback Machine resolution for {Url} failed this cycle - serving last known good snapshot from cache", realUrl);
+            logger.LogWarning("Wayback Machine resolution for {Url} failed this cycle - serving last known good snapshot from in-memory cache", realUrl);
             return cached.SnapshotUrl;
+        }
+
+        var persisted = await TryGetPersistedSnapshotAsync(realUrl, logger, cancellationToken);
+        if (persisted is not null)
+        {
+            logger.LogWarning("Wayback Machine resolution for {Url} failed this cycle - serving last known good snapshot from the persistent cache (in-memory cache empty, likely a recent restart)", realUrl);
+            // Warms the in-memory cache too, so subsequent failures within this same process don't
+            // need a Mongo round trip until this entry's own TTL expires.
+            LastKnownGoodSnapshots[realUrl] = persisted.Value;
+            return persisted.Value.SnapshotUrl;
         }
 
         return realUrl;
     }
 
-    private static void CacheSnapshot(string realUrl, string snapshotUrl) =>
-        LastKnownGoodSnapshots[realUrl] = (snapshotUrl, DateTimeOffset.UtcNow.Add(CacheTtl));
+    private static async Task CacheSnapshotAsync(string realUrl, string snapshotUrl, ILogger logger, CancellationToken cancellationToken)
+    {
+        var expiresAt = DateTimeOffset.UtcNow.Add(CacheTtl);
+        LastKnownGoodSnapshots[realUrl] = (snapshotUrl, expiresAt);
+
+        if (_persistentCache is null)
+        {
+            return;
+        }
+
+        try
+        {
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", HashUrl(realUrl));
+            var update = Builders<BsonDocument>.Update
+                .Set("realUrl", realUrl)
+                .Set("snapshotUrl", snapshotUrl)
+                .Set("expiresAt", expiresAt.UtcDateTime);
+            await _persistentCache.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true }, cancellationToken);
+        }
+        catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
+        {
+            // Best-effort - a failed cache write just means this entry won't survive a restart,
+            // not a failure of the resolution that just succeeded.
+            logger.LogWarning(ex, "Failed to persist Wayback Machine snapshot cache entry for {Url}", realUrl);
+        }
+    }
+
+    private static async Task<(string SnapshotUrl, DateTimeOffset ExpiresAt)?> TryGetPersistedSnapshotAsync(string realUrl, ILogger logger, CancellationToken cancellationToken)
+    {
+        if (_persistentCache is null)
+        {
+            return null;
+        }
+
+        try
+        {
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", HashUrl(realUrl));
+            var doc = await _persistentCache.Find(filter).FirstOrDefaultAsync(cancellationToken);
+            if (doc is null)
+            {
+                return null;
+            }
+
+            var expiresAt = new DateTimeOffset(doc["expiresAt"].ToUniversalTime(), TimeSpan.Zero);
+            if (expiresAt <= DateTimeOffset.UtcNow)
+            {
+                return null;
+            }
+
+            return (doc["snapshotUrl"].AsString, expiresAt);
+        }
+        catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
+        {
+            logger.LogWarning(ex, "Failed to read persisted Wayback Machine snapshot cache entry for {Url}", realUrl);
+            return null;
+        }
+    }
+
+    private static string HashUrl(string url) =>
+        Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(url))).ToLowerInvariant();
 
     private static async Task<string?> TryCaptureFreshSnapshotAsync(
         HttpClient archiveClient,
