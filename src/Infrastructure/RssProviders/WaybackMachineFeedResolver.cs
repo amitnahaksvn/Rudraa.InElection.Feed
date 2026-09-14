@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Application.Options;
@@ -14,7 +15,8 @@ namespace Infrastructure.RssProviders;
 /// recent as 2026-02-14, proving archive.org's crawler isn't on whatever datacenter-IP blocklist
 /// the other three are on).
 ///
-/// Two-tier resolution, both talking only to archive.org (never to the blocked target directly):
+/// Three-tier resolution, the first two talking only to archive.org (never to the blocked target
+/// directly):
 /// 1. If <see cref="WaybackMachineOptions.AccessKey"/>/<see cref="WaybackMachineOptions.SecretKey"/>
 ///    are configured (free from archive.org/account/s3.php - a free Internet Archive account, no
 ///    payment), triggers a fresh on-demand capture via the authenticated "Save Page Now" (SPN2)
@@ -26,8 +28,16 @@ namespace Infrastructure.RssProviders;
 ///    This can be stale (archive.org's organic crawl cadence, observed roughly monthly for MPInfo)
 ///    or - for a URL archive.org has genuinely never crawled before (confirmed true for NDMA's
 ///    exact rss.xml at the time this was written) - simply unavailable.
-/// If both tiers come up empty, falls back to the real URL directly (identical to today's
-/// behavior - no worse than before this existed).
+/// 3. Falls back to the last snapshot URL either tier above resolved successfully for this same
+///    real URL, cached in-process for <see cref="CacheTtl"/> - added after confirming live that
+///    archive.org (not just CDX specifically) has real multi-minute full outages several times in
+///    one day, well beyond what a short retry can ride out. Without this, a feed whose Save-Page-
+///    Now daily quota is already exhausted (making CDX its *primary* path for the rest of the day -
+///    see <see cref="TryGetLatestSnapshotAsync"/>'s own doc comment) falls all the way through to
+///    the blocked direct fetch on every single outage overlap, even though a perfectly good
+///    snapshot URL was resolved just one crawl cycle earlier.
+/// Only if the cache is also empty does this fall back to the real URL directly (identical to
+/// today's behavior before any of this existed - no worse than that baseline).
 ///
 /// Never throws: every failure mode (missing credentials, archive.org down, job never completes,
 /// malformed JSON) is caught internally and degrades to the next tier, since a fetch-URL resolver
@@ -41,6 +51,12 @@ internal static class WaybackMachineFeedResolver
     private static readonly TimeSpan PollInterval = TimeSpan.FromSeconds(5);
     private const int MaxPollAttempts = 6;
 
+    // Deliberately longer than the shortest provider cron seen using this resolver (30 minutes,
+    // IndianExpress/Organiser/ThePrint) so one skipped cycle during an archive.org outage still has
+    // a cached fallback to use, without serving a snapshot so old it stops being useful.
+    private static readonly TimeSpan CacheTtl = TimeSpan.FromMinutes(45);
+    private static readonly ConcurrentDictionary<string, (string SnapshotUrl, DateTimeOffset ExpiresAt)> LastKnownGoodSnapshots = new();
+
     public static async Task<string> ResolveAsync(
         HttpClient archiveClient,
         WaybackMachineOptions options,
@@ -53,13 +69,29 @@ internal static class WaybackMachineFeedResolver
             var freshSnapshotUrl = await TryCaptureFreshSnapshotAsync(archiveClient, options, realUrl, logger, cancellationToken);
             if (freshSnapshotUrl is not null)
             {
+                CacheSnapshot(realUrl, freshSnapshotUrl);
                 return freshSnapshotUrl;
             }
         }
 
         var latestSnapshotUrl = await TryGetLatestSnapshotAsync(archiveClient, realUrl, logger, cancellationToken);
-        return latestSnapshotUrl ?? realUrl;
+        if (latestSnapshotUrl is not null)
+        {
+            CacheSnapshot(realUrl, latestSnapshotUrl);
+            return latestSnapshotUrl;
+        }
+
+        if (LastKnownGoodSnapshots.TryGetValue(realUrl, out var cached) && cached.ExpiresAt > DateTimeOffset.UtcNow)
+        {
+            logger.LogWarning("Wayback Machine resolution for {Url} failed this cycle - serving last known good snapshot from cache", realUrl);
+            return cached.SnapshotUrl;
+        }
+
+        return realUrl;
     }
+
+    private static void CacheSnapshot(string realUrl, string snapshotUrl) =>
+        LastKnownGoodSnapshots[realUrl] = (snapshotUrl, DateTimeOffset.UtcNow.Add(CacheTtl));
 
     private static async Task<string?> TryCaptureFreshSnapshotAsync(
         HttpClient archiveClient,
