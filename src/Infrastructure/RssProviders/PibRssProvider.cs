@@ -1,4 +1,8 @@
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Application.Models;
+using Application.Options;
+using Infrastructure.DependencyInjection;
 
 namespace Infrastructure.RssProviders;
 
@@ -11,21 +15,38 @@ namespace Infrastructure.RssProviders;
 /// these three). Feed URLs live entirely in configuration under
 /// NewsCrawler:Providers[Name="PIB"]:Feeds, never hardcoded here.
 ///
-/// PIB's WAF began returning 403 for the declared crawler UA after this provider had already been
-/// verified working - same behavior as News18/OneIndia's CDNs, so this provider is registered
-/// with the browser UA in <c>InfrastructureServiceCollectionExtensions</c>, not the default one.
+/// Routed through <see cref="WaybackMachineFeedResolver"/> - production logs show a consistent
+/// 30-second connection timeout against this app's Azure outbound IP (confirmed live the same
+/// request resolves in well under a second from a non-Azure network), the same
+/// connection-hang-not-a-fast-403 signature already documented for MPInfo/NDMA, not the
+/// WAF-UA-detection reason PIB's BrowserUserAgent registration was originally added for.
 /// </summary>
 public sealed class PibRssProvider : BaseRssProvider
 {
     public const string ProviderName = "PIB";
     public const string ClientName = "PibRssClient";
 
-    public PibRssProvider(IHttpClientFactory httpClientFactory, ILogger<PibRssProvider> logger)
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly WaybackMachineOptions _waybackOptions;
+    private readonly ILogger<PibRssProvider> _logger;
+
+    public PibRssProvider(IHttpClientFactory httpClientFactory, ILogger<PibRssProvider> logger, IOptions<WaybackMachineOptions> waybackOptions)
         : base(httpClientFactory, logger)
     {
+        _httpClientFactory = httpClientFactory;
+        _waybackOptions = waybackOptions.Value;
+        _logger = logger;
     }
 
     public override string Name => ProviderName;
 
     protected override string HttpClientName => ClientName;
+
+    protected override Task<string> ResolveFeedUrlAsync(RssFeedOptions feed, CancellationToken cancellationToken) =>
+        WaybackMachineFeedResolver.ResolveAsync(
+            _httpClientFactory.CreateClient(InfrastructureServiceCollectionExtensions.WaybackMachineClientName),
+            _waybackOptions,
+            feed.Url,
+            _logger,
+            cancellationToken);
 }
