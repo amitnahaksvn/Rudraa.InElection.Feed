@@ -44,7 +44,7 @@ public class NewProvidersRssTests
         { "TimesOfIndia", f => new TimesOfIndiaRssProvider(f, NullLogger<TimesOfIndiaRssProvider>.Instance) },
         { "NavbharatTimes", f => new NavbharatTimesRssProvider(f, NullLogger<NavbharatTimesRssProvider>.Instance) },
         { "HindustanTimes", f => new HindustanTimesRssProvider(f, NullLogger<HindustanTimesRssProvider>.Instance) },
-        { "ThePrint", f => new ThePrintRssProvider(f, NullLogger<ThePrintRssProvider>.Instance) },
+        { "ThePrint", f => new ThePrintRssProvider(f, NullLogger<ThePrintRssProvider>.Instance, Options.Create(new WaybackMachineOptions())) },
         { "ScrollIn", f => new ScrollInRssProvider(f, NullLogger<ScrollInRssProvider>.Instance) },
         { "Mint", f => new MintRssProvider(f, NullLogger<MintRssProvider>.Instance) },
         { "DeccanHerald", f => new DeccanHeraldRssProvider(f, NullLogger<DeccanHeraldRssProvider>.Instance) },
