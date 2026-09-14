@@ -64,6 +64,8 @@ public abstract partial class BaseRssProvider : IRssProvider
         return results;
     }
 
+    private const int MaxTruncatedTransferAttempts = 2;
+
     private async Task<FeedFetchResult> FetchFeedAsync(RssFeedOptions feed, CancellationToken cancellationToken)
     {
         var fetchedAt = DateTimeOffset.UtcNow;
@@ -72,65 +74,83 @@ public abstract partial class BaseRssProvider : IRssProvider
         int? httpStatusCode = null;
         var url = await ResolveFeedUrlAsync(feed, cancellationToken);
 
-        try
+        for (var attempt = 1; attempt <= MaxTruncatedTransferAttempts; attempt++)
         {
-            var client = _httpClientFactory.CreateClient(HttpClientName);
-            using var response = await client.GetAsync(url, cancellationToken);
-            httpStatusCode = (int)response.StatusCode;
-            // Body read before the status check throws, not after, so a non-2xx response's body
-            // (an error page, a WAF block, a JSON error payload) is still captured for
-            // diagnostics/the monitoring-alert email instead of being discarded.
-            rawXml = await response.Content.ReadAsStringAsync(cancellationToken);
-            response.EnsureSuccessStatusCode();
-
-            var document = XDocument.Parse(SanitizeUnescapedAmpersands(rawXml));
-
-            var articles = new List<NormalizedArticle>();
-            foreach (var item in document.Descendants("item"))
+            try
             {
-                var article = await ParseItemAsync(item, feed, url, cancellationToken);
-                if (article is not null)
+                var client = _httpClientFactory.CreateClient(HttpClientName);
+                using var response = await client.GetAsync(url, cancellationToken);
+                httpStatusCode = (int)response.StatusCode;
+                // Body read before the status check throws, not after, so a non-2xx response's body
+                // (an error page, a WAF block, a JSON error payload) is still captured for
+                // diagnostics/the monitoring-alert email instead of being discarded.
+                rawXml = await response.Content.ReadAsStringAsync(cancellationToken);
+                response.EnsureSuccessStatusCode();
+
+                var document = XDocument.Parse(SanitizeUnescapedAmpersands(rawXml));
+
+                var articles = new List<NormalizedArticle>();
+                foreach (var item in document.Descendants("item"))
                 {
-                    articles.Add(article);
+                    var article = await ParseItemAsync(item, feed, url, cancellationToken);
+                    if (article is not null)
+                    {
+                        articles.Add(article);
+                    }
                 }
-            }
 
-            return new FeedFetchResult
+                return new FeedFetchResult
+                {
+                    FeedName = feed.Name,
+                    FeedUrl = url,
+                    Success = true,
+                    Articles = articles,
+                    FetchedAt = fetchedAt,
+                    HttpStatusCode = httpStatusCode,
+                    RawXml = rawXml,
+                    ContentHash = ComputeContentHash(rawXml),
+                    ProcessingDurationMs = stopwatch.ElapsedMilliseconds
+                };
+            }
+            // A malformed/incomplete XML body (confirmed live for DeccanChronicle's oversized
+            // 506-item feed: a real HTTP 200 whose content cuts off mid-CDATA partway through) is
+            // usually a one-off truncated transfer, not a permanently broken feed - one fresh retry
+            // (a brand-new GET, not reparsing the same truncated bytes) rides out the transient case
+            // without masking a feed that's genuinely, consistently malformed (which still surfaces
+            // as a failure after the retry also fails).
+            catch (System.Xml.XmlException ex) when (!cancellationToken.IsCancellationRequested && attempt < MaxTruncatedTransferAttempts)
             {
-                FeedName = feed.Name,
-                FeedUrl = url,
-                Success = true,
-                Articles = articles,
-                FetchedAt = fetchedAt,
-                HttpStatusCode = httpStatusCode,
-                RawXml = rawXml,
-                ContentHash = ComputeContentHash(rawXml),
-                ProcessingDurationMs = stopwatch.ElapsedMilliseconds
-            };
-        }
-        catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
-        {
-            // Catches everything, including a TaskCanceledException from HttpClient's own
-            // per-request Timeout - that is a dead/hanging feed, not our caller asking to stop,
-            // and must never crash the host. Only lets an exception through uncaught when our
-            // own cancellationToken was actually the one that fired (real shutdown/cancellation).
-            _logger.LogError(ex, "Failed to fetch/parse feed {Provider}/{Feed} ({Url})", Name, feed.Name, url);
-            return new FeedFetchResult
+                _logger.LogWarning(ex, "Feed {Provider}/{Feed} ({Url}) returned malformed XML on attempt {Attempt}/{Max} - retrying", Name, feed.Name, url, attempt, MaxTruncatedTransferAttempts);
+            }
+            catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
             {
-                FeedName = feed.Name,
-                FeedUrl = url,
-                Success = false,
-                Error = ex.Message,
-                ExceptionType = ex.GetType().FullName ?? ex.GetType().Name,
-                StackTrace = ex.StackTrace,
-                InnerException = ex.InnerException is { } inner ? $"{inner.GetType().FullName}: {inner.Message}" : null,
-                FetchedAt = fetchedAt,
-                HttpStatusCode = httpStatusCode,
-                RawXml = rawXml,
-                ContentHash = rawXml is not null ? ComputeContentHash(rawXml) : null,
-                ProcessingDurationMs = stopwatch.ElapsedMilliseconds
-            };
+                // Catches everything, including a TaskCanceledException from HttpClient's own
+                // per-request Timeout - that is a dead/hanging feed, not our caller asking to stop,
+                // and must never crash the host. Only lets an exception through uncaught when our
+                // own cancellationToken was actually the one that fired (real shutdown/cancellation).
+                _logger.LogError(ex, "Failed to fetch/parse feed {Provider}/{Feed} ({Url})", Name, feed.Name, url);
+                return new FeedFetchResult
+                {
+                    FeedName = feed.Name,
+                    FeedUrl = url,
+                    Success = false,
+                    Error = ex.Message,
+                    ExceptionType = ex.GetType().FullName ?? ex.GetType().Name,
+                    StackTrace = ex.StackTrace,
+                    InnerException = ex.InnerException is { } inner ? $"{inner.GetType().FullName}: {inner.Message}" : null,
+                    FetchedAt = fetchedAt,
+                    HttpStatusCode = httpStatusCode,
+                    RawXml = rawXml,
+                    ContentHash = rawXml is not null ? ComputeContentHash(rawXml) : null,
+                    ProcessingDurationMs = stopwatch.ElapsedMilliseconds
+                };
+            }
         }
+
+        // Unreachable in practice (the loop always returns or throws), but the compiler can't see
+        // that the final iteration's XmlException catch guard (attempt < MaxTruncatedTransferAttempts)
+        // makes it fall into the catch-all above instead of looping again.
+        throw new InvalidOperationException("Unreachable: FetchFeedAsync's retry loop exited without returning.");
     }
 
     /// <summary>Widened to internal so <c>DynamicFeedIngestionService</c> (Mongo-driven feeds) reuses the exact same hashing, not a duplicate.</summary>
