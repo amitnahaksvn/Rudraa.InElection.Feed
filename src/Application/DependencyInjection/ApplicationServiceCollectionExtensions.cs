@@ -38,6 +38,10 @@ public static class ApplicationServiceCollectionExtensions
             .ValidateOnStart();
 
         services
+            .AddOptions<SocialMediaCrawlerOptions>()
+            .Bind(configuration.GetSection(SocialMediaCrawlerOptions.SectionName));
+
+        services
             .AddOptions<ErrorNotificationOptions>()
             .Bind(configuration.GetSection(ErrorNotificationOptions.SectionName))
             .ValidateDataAnnotations()
