@@ -290,14 +290,34 @@ public static class HangfireRecurringJobRegistrar
     /// then registers one Hangfire recurring job per currently-enabled <c>SocialMediaSource</c>
     /// document - same shape as <see cref="SeedAndRegisterDynamicFeedRecurringJobsAsync"/> above,
     /// just for a multi-platform channel list instead of a single-platform (RSS) feed list.
+    /// <see cref="SocialMediaCrawlerOptions.Enabled"/> is checked first, same global-kill-switch
+    /// role as <see cref="NewsCrawlerOptions.Enabled"/>/<see cref="NewsApiCrawlerOptions.Enabled"/> -
+    /// when false, seeding is skipped entirely and every already-enabled source is treated as if it
+    /// had none, so the stale-job sweep below removes every currently-registered
+    /// <c>social-media-*</c> job. That sweep is the only way to actually stop a source that's
+    /// already seeded in Mongo, since there's no live per-source management endpoint yet (unlike
+    /// RSS/API's Provider Management page, which updates its own live Hangfire job instantly).
     /// </summary>
     public static async Task SeedAndRegisterSocialMediaRecurringJobsAsync(IServiceProvider services, ILogger logger)
     {
-        var seeder = services.GetRequiredService<SocialMediaSourceSeeder>();
-        await seeder.SeedAsync(CancellationToken.None);
+        var options = services.GetRequiredService<IOptions<SocialMediaCrawlerOptions>>().Value;
 
-        var sourceRepository = services.GetRequiredService<ISocialMediaSourceRepository>();
-        var enabledSources = await sourceRepository.GetEnabledAsync(CancellationToken.None);
+        IReadOnlyList<Domain.Entities.SocialMediaSource> enabledSources;
+        if (options.Enabled)
+        {
+            var seeder = services.GetRequiredService<SocialMediaSourceSeeder>();
+            await seeder.SeedAsync(CancellationToken.None);
+
+            var sourceRepository = services.GetRequiredService<ISocialMediaSourceRepository>();
+            enabledSources = await sourceRepository.GetEnabledAsync(CancellationToken.None);
+        }
+        else
+        {
+            logger.LogWarning(
+                "SocialMediaCrawler is disabled via configuration ({Section}:Enabled=false) - no recurring jobs registered, every existing one is removed",
+                SocialMediaCrawlerOptions.SectionName);
+            enabledSources = [];
+        }
 
         var recurringJobManager = services.GetRequiredService<IRecurringJobManager>();
         var enabledJobIdBag = new System.Collections.Concurrent.ConcurrentBag<string>();
