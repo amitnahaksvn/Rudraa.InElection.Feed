@@ -6,13 +6,5 @@ jobs:
   query:
     runs-on: ubuntu-latest
     steps:
-      - name: Get current RSS providers, find YouTube's schedule
-        run: |
-          curl -sS --max-time 20 "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/providers/rss" \
-            | python3 -c "
-          import json, sys
-          data = json.load(sys.stdin)
-          for p in data:
-              if p.get('name') == 'YouTube':
-                  print(json.dumps(p, indent=2))
-          "
+      - name: Check YouTube's live Hangfire recurring job status
+        run: curl -sS --max-time 20 -w "\nHTTP=%{http_code}\n" "https://rudraa-webapp-azhebqbfhrfkfwc8.centralindia-01.azurewebsites.net/api/crawl/jobs/YouTube?country=India"
