@@ -11,18 +11,18 @@ namespace Infrastructure.RssProviders;
 /// (/section/{name}/feed/). Feed URLs live entirely in configuration under
 /// NewsCrawler:Providers[Name="IndianExpress"]:Feeds, never hardcoded here.
 ///
-/// Routed through <see cref="WaybackMachineFeedResolver"/> - indianexpress.com's CloudFront
-/// distribution returns an instant (single-digit-millisecond) HTTP 403 "Request blocked" page to
-/// every request from this app's Azure outbound IP, on every one of its 21 feeds, identically with
-/// the already-configured <c>BrowserUserAgent</c> - confirmed live that the exact same request
-/// succeeds (HTTP 200) from a non-Azure network, so this is an IP-reputation/rate block at
-/// CloudFront's edge, not a UA or content issue. Same root cause category as
-/// <see cref="MPInfoRssProvider"/>/<see cref="NdmaRssProvider"/> (an edge/network block against
-/// this app's specific outbound IP) even though the failure signature differs (instant 403 here vs.
-/// their connection hangs), so the same fix applies - see
-/// <see cref="WaybackMachineFeedResolver"/>'s own doc comment for the full mechanism. Unlike those
-/// two single-feed low-volume providers, this one has 21 feeds on a 30-minute cron, so an on-demand
-/// capture taking up to ~30s per feed in the worst case still fits comfortably within that cadence.
+/// indianexpress.com's CloudFront distribution occasionally returns an instant HTTP 403
+/// "Request blocked" page to this app's Azure outbound IP - an IP-reputation/rate block at
+/// CloudFront's edge, not a UA or content issue (confirmed live the same request succeeds from a
+/// non-Azure network). Originally routed unconditionally through
+/// <see cref="WaybackMachineFeedResolver"/> (see git history), which turned out to be actively
+/// harmful: this app's own real daily volume for this provider collapsed from 896 articles/day to
+/// 13 once every fetch was forced through Wayback's shared ~5-captures-per-URL-per-day quota, even
+/// though direct access still worked most of the time - the block is intermittent, not the
+/// ~100%-of-the-time block MPInfo/NDMA/PIB have. Now uses
+/// <see cref="ResolveFallbackUrlAsync"/> instead - direct access is always tried first (getting
+/// full volume on every fetch that would have succeeded anyway), and only a fetch that actually
+/// fails retries through Wayback.
 /// </summary>
 public sealed class IndianExpressRssProvider : BaseRssProvider
 {
@@ -45,8 +45,8 @@ public sealed class IndianExpressRssProvider : BaseRssProvider
 
     protected override string HttpClientName => ClientName;
 
-    protected override Task<string> ResolveFeedUrlAsync(RssFeedOptions feed, CancellationToken cancellationToken) =>
-        WaybackMachineFeedResolver.ResolveAsync(
+    protected override async Task<string?> ResolveFallbackUrlAsync(RssFeedOptions feed, CancellationToken cancellationToken) =>
+        await WaybackMachineFeedResolver.ResolveAsync(
             _httpClientFactory.CreateClient(InfrastructureServiceCollectionExtensions.WaybackMachineClientName),
             _waybackOptions,
             feed.Url,

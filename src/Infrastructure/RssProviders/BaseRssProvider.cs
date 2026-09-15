@@ -42,13 +42,34 @@ public abstract partial class BaseRssProvider : IRssProvider
     /// as the identity (<see cref="RssFeedOptions.Url"/> is already the literal feed URL), but
     /// <see cref="GoogleNewsRssProvider"/> overrides it to treat <c>Url</c> as a search topic and
     /// build a Google News search-feed URL from it - letting a new topic be added purely via
-    /// configuration (one list entry) rather than a hardcoded URL per topic. Async (not just a
-    /// string transform) because <see cref="MPInfoRssProvider"/>/<see cref="NdmaRssProvider"/>
-    /// need a real HTTP round trip to the Wayback Machine to resolve the URL that's actually
-    /// fetched - see <see cref="WaybackMachineFeedResolver"/>.
+    /// configuration (one list entry) rather than a hardcoded URL per topic. Also overridden by
+    /// <see cref="MPInfoRssProvider"/>/<see cref="NdmaRssProvider"/>/<see cref="PibRssProvider"/> to
+    /// route unconditionally through <see cref="WaybackMachineFeedResolver"/> - correct only for a
+    /// provider confirmed to be blocked essentially 100% of the time (verified live for those three:
+    /// hard connection hangs/DNS failures against this app's Azure IP, every attempt, for a sustained
+    /// period), where skipping straight to Wayback avoids wasting a doomed direct attempt's timeout
+    /// on every single fetch. A provider that's only sometimes blocked should use
+    /// <see cref="ResolveFallbackUrlAsync"/> instead - see its own doc comment for why the two hooks
+    /// exist separately rather than one always routing through Wayback.
     /// </summary>
     protected virtual Task<string> ResolveFeedUrlAsync(RssFeedOptions feed, CancellationToken cancellationToken) =>
         Task.FromResult(feed.Url);
+
+    /// <summary>
+    /// An alternate URL to retry with only if the direct fetch of <see cref="ResolveFeedUrlAsync"/>'s
+    /// URL actually fails - <c>null</c> by default (no fallback, matching every provider's behavior
+    /// before this existed). Added after discovering live that routing a provider through
+    /// <see cref="WaybackMachineFeedResolver"/> <em>unconditionally</em> (the
+    /// <see cref="ResolveFeedUrlAsync"/> override approach) is actively harmful for a provider that
+    /// isn't actually blocked most of the time: IndianExpress's real daily volume collapsed from 896
+    /// articles to 13 once every fetch was forced through Wayback's shared ~5-captures-per-URL-per-day
+    /// quota, even though direct access still worked the majority of the time - the "fix" for an
+    /// intermittent block became a much lower permanent ceiling. This hook lets a provider get its
+    /// full direct-access volume on every fetch that would have succeeded anyway, and only pay
+    /// Wayback's latency/quota cost on the fetches that actually need it.
+    /// </summary>
+    protected virtual Task<string?> ResolveFallbackUrlAsync(RssFeedOptions feed, CancellationToken cancellationToken) =>
+        Task.FromResult<string?>(null);
 
     public async Task<IReadOnlyList<FeedFetchResult>> FetchAllFeedsAsync(
         IReadOnlyList<RssFeedOptions> feeds,
@@ -68,11 +89,29 @@ public abstract partial class BaseRssProvider : IRssProvider
 
     private async Task<FeedFetchResult> FetchFeedAsync(RssFeedOptions feed, CancellationToken cancellationToken)
     {
+        var url = await ResolveFeedUrlAsync(feed, cancellationToken);
+        var result = await FetchAndParseAsync(feed, url, cancellationToken);
+        if (result.Success)
+        {
+            return result;
+        }
+
+        var fallbackUrl = await ResolveFallbackUrlAsync(feed, cancellationToken);
+        if (fallbackUrl is null || fallbackUrl == url)
+        {
+            return result;
+        }
+
+        _logger.LogWarning("Direct fetch of {Provider}/{Feed} ({Url}) failed - retrying via fallback URL", Name, feed.Name, url);
+        return await FetchAndParseAsync(feed, fallbackUrl, cancellationToken);
+    }
+
+    private async Task<FeedFetchResult> FetchAndParseAsync(RssFeedOptions feed, string url, CancellationToken cancellationToken)
+    {
         var fetchedAt = DateTimeOffset.UtcNow;
         var stopwatch = Stopwatch.StartNew();
         string? rawXml = null;
         int? httpStatusCode = null;
-        var url = await ResolveFeedUrlAsync(feed, cancellationToken);
 
         for (var attempt = 1; attempt <= MaxTruncatedTransferAttempts; attempt++)
         {
