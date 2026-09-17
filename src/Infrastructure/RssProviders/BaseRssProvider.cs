@@ -126,7 +126,7 @@ public abstract partial class BaseRssProvider : IRssProvider
                 rawXml = await response.Content.ReadAsStringAsync(cancellationToken);
                 response.EnsureSuccessStatusCode();
 
-                var document = XDocument.Parse(SanitizeUnescapedAmpersands(rawXml));
+                var document = XDocument.Parse(SanitizeInvalidXmlCharacters(SanitizeUnescapedAmpersands(rawXml)));
 
                 var articles = new List<NormalizedArticle>();
                 foreach (var item in document.Descendants("item"))
@@ -151,15 +151,19 @@ public abstract partial class BaseRssProvider : IRssProvider
                     ProcessingDurationMs = stopwatch.ElapsedMilliseconds
                 };
             }
-            // A malformed/incomplete XML body (confirmed live for DeccanChronicle's oversized
-            // 506-item feed: a real HTTP 200 whose content cuts off mid-CDATA partway through) is
-            // usually a one-off truncated transfer, not a permanently broken feed - one fresh retry
-            // (a brand-new GET, not reparsing the same truncated bytes) rides out the transient case
-            // without masking a feed that's genuinely, consistently malformed (which still surfaces
-            // as a failure after the retry also fails).
-            catch (System.Xml.XmlException ex) when (!cancellationToken.IsCancellationRequested && attempt < MaxTruncatedTransferAttempts)
+            // A malformed/incomplete body is usually a one-off truncated transfer, not a
+            // permanently broken feed - one fresh retry (a brand-new GET, not reparsing/redecoding
+            // the same truncated bytes) rides out the transient case without masking a feed that's
+            // genuinely, consistently broken (which still surfaces as a failure after the retry
+            // also fails). Two confirmed-live shapes this covers: an XmlException (DeccanChronicle's
+            // oversized 506-item feed - a real HTTP 200 that cuts off mid-CDATA partway through),
+            // and an IOException/InvalidDataException from .NET's automatic response decompression
+            // (PIB's Wayback-resolved snapshot URLs occasionally serve a truncated/corrupted
+            // gzip stream that fails mid-Inflate, before any XML is ever seen).
+            catch (Exception ex) when (!cancellationToken.IsCancellationRequested && attempt < MaxTruncatedTransferAttempts &&
+                (ex is System.Xml.XmlException || ex is IOException || ex is InvalidDataException))
             {
-                _logger.LogWarning(ex, "Feed {Provider}/{Feed} ({Url}) returned malformed XML on attempt {Attempt}/{Max} - retrying", Name, feed.Name, url, attempt, MaxTruncatedTransferAttempts);
+                _logger.LogWarning(ex, "Feed {Provider}/{Feed} ({Url}) returned a malformed/truncated response on attempt {Attempt}/{Max} - retrying", Name, feed.Name, url, attempt, MaxTruncatedTransferAttempts);
             }
             catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
             {
@@ -487,11 +491,55 @@ public abstract partial class BaseRssProvider : IRssProvider
     internal static string SanitizeUnescapedAmpersands(string xml) =>
         UnescapedAmpersandRegex().Replace(xml, "&amp;");
 
+    /// <summary>
+    /// Strips characters the XML 1.0 spec's own <c>Char</c> production forbids outright - confirmed
+    /// live against DeccanChronicle's feed, which embeds a literal ETX control character (0x03) in
+    /// some items' content, written out as the numeric character reference <c>&amp;#3;</c> - and
+    /// .NET's XmlReader rejects that the instant it tries to resolve the reference, regardless of
+    /// how the invalid character reached the document (a raw byte or an escaped reference). Neither
+    /// is recoverable by retrying the fetch (the retry in <c>FetchAndParseAsync</c> is for a
+    /// transient truncated transfer, not this) since the corrupted character is baked into that
+    /// item's content on every crawl until the publisher's own feed changes - stripping it is the
+    /// only way to get the rest of an otherwise-valid feed to parse at all. Handles both forms: a
+    /// literal invalid byte already in the text, and a numeric reference (decimal or hex) that
+    /// would decode to one - only ever removes a reference that's actually invalid, so a feed's
+    /// legitimate <c>&amp;#8217;</c>-style punctuation references are untouched.
+    /// </summary>
+    internal static string SanitizeInvalidXmlCharacters(string xml)
+    {
+        var withoutRawControlChars = InvalidXmlControlCharRegex().Replace(xml, string.Empty);
+
+        return NumericCharacterReferenceRegex().Replace(withoutRawControlChars, match =>
+        {
+            var codepoint = match.Groups["dec"].Success
+                ? int.Parse(match.Groups["dec"].Value, CultureInfo.InvariantCulture)
+                : int.Parse(match.Groups["hex"].Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+
+            return IsValidXmlCharacter(codepoint) ? match.Value : string.Empty;
+        });
+    }
+
+    // The XML 1.0 spec's Char production, verbatim: #x9 | #xA | #xD | [#x20-#xD7FF] |
+    // [#xE000-#xFFFD] | [#x10000-#x10FFFF] - anything else (most of the C0 control range, the
+    // UTF-16 surrogate range on its own, and a couple of noncharacters) a conformant XML parser
+    // must reject.
+    private static bool IsValidXmlCharacter(int codepoint) =>
+        codepoint is 0x9 or 0xA or 0xD ||
+        (codepoint >= 0x20 && codepoint <= 0xD7FF) ||
+        (codepoint >= 0xE000 && codepoint <= 0xFFFD) ||
+        (codepoint >= 0x10000 && codepoint <= 0x10FFFF);
+
     [GeneratedRegex("<[^>]+>")]
     private static partial Regex HtmlTagRegex();
 
     [GeneratedRegex(@"&(?!amp;|lt;|gt;|quot;|apos;|#\d+;|#x[0-9a-fA-F]+;)")]
     private static partial Regex UnescapedAmpersandRegex();
+
+    [GeneratedRegex(@"&#(?<dec>\d+);|&#x(?<hex>[0-9a-fA-F]+);")]
+    private static partial Regex NumericCharacterReferenceRegex();
+
+    [GeneratedRegex(@"[\x00-\x08\x0B\x0C\x0E-\x1F]")]
+    private static partial Regex InvalidXmlControlCharRegex();
 
     [GeneratedRegex(@"\s+")]
     private static partial Regex WhitespaceRegex();

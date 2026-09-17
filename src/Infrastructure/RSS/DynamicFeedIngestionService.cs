@@ -99,7 +99,7 @@ public sealed class DynamicFeedIngestionService : IDynamicFeedIngestionService
             rawXml = await response.Content.ReadAsStringAsync(linkedToken);
             response.EnsureSuccessStatusCode();
 
-            var document = XDocument.Parse(rawXml);
+            var document = XDocument.Parse(BaseRssProvider.SanitizeInvalidXmlCharacters(BaseRssProvider.SanitizeUnescapedAmpersands(rawXml)));
 
             foreach (var item in document.Descendants("item"))
             {

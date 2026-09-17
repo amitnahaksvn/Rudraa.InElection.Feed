@@ -74,7 +74,7 @@ public abstract class BaseAtomRssProvider : IRssProvider
             // "&amp;" - confirmed live via production ErrorLogs (recurring XmlException, line/
             // position advancing with the feed's own growing content). Same tolerance fix as
             // BaseRssProvider's own RSS 2.0 pipeline, reused rather than duplicated.
-            var document = XDocument.Parse(BaseRssProvider.SanitizeUnescapedAmpersands(rawXml));
+            var document = XDocument.Parse(BaseRssProvider.SanitizeInvalidXmlCharacters(BaseRssProvider.SanitizeUnescapedAmpersands(rawXml)));
             var articles = new List<NormalizedArticle>();
             foreach (var entry in document.Descendants(Atom + "entry"))
             {
