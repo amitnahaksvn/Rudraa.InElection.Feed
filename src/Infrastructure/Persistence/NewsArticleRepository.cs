@@ -155,12 +155,17 @@ public sealed class NewsArticleRepository : INewsArticleRepository
             ? (ascending ? query.SortBy(a => a.CrawledAt) : query.SortByDescending(a => a.CrawledAt))
             : (ascending ? query.SortBy(a => a.PublishedAt) : query.SortByDescending(a => a.PublishedAt));
 
-        return await sorted.Skip(filter.Skip).Limit(filter.Take).ToListAsync(cancellationToken);
+        // filter.Cursor already narrows BuildFeedFilter to just the articles past that point in the
+        // current sort direction (see NewsArticleFeedFilter's own doc comment for why), so there's
+        // nothing left to Skip over - every remaining match is a genuinely new page, immune to
+        // anything deleted from an earlier page shifting this one's Skip count out of alignment.
+        var effectiveSkip = filter.Cursor is null ? filter.Skip : 0;
+        return await sorted.Skip(effectiveSkip).Limit(filter.Take).ToListAsync(cancellationToken);
     }
 
-    /// <summary>Total articles matching the same pipeline/country narrowing as <see cref="GetFeedAsync"/> (its Skip/Take are irrelevant here) - backs the News Feed page's total-count header.</summary>
+    /// <summary>Total articles matching the same pipeline/country narrowing as <see cref="GetFeedAsync"/> (its Skip/Take/Cursor are irrelevant here) - backs the News Feed page's total-count header.</summary>
     public Task<long> CountFeedAsync(NewsArticleFeedFilter filter, CancellationToken cancellationToken) =>
-        _collection.CountDocumentsAsync(BuildFeedFilter(filter), cancellationToken: cancellationToken);
+        _collection.CountDocumentsAsync(BuildFeedFilter(filter with { Cursor = null }), cancellationToken: cancellationToken);
 
     private static FilterDefinition<NewsArticle> BuildFeedFilter(NewsArticleFeedFilter filter)
     {
@@ -175,6 +180,16 @@ public sealed class NewsArticleRepository : INewsArticleRepository
         if (!string.IsNullOrWhiteSpace(filter.Country))
         {
             clauses.Add(builder.Eq(a => a.Country, filter.Country));
+        }
+
+        if (filter.Cursor is { } cursor)
+        {
+            // Descending (newest-first, the default) wants strictly-older articles than the last
+            // one already shown; Ascending wants strictly-newer ones - either way, "past the point
+            // this reader has already scrolled to" in whichever direction the feed is ordered.
+            clauses.Add(filter.SortBy == NewsFeedSortBy.CrawledAt
+                ? (filter.SortDirection == NewsFeedSortDirection.Ascending ? builder.Gt(a => a.CrawledAt, cursor) : builder.Lt(a => a.CrawledAt, cursor))
+                : (filter.SortDirection == NewsFeedSortDirection.Ascending ? builder.Gt(a => a.PublishedAt, cursor) : builder.Lt(a => a.PublishedAt, cursor)));
         }
 
         return builder.And(clauses);
@@ -199,9 +214,8 @@ public sealed class NewsArticleRepository : INewsArticleRepository
     public async Task<long> DeleteManyAsync(IReadOnlyList<string> ids, CancellationToken cancellationToken)
     {
         var filter = Builders<NewsArticle>.Filter.In(a => a.Id, ids);
-        var update = Builders<NewsArticle>.Update.Set(a => a.IsActive, false);
-        var result = await _collection.UpdateManyAsync(filter, update, cancellationToken: cancellationToken);
-        return result.ModifiedCount;
+        var result = await _collection.DeleteManyAsync(filter, cancellationToken);
+        return result.DeletedCount;
     }
 
     public async Task EnsureIndexesAsync(CancellationToken cancellationToken)

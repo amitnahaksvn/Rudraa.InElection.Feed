@@ -6,8 +6,8 @@ namespace Application.News.Commands.DeleteArticles;
 /// <summary>
 /// Deletes one or more articles by id - backs both the News Feed page's per-card delete button
 /// (a single id) and its multi-select bulk delete (many ids), the same request shape either way.
-/// See <see cref="INewsArticleRepository.DeleteManyAsync"/> for why this is a soft delete
-/// (IsActive=false), not a document removal.
+/// A real document removal - see <see cref="INewsArticleRepository.DeleteManyAsync"/> for why the
+/// matching ArticleFingerprint is still kept around even though the article itself isn't.
 /// </summary>
 public sealed record DeleteArticlesCommand(IReadOnlyList<string> Ids) : IRequest<long>;
 

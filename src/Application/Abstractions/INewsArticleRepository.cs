@@ -41,17 +41,15 @@ public interface INewsArticleRepository
     Task<IReadOnlyList<string>> GetDistinctCountriesAsync(ArticleSourceType? sourceType, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Soft-deletes the articles with these ids (sets <see cref="Domain.Entities.NewsArticle.IsActive"/>
-    /// to false) - backs the News Feed page's per-card delete and its multi-select bulk delete, the
-    /// same call either way. <see cref="Domain.Entities.NewsArticle.IsActive"/> already gates every
-    /// read path here (<see cref="GetLatestAsync"/>/<see cref="GetByProviderAsync"/>/
-    /// <see cref="GetByCategoryAsync"/>/<see cref="GetFeedAsync"/>/<see cref="CountFeedAsync"/>/
-    /// <see cref="GetDistinctCountriesAsync"/> all already filter on it, and its own indexes are
-    /// already built around it) - this is the first place that actually flips it to false, rather
-    /// than a new mechanism. Ids that don't match any document are silently ignored rather than
-    /// erroring. The document itself, and its matching <see cref="Domain.Entities.ArticleFingerprint"/>,
-    /// are both left in place - so a deleted article stops appearing everywhere immediately but
-    /// isn't silently re-ingested the next time its source feed is crawled.
+    /// Permanently removes the articles with these ids - backs the News Feed page's per-card delete
+    /// and its multi-select bulk delete, the same call either way. Ids that don't match any document
+    /// are silently ignored rather than erroring. A hard delete, not a soft one: this used to only
+    /// flip <see cref="Domain.Entities.NewsArticle.IsActive"/> to false, but that left the document
+    /// (and every duplicate-looking copy a user complained about) sitting in the collection forever,
+    /// which is what the user actually meant by "delete". The matching
+    /// <see cref="Domain.Entities.ArticleFingerprint"/> is deliberately left in place regardless -
+    /// so a deleted article doesn't come back the next time its source feed is crawled again, the
+    /// one part of the old soft-delete's reasoning that still applies to a real delete.
     /// </summary>
     Task<long> DeleteManyAsync(IReadOnlyList<string> ids, CancellationToken cancellationToken);
 

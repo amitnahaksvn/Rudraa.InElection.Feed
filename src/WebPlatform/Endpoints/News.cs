@@ -78,15 +78,19 @@ public sealed class News : IEndpointGroup
         "Articles for the News Feed page's infinite scroll - 'sourceType' (Rss/Api) picks the tab, " +
         "'country' optionally narrows to one publisher country, 'sortBy' (PublishedAt/CrawledAt, " +
         "defaults to PublishedAt) picks which timestamp orders the feed, 'sortDirection' " +
-        "(Descending/Ascending, defaults to Descending - i.e. newest first) picks which way, and " +
-        "'skip'/'count' page through the results as the reader scrolls.")]
+        "(Descending/Ascending, defaults to Descending - i.e. newest first) picks which way. " +
+        "Prefer 'before' over 'skip' for every page after the first: pass the PublishedAt/CrawledAt " +
+        "(matching 'sortBy') of the last article already shown, and 'skip' is ignored - this is " +
+        "immune to another article being deleted while the reader is mid-scroll, which plain " +
+        "'skip' paging is not (a deletion earlier in the list shifts every later position back by " +
+        "one, so the next 'skip' either re-shows an already-seen article or drops one entirely).")]
     public static async Task<Ok<IReadOnlyList<NewsArticleDto>>> GetFeed(
         ISender sender, IOptions<ApiOptions> apiOptions, ArticleSourceType? sourceType, string? country, int skip, int count,
         NewsFeedSortBy sortBy = NewsFeedSortBy.PublishedAt, NewsFeedSortDirection sortDirection = NewsFeedSortDirection.Descending,
-        CancellationToken cancellationToken = default)
+        DateTimeOffset? before = null, CancellationToken cancellationToken = default)
     {
         var result = await sender.Send(
-            new GetNewsFeedQuery(sourceType, country, Math.Max(0, skip), ResolvePageSize(count, apiOptions.Value), sortBy, sortDirection),
+            new GetNewsFeedQuery(sourceType, country, Math.Max(0, skip), ResolvePageSize(count, apiOptions.Value), sortBy, sortDirection, before),
             cancellationToken);
         return TypedResults.Ok(result);
     }
