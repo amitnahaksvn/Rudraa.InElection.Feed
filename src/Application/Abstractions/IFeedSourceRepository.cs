@@ -20,5 +20,8 @@ public interface IFeedSourceRepository
 
     Task UpdateLastFetchedOnAsync(string id, DateTimeOffset lastFetchedOn, CancellationToken cancellationToken);
 
+    /// <summary>No-ops if the document is already inactive or doesn't exist - safe to call unconditionally on every startup.</summary>
+    Task DeactivateBySourceCodeAsync(string sourceCode, CancellationToken cancellationToken);
+
     Task EnsureIndexesAsync(CancellationToken cancellationToken);
 }

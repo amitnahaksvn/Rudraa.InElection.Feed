@@ -40,6 +40,14 @@ public sealed class FeedSourceRepository : IFeedSourceRepository
                 .Set(f => f.UpdatedOn, lastFetchedOn),
             cancellationToken: cancellationToken);
 
+    public Task DeactivateBySourceCodeAsync(string sourceCode, CancellationToken cancellationToken) =>
+        _collection.UpdateOneAsync(
+            f => f.SourceCode == sourceCode && f.IsActive,
+            Builders<FeedSource>.Update
+                .Set(f => f.IsActive, false)
+                .Set(f => f.UpdatedOn, DateTimeOffset.UtcNow),
+            cancellationToken: cancellationToken);
+
     public async Task EnsureIndexesAsync(CancellationToken cancellationToken)
     {
         // The unique index is created separately via CosmosIndexHelpers (see its own doc
