@@ -238,6 +238,11 @@ public static class HangfireRecurringJobRegistrar
         var seeder = services.GetRequiredService<FeedSourceSeeder>();
         await seeder.SeedAsync(CancellationToken.None);
 
+        // See RetireSupersededFeedsAsync's own doc comment - must run before GetActiveAsync below
+        // so a since-superseded document (currently just PIB) is excluded from this same pass,
+        // not just the next one.
+        await seeder.RetireSupersededFeedsAsync(CancellationToken.None);
+
         var feedSourceRepository = services.GetRequiredService<IFeedSourceRepository>();
         var activeFeedSources = await feedSourceRepository.GetActiveAsync(CancellationToken.None);
 

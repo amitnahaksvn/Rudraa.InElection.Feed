@@ -66,4 +66,23 @@ public sealed class FeedSourceSeeder
         var id = await _feedSourceRepository.InsertAsync(feedSource, cancellationToken);
         _logger.LogInformation("Seeded FeedSource 'PIB' ({Id})", id);
     }
+
+    /// <summary>
+    /// One-time cleanup for this Phase 1 pipeline's own PIB document: PIB has since gained a proper
+    /// catalog entry (<c>PibRssProvider</c>, routed through <see cref="Infrastructure.RssProviders.WaybackMachineFeedResolver"/>
+    /// to survive pib.gov.in's connection timeouts from this app's outbound IP), which is the
+    /// spec-tolerance handling this <see cref="FeedSource"/> pipeline was never meant to cover (see
+    /// this class's own doc comment: "a publisher that needs real spec-tolerance handling...still
+    /// belongs in the file-based provider system, not here"). Left active, this document keeps
+    /// registering its own independent "dynamic-feed-PIB" Hangfire job forever, invisible to and
+    /// unaffected by the Provider Management page's PIB enable/disable toggle (which only knows
+    /// about the catalog provider's own "news-crawl-PIB::India" job) - exactly the "I disabled PIB
+    /// but it's still running in Hangfire" symptom this fixes. Deactivating it here is enough:
+    /// <see cref="HangfireRecurringJobRegistrar.SeedAndRegisterDynamicFeedRecurringJobsAsync"/>'s
+    /// own stale-job sweep removes "dynamic-feed-PIB" on the very next startup once this document's
+    /// <see cref="FeedSource.IsActive"/> is false, the same way it already removes any other
+    /// deactivated/deleted FeedSource's job.
+    /// </summary>
+    public Task RetireSupersededFeedsAsync(CancellationToken cancellationToken) =>
+        _feedSourceRepository.DeactivateBySourceCodeAsync("PIB", cancellationToken);
 }
