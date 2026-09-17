@@ -18,6 +18,18 @@ namespace Application.Services;
 /// </summary>
 internal static class ArticlePersister
 {
+    /// <summary>
+    /// A feed/API occasionally serves genuinely old content alongside its current items - a stale
+    /// cache, a "most popular"/evergreen list, or (for the Wayback-routed providers) a snapshot
+    /// that's months old by the time it's served - confirmed live as multi-year-old items showing
+    /// up in otherwise-current feeds. Anything older than this is skipped outright rather than
+    /// persisted, the same "not worth it" treatment as a duplicate. Applied only when
+    /// <see cref="NormalizedArticle.PublishedAt"/> is actually known - a handful of providers
+    /// (Nikkei Asia, Folha) have no date element in their feed at all, a documented feed
+    /// limitation elsewhere in this codebase, not a reason to drop every one of their articles.
+    /// </summary>
+    private static readonly TimeSpan MaxArticleAge = TimeSpan.FromDays(30);
+
     public static async Task<int> PersistAsync(
         INewsArticleRepository articleRepository,
         IArticleFingerprintRepository fingerprintRepository,
@@ -37,6 +49,17 @@ internal static class ArticlePersister
                 : rawNormalized;
 
             var now = DateTimeOffset.UtcNow;
+
+            // Checked before the duplicate lookup - no need for a fingerprint round trip on
+            // content we're going to skip regardless of whether it's actually a duplicate.
+            if (normalized.PublishedAt is { } publishedAtForAgeCheck && now - publishedAtForAgeCheck > MaxArticleAge)
+            {
+                logger.LogDebug(
+                    "Skipped stale article ({Age} old, published {PublishedAt:O}): {Title} ({Url})",
+                    now - publishedAtForAgeCheck, publishedAtForAgeCheck, normalized.Title, normalized.Url);
+                continue;
+            }
+
             var cleanedSummary = DescriptionNormalizer.Clean(normalized.Summary);
             var hash = ArticleHasher.ComputeHash(normalized.Title, normalized.PublishedAt);
 
