@@ -147,6 +147,12 @@ public abstract class BaseNewsApiProvider : INewsApiProvider
         var url = BuildRequestUrl(options, endpoint, includeAuth: options.AuthType == ApiAuthType.QueryParameter, apiKey);
 
         var request = new HttpRequestMessage(HttpMethod.Get, url);
+        if (options.DailyRequestLimit is { } dailyLimit)
+        {
+            request.Options.Set(ApiQuotaHandler.ProviderKey, options.Name);
+            request.Options.Set(ApiQuotaHandler.DailyLimitKey, dailyLimit);
+        }
+
         if (options.AuthType == ApiAuthType.HttpHeader && apiKey is not null)
         {
             request.Headers.TryAddWithoutValidation(options.AuthParamName, apiKey);

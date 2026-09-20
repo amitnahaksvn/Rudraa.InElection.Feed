@@ -115,7 +115,9 @@ public abstract partial class BaseRssProvider : IRssProvider
                 continue;
             }
 
-            _logger.LogWarning("Fetch of {Provider}/{Feed} ({Url}) failed - retrying via fallback URL", Name, feed.Name, url);
+            _logger.LogWarning(
+                "Fetch of {Provider}/{Feed} ({Url}) failed ({Status} {Error}) - retrying via fallback URL {FallbackHost}",
+                Name, feed.Name, url, result.HttpStatusCode, result.Error, new Uri(fallbackUrl).Host);
             result = await FetchAndParseAsync(feed, fallbackUrl, cancellationToken);
             if (result.Success)
             {

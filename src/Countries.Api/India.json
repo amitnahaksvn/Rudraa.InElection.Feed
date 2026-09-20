@@ -2020,6 +2020,7 @@
         "Name": "APITube",
         "Enabled": true,
         "Cron": "26,56 * * * *",
+        "DailyRequestLimit": 100,
         "BaseUrl": "https://api.apitube.io/v1",
         "AuthType": "QueryParameter",
         "AuthParamName": "api_key",

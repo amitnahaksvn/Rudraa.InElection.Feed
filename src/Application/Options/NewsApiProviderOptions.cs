@@ -32,5 +32,11 @@ public sealed class NewsApiProviderOptions
 
     public int TimeoutSeconds { get; set; } = 120;
 
+    /// <summary>
+    /// Hard cap on HTTP requests to this provider per UTC day (every attempt counts, retries
+    /// included), shared across instances via Mongo. Null = unlimited. For free-tier plans.
+    /// </summary>
+    public int? DailyRequestLimit { get; set; }
+
     public List<NewsApiEndpointOptions> Endpoints { get; set; } = [];
 }

@@ -100,6 +100,8 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddSingleton<IArticleFingerprintRepository, ArticleFingerprintRepository>();
         services.AddSingleton<ICrawlHistoryRepository, CrawlHistoryRepository>();
         services.AddSingleton<ICrawlLockRepository, CrawlLockRepository>();
+        services.AddSingleton<IApiRequestQuota, ApiRequestQuotaRepository>();
+        services.AddTransient<ApiQuotaHandler>();
         services.AddSingleton<IRssRawResponseRepository, RssRawResponseRepository>();
         services.AddSingleton<IFeedSourceRepository, FeedSourceRepository>();
         services.AddSingleton<IFeedErrorLogRepository, FeedErrorLogRepository>();
@@ -534,7 +536,7 @@ public static class InfrastructureServiceCollectionExtensions
                         outcome.Exception,
                         "News API request failed (attempt {RetryAttempt}/3) - retrying in {Delay}. HTTP status: {StatusCode}",
                         retryAttempt, delay, outcome.Result?.StatusCode));
-        });
+        }).AddHttpMessageHandler<ApiQuotaHandler>(); // after the policy handler = inside the retry loop, so retries are counted too
 
         services.AddSingleton<INewsApiProvider, NewsApiOrgProvider>();
         services.AddSingleton<INewsApiProvider, GNewsProvider>();
