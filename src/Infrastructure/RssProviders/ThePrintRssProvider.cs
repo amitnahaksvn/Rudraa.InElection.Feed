@@ -55,6 +55,23 @@ public sealed class ThePrintRssProvider : BaseRssProvider
     protected override async Task<string?> ResolveFallbackUrlAsync(RssFeedOptions feed, CancellationToken cancellationToken) =>
         FeedProxyUrl.Build(_proxyOptions, feed.Url) is null ? null : await ResolveWaybackAsync(feed, cancellationToken);
 
+    /// <summary>
+    /// Relay/Wayback can each time out or be down (archive.org intermittently exceeds the feed
+    /// timeout), so the origin URL itself is the last-resort tier - it is only reached once every
+    /// earlier tier has failed, so a network that IS blocked pays the extra attempt only on failure.
+    /// </summary>
+    protected override async Task<IReadOnlyList<string>> ResolveFallbackUrlsAsync(RssFeedOptions feed, CancellationToken cancellationToken)
+    {
+        var fallbacks = new List<string>();
+        if (await ResolveFallbackUrlAsync(feed, cancellationToken) is { } waybackUrl)
+        {
+            fallbacks.Add(waybackUrl);
+        }
+
+        fallbacks.Add(feed.Url);
+        return fallbacks;
+    }
+
     private Task<string> ResolveWaybackAsync(RssFeedOptions feed, CancellationToken cancellationToken) =>
         WaybackMachineFeedResolver.ResolveAsync(
             _httpClientFactory.CreateClient(InfrastructureServiceCollectionExtensions.WaybackMachineClientName),

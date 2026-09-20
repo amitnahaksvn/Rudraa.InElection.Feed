@@ -271,9 +271,30 @@ public abstract class BaseNewsApiProvider : INewsApiProvider
 
     private static string BuildRequestUrl(NewsApiProviderOptions options, NewsApiEndpointOptions endpoint, bool includeAuth, string? apiKey = null)
     {
-        var baseUrl = options.BaseUrl.TrimEnd('/');
-        var path = endpoint.Endpoint.TrimStart('/');
-        var queryParameters = new Dictionary<string, string>(endpoint.QueryParameters, StringComparer.OrdinalIgnoreCase);
+        var queryParameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        string root;
+
+        // The endpoint may be stored as a full URL (so the Provider Management page shows exactly what
+        // is called) instead of a path relative to BaseUrl. Any query string inside it is merged with
+        // QueryParameters, which win on a clash - so the same parameter is never sent twice.
+        if (Uri.TryCreate(endpoint.Endpoint, UriKind.Absolute, out var absolute) && absolute.Scheme is "http" or "https")
+        {
+            root = absolute.GetLeftPart(UriPartial.Path);
+            var embedded = System.Web.HttpUtility.ParseQueryString(absolute.Query);
+            foreach (var key in embedded.AllKeys.Where(k => !string.IsNullOrEmpty(k)))
+            {
+                queryParameters[key!] = embedded[key]!;
+            }
+        }
+        else
+        {
+            root = $"{options.BaseUrl.TrimEnd('/')}/{endpoint.Endpoint.TrimStart('/')}";
+        }
+
+        foreach (var (key, value) in endpoint.QueryParameters)
+        {
+            queryParameters[key] = value;
+        }
 
         if (includeAuth && apiKey is not null)
         {
@@ -281,6 +302,6 @@ public abstract class BaseNewsApiProvider : INewsApiProvider
         }
 
         var query = string.Join('&', queryParameters.Select(kv => $"{Uri.EscapeDataString(kv.Key)}={Uri.EscapeDataString(kv.Value)}"));
-        return query.Length == 0 ? $"{baseUrl}/{path}" : $"{baseUrl}/{path}?{query}";
+        return query.Length == 0 ? root : $"{root}?{query}";
     }
 }

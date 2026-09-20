@@ -60,7 +60,11 @@ public sealed class EventRegistryProvider : INewsApiProvider
         var stopwatch = Stopwatch.StartNew();
         int? httpStatusCode = null;
         string? responseBody = null;
-        var url = options.BaseUrl;
+        // The endpoint may hold the full POST URL (shown as-is on the Provider Management page);
+        // otherwise the provider's BaseUrl is the full POST URL, as before.
+        var url = Uri.TryCreate(endpoint.Endpoint, UriKind.Absolute, out var endpointUri) && endpointUri.Scheme is "http" or "https"
+            ? endpoint.Endpoint
+            : options.BaseUrl;
 
         var apiKey = _configuration[$"NewsApiKeys:{options.Name}"];
         if (string.IsNullOrWhiteSpace(apiKey))
@@ -101,6 +105,11 @@ public sealed class EventRegistryProvider : INewsApiProvider
 
             var client = _httpClientFactory.CreateClient(BaseNewsApiProvider.HttpClientName);
             using var request = new HttpRequestMessage(HttpMethod.Post, url) { Content = JsonContent.Create(body) };
+            if (options.DailyRequestLimit is { } dailyLimit)
+            {
+                request.Options.Set(ApiQuotaHandler.ProviderKey, options.Name);
+                request.Options.Set(ApiQuotaHandler.DailyLimitKey, dailyLimit);
+            }
 
             using var response = await client.SendAsync(request, cancellationToken);
             httpStatusCode = (int)response.StatusCode;
@@ -109,6 +118,23 @@ public sealed class EventRegistryProvider : INewsApiProvider
             // diagnostics/the monitoring-alert email instead of being discarded - same reasoning
             // as BaseNewsApiProvider.FetchEndpointAsync.
             responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
+            if (response.Headers.Contains(ApiQuotaHandler.ExceededHeader))
+            {
+                // Our own daily budget is spent and nothing was sent - a skip, not a failure (see BaseNewsApiProvider).
+                _logger.LogInformation("Skipping {Provider}/{Endpoint}: daily request limit ({Limit}) reached", options.Name, endpoint.Name, options.DailyRequestLimit);
+                return new ApiFetchResult
+                {
+                    EndpointName = endpoint.Name,
+                    EndpointUrl = url,
+                    Success = false,
+                    QuotaExceeded = true,
+                    Error = $"Daily request limit ({options.DailyRequestLimit}) reached for {options.Name}",
+                    FetchedAt = fetchedAt,
+                    HttpStatusCode = httpStatusCode,
+                    ProcessingDurationMs = stopwatch.ElapsedMilliseconds
+                };
+            }
+
             response.EnsureSuccessStatusCode();
 
             var articles = ParseArticles(responseBody, endpoint);
