@@ -17,6 +17,7 @@ import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import PublicIcon from '@mui/icons-material/Public';
 import { useRssProviders } from './useRssProviders';
 import { RssProviderCard } from './RssProviderCard';
+import { isVisibleCountry } from './visibleCountry';
 import { CountryGroupHeader } from './CountryGroupHeader';
 import { CountriesManagerDialog } from './CountriesManagerDialog';
 import type { RssProviderSummary } from '../../api/providerTypes';
@@ -34,6 +35,7 @@ export function RssProvidersTab() {
     if (!data) return [];
     const term = search.trim().toLowerCase();
     return data.filter((p) => {
+      if (!isVisibleCountry(p.country)) return false;
       const matchesSearch = !term || p.name.toLowerCase().includes(term) || p.country.toLowerCase().includes(term);
       const matchesStatus = statusFilter === 'all' || (statusFilter === 'enabled') === p.enabled;
       return matchesSearch && matchesStatus;
@@ -135,7 +137,7 @@ export function RssProvidersTab() {
             </Button>
           )}
           <Typography variant="caption" color="text.secondary">
-            {filtered.length} of {data?.length ?? 0} providers
+            {filtered.length} of {data?.filter((p) => isVisibleCountry(p.country)).length ?? 0} providers
           </Typography>
         </Stack>
       </Stack>
