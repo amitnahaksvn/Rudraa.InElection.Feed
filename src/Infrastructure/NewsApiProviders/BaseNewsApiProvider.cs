@@ -46,6 +46,36 @@ public abstract class BaseNewsApiProvider : INewsApiProvider
     /// <summary>Upper bound on pages fetched per endpoint per run (page 1 included).</summary>
     protected virtual int MaxPages => 1;
 
+    /// <summary>How many times to re-send a request the API itself answered with HTTP 429 (0 = never, the default). For APIs whose limiter is intermittent rather than a hard daily quota.</summary>
+    protected virtual int RateLimitRetries => 0;
+
+    protected virtual TimeSpan RateLimitRetryDelay => TimeSpan.FromSeconds(8);
+
+    private async Task<HttpResponseMessage> SendFirstPageAsync(
+        HttpClient client, NewsApiProviderOptions options, NewsApiEndpointOptions endpoint, string? apiKey, CancellationToken cancellationToken)
+    {
+        for (var attempt = 0; ; attempt++)
+        {
+            using var request = BuildRequest(options, endpoint, apiKey);
+            var response = await client.SendAsync(request, cancellationToken);
+
+            // Only the API's own 429 is retried - our locally generated "daily budget spent" 429 carries
+            // ApiQuotaHandler.ExceededHeader and must never be retried (that would be pointless).
+            if (response.StatusCode != System.Net.HttpStatusCode.TooManyRequests
+                || response.Headers.Contains(ApiQuotaHandler.ExceededHeader)
+                || attempt >= RateLimitRetries)
+            {
+                return response;
+            }
+
+            response.Dispose();
+            _logger.LogInformation(
+                "{Provider}/{Endpoint}: HTTP 429 from the API (attempt {Attempt}/{Max}) - retrying in {Delay}",
+                options.Name, endpoint.Name, attempt + 1, RateLimitRetries + 1, RateLimitRetryDelay);
+            await Task.Delay(RateLimitRetryDelay, cancellationToken);
+        }
+    }
+
     public async Task<IReadOnlyList<ApiFetchResult>> FetchAllEndpointsAsync(NewsApiProviderOptions options, CancellationToken cancellationToken)
     {
         var enabledEndpoints = options.Endpoints.Where(e => e.Enabled).ToList();
@@ -97,9 +127,7 @@ public abstract class BaseNewsApiProvider : INewsApiProvider
         try
         {
             var client = _httpClientFactory.CreateClient(HttpClientName);
-            using var request = BuildRequest(options, endpoint, apiKey);
-
-            using var response = await client.SendAsync(request, cancellationToken);
+            using var response = await SendFirstPageAsync(client, options, endpoint, apiKey, cancellationToken);
             httpStatusCode = (int)response.StatusCode;
             if (response.Headers.Contains(ApiQuotaHandler.ExceededHeader))
             {

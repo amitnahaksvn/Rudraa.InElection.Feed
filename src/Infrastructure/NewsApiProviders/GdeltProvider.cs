@@ -25,6 +25,13 @@ public sealed class GdeltProvider : BaseNewsApiProvider
 
     public override string Name => ProviderName;
 
+    // GDELT's DOC API answers "please limit requests to one every 5 seconds" with HTTP 429 for only
+    // some requests, regardless of scheme or query (measured: ~3 of 12 spaced requests succeeded), so
+    // one 429 says nothing about the next attempt. Retry with a pause instead of failing the run.
+    protected override int RateLimitRetries => 8;
+
+    protected override TimeSpan RateLimitRetryDelay => TimeSpan.FromSeconds(8);
+
     protected override IReadOnlyList<NormalizedArticle> ParseArticles(string json, NewsApiEndpointOptions endpoint)
     {
         using var document = JsonDocument.Parse(json);
