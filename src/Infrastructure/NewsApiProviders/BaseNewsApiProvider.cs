@@ -96,6 +96,9 @@ public abstract class BaseNewsApiProvider : INewsApiProvider
             // (a JSON error payload, a rate-limit message) is still captured for
             // diagnostics/the monitoring-alert email instead of being discarded.
             responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
+            // Some APIs (APITube) echo the request URL - api key included - inside the JSON body, and
+            // this body is later persisted/emailed/shown on the Test page, so redact it here, once.
+            responseBody = RedactApiKey(responseBody, apiKey);
             response.EnsureSuccessStatusCode();
 
             var json = responseBody;
@@ -140,6 +143,18 @@ public abstract class BaseNewsApiProvider : INewsApiProvider
                 ProcessingDurationMs = stopwatch.ElapsedMilliseconds
             };
         }
+    }
+
+    private static string RedactApiKey(string body, string? apiKey)
+    {
+        if (string.IsNullOrWhiteSpace(apiKey))
+        {
+            return body;
+        }
+
+        return body
+            .Replace(apiKey, "***", StringComparison.Ordinal)
+            .Replace(Uri.EscapeDataString(apiKey), "***", StringComparison.Ordinal);
     }
 
     private static HttpRequestMessage BuildRequest(NewsApiProviderOptions options, NewsApiEndpointOptions endpoint, string? apiKey)

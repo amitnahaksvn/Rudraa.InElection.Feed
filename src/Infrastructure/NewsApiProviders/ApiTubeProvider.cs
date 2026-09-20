@@ -34,7 +34,8 @@ public sealed class ApiTubeProvider : BaseNewsApiProvider
         foreach (var item in resultsElement.EnumerateArray())
         {
             var title = item.GetStringOrNull("title");
-            var url = item.GetStringOrNull("url");
+            // The live API names the article link "href" (its "url" only appears inside links[]/media[]).
+            var url = item.GetStringOrNull("href") ?? item.GetStringOrNull("url");
             if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(url))
             {
                 continue;
@@ -51,6 +52,7 @@ public sealed class ApiTubeProvider : BaseNewsApiProvider
                 Summary = item.GetStringOrNull("description"),
                 Content = item.GetStringOrNull("body"),
                 Url = url,
+                Author = item.TryGetProperty("author", out var author) && author.ValueKind == JsonValueKind.Object ? author.GetStringOrNull("name") : null,
                 OriginalGuid = item.GetStringOrNull("id"),
                 Language = item.GetStringOrNull("language") ?? endpoint.Language,
                 ImageUrl = item.GetStringOrNull("image"),
