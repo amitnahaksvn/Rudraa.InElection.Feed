@@ -1016,6 +1016,7 @@
         "Name": "CurrentsAPI",
         "Enabled": true,
         "Cron": "37 */2 * * *",
+        "DailyRequestLimit": 1000,
         "BaseUrl": "https://api.currentsapi.services/v1",
         "AuthType": "QueryParameter",
         "AuthParamName": "apiKey",
@@ -2030,9 +2031,11 @@
             "Name": "Everything",
             "Endpoint": "news/everything",
             "QueryParameters": {
-              "title": "India politics",
               "language.code": "en",
-              "country.code": "in"
+              "source.country.code": "in",
+              "category.id": "medtop:11000000",
+              "sort.by": "published_at",
+              "sort.order": "desc"
             },
             "Category": "Politics",
             "Language": "en",
