@@ -49,8 +49,8 @@ public sealed class NewsDataIoProvider : BaseNewsApiProvider
                 FeedName = sourceName ?? Name,
                 Category = tags.FirstOrDefault() ?? endpoint.Category,
                 Title = title,
-                Summary = item.GetStringOrNull("description"),
-                Content = item.GetStringOrNull("content"),
+                Summary = NullIfPaidPlaceholder(item.GetStringOrNull("description")),
+                Content = NullIfPaidPlaceholder(item.GetStringOrNull("content")),
                 Url = url,
                 OriginalGuid = item.GetStringOrNull("article_id"),
                 Author = author,
@@ -64,4 +64,9 @@ public sealed class NewsDataIoProvider : BaseNewsApiProvider
 
         return articles;
     }
+
+    // On the free plan NewsData.io fills description/content with the literal "ONLY AVAILABLE IN PAID
+    // PLANS" instead of leaving them empty - stored as-is it would show up as the article body.
+    private static string? NullIfPaidPlaceholder(string? value) =>
+        value is not null && value.StartsWith("ONLY AVAILABLE IN PAID PLAN", StringComparison.OrdinalIgnoreCase) ? null : value;
 }
