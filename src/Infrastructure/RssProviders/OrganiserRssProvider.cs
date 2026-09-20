@@ -23,13 +23,15 @@ public sealed class OrganiserRssProvider : BaseRssProvider
 
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly WaybackMachineOptions _waybackOptions;
+    private readonly FeedProxyOptions _proxyOptions;
     private readonly ILogger<OrganiserRssProvider> _logger;
 
-    public OrganiserRssProvider(IHttpClientFactory httpClientFactory, ILogger<OrganiserRssProvider> logger, IOptions<WaybackMachineOptions> waybackOptions)
+    public OrganiserRssProvider(IHttpClientFactory httpClientFactory, ILogger<OrganiserRssProvider> logger, IOptions<WaybackMachineOptions> waybackOptions, IOptions<FeedProxyOptions> proxyOptions)
         : base(httpClientFactory, logger)
     {
         _httpClientFactory = httpClientFactory;
         _waybackOptions = waybackOptions.Value;
+        _proxyOptions = proxyOptions.Value;
         _logger = logger;
     }
 
@@ -37,7 +39,18 @@ public sealed class OrganiserRssProvider : BaseRssProvider
 
     protected override string HttpClientName => ClientName;
 
+    /// <summary>
+    /// Relay first when configured (<see cref="FeedProxyOptions"/> - fresh content, no shared Wayback
+    /// quota, and immune to archive.org outages); otherwise straight to the Wayback Machine as before.
+    /// </summary>
     protected override Task<string> ResolveFeedUrlAsync(RssFeedOptions feed, CancellationToken cancellationToken) =>
+        FeedProxyUrl.Build(_proxyOptions, feed.Url) is { } relayUrl ? Task.FromResult(relayUrl) : ResolveWaybackAsync(feed, cancellationToken);
+
+    /// <summary>Only reached when the relay was tried first and failed.</summary>
+    protected override async Task<string?> ResolveFallbackUrlAsync(RssFeedOptions feed, CancellationToken cancellationToken) =>
+        FeedProxyUrl.Build(_proxyOptions, feed.Url) is null ? null : await ResolveWaybackAsync(feed, cancellationToken);
+
+    private Task<string> ResolveWaybackAsync(RssFeedOptions feed, CancellationToken cancellationToken) =>
         WaybackMachineFeedResolver.ResolveAsync(
             _httpClientFactory.CreateClient(InfrastructureServiceCollectionExtensions.WaybackMachineClientName),
             _waybackOptions,

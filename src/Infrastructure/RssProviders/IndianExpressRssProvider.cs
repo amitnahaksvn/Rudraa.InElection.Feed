@@ -55,10 +55,9 @@ public sealed class IndianExpressRssProvider : BaseRssProvider
     {
         var urls = new List<string>(2);
 
-        if (!string.IsNullOrWhiteSpace(_proxyOptions.BaseUrl))
+        if (FeedProxyUrl.Build(_proxyOptions, feed.Url) is { } relayUrl)
         {
-            var separator = _proxyOptions.BaseUrl.Contains('?') ? '&' : '?';
-            urls.Add($"{_proxyOptions.BaseUrl}{separator}url={Uri.EscapeDataString(feed.Url)}");
+            urls.Add(relayUrl);
         }
 
         var wayback = await WaybackMachineFeedResolver.ResolveAsync(
