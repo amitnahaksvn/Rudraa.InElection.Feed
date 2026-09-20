@@ -56,6 +56,7 @@ public sealed class TestApiEndpointCommandHandler : IRequestHandler<TestApiEndpo
             AuthType = schedule.AuthType ?? ApiAuthType.QueryParameter,
             AuthParamName = schedule.AuthParamName ?? "apiKey",
             TimeoutSeconds = schedule.TimeoutSeconds ?? 120,
+            DailyRequestLimit = schedule.DailyRequestLimit,
             Endpoints =
             [
                 new NewsApiEndpointOptions

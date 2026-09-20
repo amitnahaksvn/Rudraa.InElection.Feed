@@ -21,6 +21,14 @@ public sealed class CurrentsApiProvider : BaseNewsApiProvider
 
     public override string Name => ProviderName;
 
+    // Currents returns 20 articles per call on the free plan; further pages come from page_number.
+    // Capped at 3 pages per endpoint per run so paging can't eat the 600 requests/day budget.
+    protected override string? PageParameterName => "page_number";
+
+    protected override int PageSize => 20;
+
+    protected override int MaxPages => 3;
+
     protected override IReadOnlyList<NormalizedArticle> ParseArticles(string json, NewsApiEndpointOptions endpoint)
     {
         using var document = JsonDocument.Parse(json);

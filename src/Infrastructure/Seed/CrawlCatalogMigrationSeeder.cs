@@ -167,6 +167,7 @@ public sealed class CrawlCatalogMigrationSeeder
                         AuthType = provider.AuthType,
                         AuthParamName = provider.AuthParamName,
                         TimeoutSeconds = provider.TimeoutSeconds,
+                        DailyRequestLimit = provider.DailyRequestLimit,
                         UpdatedAt = DateTimeOffset.UtcNow
                     },
                     cancellationToken);

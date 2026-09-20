@@ -156,6 +156,7 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
             AuthType = schedule.AuthType ?? Domain.Enums.ApiAuthType.QueryParameter,
             AuthParamName = schedule.AuthParamName ?? "apiKey",
             TimeoutSeconds = schedule.TimeoutSeconds ?? 120,
+            DailyRequestLimit = schedule.DailyRequestLimit,
             Endpoints = (providerEndpoints ?? [])
                 .Where(e => e.Enabled)
                 .Select(e => new NewsApiEndpointOptions
@@ -219,6 +220,13 @@ public sealed class NewsApiCrawlerOrchestrator : INewsApiCrawlerService
 
                 foreach (var result in results)
                 {
+                    if (result.QuotaExceeded)
+                    {
+                        // Deliberate free-tier cap, not a failure: no error log, notification or failed-feed entry.
+                        _logger.LogInformation("News API endpoint skipped (daily limit reached): {Provider}/{Endpoint}", provider.Name, result.EndpointName);
+                        continue;
+                    }
+
                     if (!result.Success)
                     {
                         failedEndpoints.Add($"{provider.Name}/{result.EndpointName}");

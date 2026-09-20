@@ -28,7 +28,7 @@ internal static class ArticlePersister
     /// (Nikkei Asia, Folha) have no date element in their feed at all, a documented feed
     /// limitation elsewhere in this codebase, not a reason to drop every one of their articles.
     /// </summary>
-    private static readonly TimeSpan MaxArticleAge = TimeSpan.FromDays(30);
+    private static readonly TimeSpan MaxArticleAge = TimeSpan.FromDays(1);
 
     public static async Task<int> PersistAsync(
         INewsArticleRepository articleRepository,

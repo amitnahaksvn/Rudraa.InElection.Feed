@@ -14,6 +14,13 @@ public sealed class ApiFetchResult
 
     public bool Success { get; init; }
 
+    /// <summary>
+    /// True when the endpoint was not called because the provider's configured daily request limit
+    /// is already used up. An expected, self-inflicted skip (free-tier protection), not a
+    /// provider failure - <see cref="Success"/> is false, but nothing should be logged or alerted as an error.
+    /// </summary>
+    public bool QuotaExceeded { get; init; }
+
     public string? Error { get; init; }
 
     /// <summary>Full type name of the exception behind <see cref="Error"/>; null on success.</summary>

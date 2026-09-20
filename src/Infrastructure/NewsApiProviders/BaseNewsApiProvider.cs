@@ -37,6 +37,15 @@ public abstract class BaseNewsApiProvider : INewsApiProvider
     /// <summary>Parses one endpoint's raw JSON response body into normalized articles - the only thing each concrete provider implements.</summary>
     protected abstract IReadOnlyList<NormalizedArticle> ParseArticles(string json, NewsApiEndpointOptions endpoint);
 
+    /// <summary>Query parameter carrying the page number (2, 3, ...) for providers that page their results; null (default) = single request per endpoint.</summary>
+    protected virtual string? PageParameterName => null;
+
+    /// <summary>Size of a full page: the next page is only requested when the previous one returned at least this many articles.</summary>
+    protected virtual int PageSize => int.MaxValue;
+
+    /// <summary>Upper bound on pages fetched per endpoint per run (page 1 included).</summary>
+    protected virtual int MaxPages => 1;
+
     public async Task<IReadOnlyList<ApiFetchResult>> FetchAllEndpointsAsync(NewsApiProviderOptions options, CancellationToken cancellationToken)
     {
         var enabledEndpoints = options.Endpoints.Where(e => e.Enabled).ToList();
@@ -92,6 +101,26 @@ public abstract class BaseNewsApiProvider : INewsApiProvider
 
             using var response = await client.SendAsync(request, cancellationToken);
             httpStatusCode = (int)response.StatusCode;
+            if (response.Headers.Contains(ApiQuotaHandler.ExceededHeader))
+            {
+                // Our own daily budget for this provider is spent - nothing was sent to the API, so
+                // this is a skip, not a failure: no Error log, just an Information line.
+                _logger.LogInformation(
+                    "Skipping {Provider}/{Endpoint}: daily request limit ({Limit}) reached",
+                    options.Name, endpoint.Name, options.DailyRequestLimit);
+                return new ApiFetchResult
+                {
+                    EndpointName = endpoint.Name,
+                    EndpointUrl = url,
+                    Success = false,
+                    QuotaExceeded = true,
+                    Error = $"Daily request limit ({options.DailyRequestLimit}) reached for {options.Name}",
+                    FetchedAt = fetchedAt,
+                    HttpStatusCode = httpStatusCode,
+                    ProcessingDurationMs = stopwatch.ElapsedMilliseconds
+                };
+            }
+
             // Body read before the status check throws, not after, so a non-2xx response's body
             // (a JSON error payload, a rate-limit message) is still captured for
             // diagnostics/the monitoring-alert email instead of being discarded.
@@ -101,11 +130,47 @@ public abstract class BaseNewsApiProvider : INewsApiProvider
             responseBody = RedactApiKey(responseBody, apiKey);
             response.EnsureSuccessStatusCode();
 
+            var firstPage = ParseArticles(responseBody, endpoint);
+            var allArticles = new List<NormalizedArticle>(firstPage);
+
+            // Optional paging (off unless a provider overrides PageParameterName): a full page means
+            // there may be more, so ask for the next page number - bounded by MaxPages and, since
+            // every attempt goes through ApiQuotaHandler, by the provider's daily request limit.
+            // Later pages are best-effort: a failure keeps what earlier pages already returned.
+            var lastPageCount = firstPage.Count;
+            for (var page = 2; PageParameterName is { } pageParam && page <= MaxPages && lastPageCount >= PageSize; page++)
+            {
+                var pageEndpoint = new NewsApiEndpointOptions
+                {
+                    Name = endpoint.Name,
+                    Endpoint = endpoint.Endpoint,
+                    QueryParameters = new Dictionary<string, string>(endpoint.QueryParameters) { [pageParam] = page.ToString() },
+                    Category = endpoint.Category,
+                    Language = endpoint.Language,
+                    Enabled = endpoint.Enabled
+                };
+
+                using var pageRequest = BuildRequest(options, pageEndpoint, apiKey);
+                using var pageResponse = await client.SendAsync(pageRequest, cancellationToken);
+                if (!pageResponse.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning(
+                        "{Provider}/{Endpoint}: page {Page} returned HTTP {StatusCode} - keeping the {Count} articles from earlier pages",
+                        options.Name, endpoint.Name, page, (int)pageResponse.StatusCode, allArticles.Count);
+                    break;
+                }
+
+                var pageBody = RedactApiKey(await pageResponse.Content.ReadAsStringAsync(cancellationToken), apiKey);
+                var pageArticles = ParseArticles(pageBody, endpoint);
+                allArticles.AddRange(pageArticles);
+                lastPageCount = pageArticles.Count;
+            }
+
             var json = responseBody;
             // Stamped here, once, rather than in every concrete provider's ParseArticles - every
             // JSON-API provider's articles are Api-sourced, so there's nothing provider-specific
             // about this assignment. NormalizedArticle is a record precisely so `with` works here.
-            var articles = ParseArticles(json, endpoint)
+            var articles = allArticles
                 .Select(article => article with { SourceType = ArticleSourceType.Api })
                 .ToList();
 

@@ -15,6 +15,9 @@ public sealed class ApiQuotaHandler : DelegatingHandler
     public static readonly HttpRequestOptionsKey<string> ProviderKey = new("quota.provider");
     public static readonly HttpRequestOptionsKey<int> DailyLimitKey = new("quota.dailyLimit");
 
+    /// <summary>Header set on the locally-generated 429, so callers can tell "our own daily budget is spent" from a real 429 sent by the API.</summary>
+    public const string ExceededHeader = "X-Local-Quota-Exceeded";
+
     private readonly IApiRequestQuota _quota;
 
     public ApiQuotaHandler(IApiRequestQuota quota)
@@ -28,11 +31,13 @@ public sealed class ApiQuotaHandler : DelegatingHandler
             && request.Options.TryGetValue(DailyLimitKey, out var limit)
             && !await _quota.TryConsumeAsync(provider, limit, cancellationToken))
         {
-            return new HttpResponseMessage(HttpStatusCode.TooManyRequests)
+            var blocked = new HttpResponseMessage(HttpStatusCode.TooManyRequests)
             {
                 RequestMessage = request,
                 Content = new StringContent($"Daily request limit ({limit}) reached for {provider}; no request was sent.")
             };
+            blocked.Headers.TryAddWithoutValidation(ExceededHeader, "1");
+            return blocked;
         }
 
         return await base.SendAsync(request, cancellationToken);

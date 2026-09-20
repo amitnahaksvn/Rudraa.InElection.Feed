@@ -52,6 +52,7 @@ public sealed class ProviderScheduleRepository : IProviderScheduleRepository
             .SetOnInsert(s => s.AuthType, schedule.AuthType)
             .SetOnInsert(s => s.AuthParamName, schedule.AuthParamName)
             .SetOnInsert(s => s.TimeoutSeconds, schedule.TimeoutSeconds)
+            .SetOnInsert(s => s.DailyRequestLimit, schedule.DailyRequestLimit)
             .SetOnInsert(s => s.UpdatedAt, schedule.UpdatedAt);
 
         return _collection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true }, cancellationToken);

@@ -54,5 +54,8 @@ public sealed class ProviderSchedule
     /// <summary>API-only. Null for RSS-pipeline rows.</summary>
     public int? TimeoutSeconds { get; set; }
 
+    /// <summary>API-only: hard cap on HTTP requests to this provider per UTC day (retries and extra pages included), for free-tier plans. Null = unlimited. Not touched by <c>UpsertAsync</c>, so a Provider Management edit never wipes it.</summary>
+    public int? DailyRequestLimit { get; set; }
+
     public DateTimeOffset UpdatedAt { get; set; }
 }
