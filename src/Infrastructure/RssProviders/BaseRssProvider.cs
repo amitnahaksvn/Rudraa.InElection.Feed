@@ -71,6 +71,18 @@ public abstract partial class BaseRssProvider : IRssProvider
     protected virtual Task<string?> ResolveFallbackUrlAsync(RssFeedOptions feed, CancellationToken cancellationToken) =>
         Task.FromResult<string?>(null);
 
+    /// <summary>
+    /// Ordered fallback URLs, each tried in turn (stopping at the first success) after the direct fetch
+    /// fails. Defaults to the single <see cref="ResolveFallbackUrlAsync"/> result, so every existing
+    /// provider is unchanged; override this instead when a provider has more than one fallback tier
+    /// (e.g. a relay, then the Wayback Machine).
+    /// </summary>
+    protected virtual async Task<IReadOnlyList<string>> ResolveFallbackUrlsAsync(RssFeedOptions feed, CancellationToken cancellationToken)
+    {
+        var single = await ResolveFallbackUrlAsync(feed, cancellationToken);
+        return single is null ? [] : [single];
+    }
+
     public async Task<IReadOnlyList<FeedFetchResult>> FetchAllFeedsAsync(
         IReadOnlyList<RssFeedOptions> feeds,
         CancellationToken cancellationToken)
@@ -96,14 +108,22 @@ public abstract partial class BaseRssProvider : IRssProvider
             return result;
         }
 
-        var fallbackUrl = await ResolveFallbackUrlAsync(feed, cancellationToken);
-        if (fallbackUrl is null || fallbackUrl == url)
+        foreach (var fallbackUrl in await ResolveFallbackUrlsAsync(feed, cancellationToken))
         {
-            return result;
+            if (fallbackUrl == url)
+            {
+                continue;
+            }
+
+            _logger.LogWarning("Fetch of {Provider}/{Feed} ({Url}) failed - retrying via fallback URL", Name, feed.Name, url);
+            result = await FetchAndParseAsync(feed, fallbackUrl, cancellationToken);
+            if (result.Success)
+            {
+                return result;
+            }
         }
 
-        _logger.LogWarning("Direct fetch of {Provider}/{Feed} ({Url}) failed - retrying via fallback URL", Name, feed.Name, url);
-        return await FetchAndParseAsync(feed, fallbackUrl, cancellationToken);
+        return result;
     }
 
     private async Task<FeedFetchResult> FetchAndParseAsync(RssFeedOptions feed, string url, CancellationToken cancellationToken)

@@ -32,6 +32,10 @@ public static class ApplicationServiceCollectionExtensions
             .Bind(configuration.GetSection(WaybackMachineOptions.SectionName));
 
         services
+            .AddOptions<FeedProxyOptions>()
+            .Bind(configuration.GetSection(FeedProxyOptions.SectionName));
+
+        services
             .AddOptions<NewsApiCrawlerOptions>()
             .Bind(configuration.GetSection(NewsApiCrawlerOptions.SectionName))
             .ValidateDataAnnotations()

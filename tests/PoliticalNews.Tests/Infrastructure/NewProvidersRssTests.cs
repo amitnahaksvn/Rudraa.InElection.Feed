@@ -39,7 +39,7 @@ public class NewProvidersRssTests
         { "IndiaTV", f => new IndiaTvRssProvider(f, NullLogger<IndiaTvRssProvider>.Instance) },
         { "News18", f => new News18RssProvider(f, NullLogger<News18RssProvider>.Instance) },
         { "NDTV", f => new NdtvRssProvider(f, NullLogger<NdtvRssProvider>.Instance) },
-        { "IndianExpress", f => new IndianExpressRssProvider(f, NullLogger<IndianExpressRssProvider>.Instance, Options.Create(new WaybackMachineOptions())) },
+        { "IndianExpress", f => new IndianExpressRssProvider(f, NullLogger<IndianExpressRssProvider>.Instance, Options.Create(new WaybackMachineOptions()), Options.Create(new FeedProxyOptions())) },
         { "TheHindu", f => new TheHinduRssProvider(f, NullLogger<TheHinduRssProvider>.Instance) },
         { "TimesOfIndia", f => new TimesOfIndiaRssProvider(f, NullLogger<TimesOfIndiaRssProvider>.Instance) },
         { "NavbharatTimes", f => new NavbharatTimesRssProvider(f, NullLogger<NavbharatTimesRssProvider>.Instance) },

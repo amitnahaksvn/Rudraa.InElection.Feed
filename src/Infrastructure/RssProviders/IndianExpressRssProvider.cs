@@ -31,13 +31,15 @@ public sealed class IndianExpressRssProvider : BaseRssProvider
 
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly WaybackMachineOptions _waybackOptions;
+    private readonly FeedProxyOptions _proxyOptions;
     private readonly ILogger<IndianExpressRssProvider> _logger;
 
-    public IndianExpressRssProvider(IHttpClientFactory httpClientFactory, ILogger<IndianExpressRssProvider> logger, IOptions<WaybackMachineOptions> waybackOptions)
+    public IndianExpressRssProvider(IHttpClientFactory httpClientFactory, ILogger<IndianExpressRssProvider> logger, IOptions<WaybackMachineOptions> waybackOptions, IOptions<FeedProxyOptions> proxyOptions)
         : base(httpClientFactory, logger)
     {
         _httpClientFactory = httpClientFactory;
         _waybackOptions = waybackOptions.Value;
+        _proxyOptions = proxyOptions.Value;
         _logger = logger;
     }
 
@@ -45,11 +47,31 @@ public sealed class IndianExpressRssProvider : BaseRssProvider
 
     protected override string HttpClientName => ClientName;
 
-    protected override async Task<string?> ResolveFallbackUrlAsync(RssFeedOptions feed, CancellationToken cancellationToken) =>
-        await WaybackMachineFeedResolver.ResolveAsync(
+    /// <summary>
+    /// Fallback order after a failed direct fetch: the optional relay (<see cref="FeedProxyOptions"/> -
+    /// an unblocked network's IP, no shared quota), then the Wayback Machine as a last resort.
+    /// </summary>
+    protected override async Task<IReadOnlyList<string>> ResolveFallbackUrlsAsync(RssFeedOptions feed, CancellationToken cancellationToken)
+    {
+        var urls = new List<string>(2);
+
+        if (!string.IsNullOrWhiteSpace(_proxyOptions.BaseUrl))
+        {
+            var separator = _proxyOptions.BaseUrl.Contains('?') ? '&' : '?';
+            urls.Add($"{_proxyOptions.BaseUrl}{separator}url={Uri.EscapeDataString(feed.Url)}");
+        }
+
+        var wayback = await WaybackMachineFeedResolver.ResolveAsync(
             _httpClientFactory.CreateClient(InfrastructureServiceCollectionExtensions.WaybackMachineClientName),
             _waybackOptions,
             feed.Url,
             _logger,
             cancellationToken);
+        if (wayback is not null)
+        {
+            urls.Add(wayback);
+        }
+
+        return urls;
+    }
 }
